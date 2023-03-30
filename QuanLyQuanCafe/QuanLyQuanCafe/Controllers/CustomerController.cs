@@ -49,7 +49,7 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var dbCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.IdCustomer == Id);
+                var dbCustomer = await _context.Customers.SingleOrDefaultAsync(c => c.IdCustomer == Id);
                 if(dbCustomer == null)
                 {
                     return Ok(new ApiResponse<AnyType> { Status= false, Message = "Not found customer"});
@@ -89,12 +89,20 @@ namespace QuanLyQuanCafe.Controllers
         }
 
         [HttpPut]
-        [Route("updateInfoCustomer")]
-        public async Task<IActionResult> UpdateInfoCustomer()
+        [Route("updateInfoCustomer/{Id}")]
+        public async Task<IActionResult> UpdateInfoCustomer(string Id, [FromBody] InfoCustomer infoUpdate)
         {
             try
             {
-                return Ok(new ApiResponse<AnyType> { Status = true, Message = "sucess" });
+                var dbCustomer =await _context.Customers.SingleOrDefaultAsync(c => c.IdCustomer == Id);
+                if(dbCustomer == null)
+                {
+                    return Ok(new ApiResponse<AnyType> { Status = true, Message = "Not found customer" });
+                }
+                _mapper.Map(infoUpdate, dbCustomer);
+                _context.Customers.Update(dbCustomer);
+                await _context.SaveChangesAsync();
+                return Ok(new ApiResponse<Customer> { Status = true, Message = "sucess",Data = dbCustomer });
 
             }
             catch (Exception ex)
@@ -105,11 +113,18 @@ namespace QuanLyQuanCafe.Controllers
 
 
         [HttpDelete]
-        [Route("deleteCustomer")]
-        public async Task<IActionResult> DeleteCustomer()
+        [Route("deleteCustomer/{Id}")]
+        public async Task<IActionResult> DeleteCustomer(string Id)
         {
             try
             {
+                var dbCustomer = await _context.Customers.SingleOrDefaultAsync(u => u.IdCustomer == Id);
+                if (dbCustomer == null)
+                {
+                    return Ok(new ApiResponse<AnyType> { Status = true, Message = "Not found customer" });
+                }
+                _context.Customers.Remove(dbCustomer);
+                await _context.SaveChangesAsync();
                 return Ok(new ApiResponse<AnyType> { Status = true, Message = "sucess" });
 
             }

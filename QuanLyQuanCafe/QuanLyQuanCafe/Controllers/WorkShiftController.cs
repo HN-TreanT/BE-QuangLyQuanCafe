@@ -66,7 +66,7 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var DbWorkShift = await _context.WorkShifts.FirstOrDefaultAsync(u => u.IdWorkShift == Id);
+                var DbWorkShift = await _context.WorkShifts.SingleOrDefaultAsync(u => u.IdWorkShift == Id);
                 if(DbWorkShift == null)
                 {
                     return NotFound(new ApiResponse<AnyType> { Status = false, Message = "Not found " });
