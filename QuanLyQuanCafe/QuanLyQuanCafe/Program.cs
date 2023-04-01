@@ -1,5 +1,11 @@
 using QuanLyQuanCafe.Models;
 using Microsoft.EntityFrameworkCore;
+using QuanLyQuanCafe.Services.CategoryServices;
+using QuanLyQuanCafe.Services.CustomerServices;
+using QuanLyQuanCafe.Services.ProvideServices;
+using QuanLyQuanCafe.Services.TableFoodServices;
+using QuanLyQuanCafe.Services.WorkShiftServices;
+using QuanLyQuanCafe.Services.StaffServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +25,12 @@ builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
 }));
 /*builder.Services.AddAutoMapper(typeof(Program).Assembly);*/
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<ICategoryService, CategoryServices>();
+builder.Services.AddScoped<ICustomerServices, CustomerServices>();
+builder.Services.AddScoped<IProviderService, ProviderServices>();
+builder.Services.AddScoped<ITableFoodService, TableFoodServices>();
+builder.Services.AddScoped<IWorkShiftService, WorkShiftService>();
+builder.Services.AddScoped<IStaffService, StaffServices>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

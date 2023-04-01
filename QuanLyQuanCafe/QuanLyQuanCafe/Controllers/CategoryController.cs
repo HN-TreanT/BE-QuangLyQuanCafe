@@ -4,14 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Models;
-
+using QuanLyQuanCafe.Dto;
+using QuanLyQuanCafe.Tools;
+using QuanLyQuanCafe.Services.CategoryServices;
 namespace QuanLyQuanCafe.Controllers
 {
-    public class categoryInfo
-    {
-        public string Name { get; set; }
-    }
-
 
     [Route("api/[controller]")]
     [ApiController]
@@ -19,10 +16,13 @@ namespace QuanLyQuanCafe.Controllers
     {
         private readonly CafeContext _context;
         private readonly IMapper _mapper;
-        public CategoryController(CafeContext context, IMapper mapper)
+        private readonly ICategoryService _categoryService;
+       
+        public CategoryController(CafeContext context, IMapper mapper,ICategoryService categoryService)
         {
             this._context = context;
             this._mapper = mapper;
+            this._categoryService = categoryService;    
         }
         [HttpGet]
         [Route("getAllCategory")]
@@ -30,16 +30,16 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var DbCategories = await _context.Categories.ToListAsync();
-                if(DbCategories.Count <= 0)
+                var response = await _categoryService.GetAllCategory();
+                if (response.Data.Count <= 0)
                 {
                     return NotFound();
                 }
-                return Ok(new ApiResponse<List<Category>> { Status = true, Message = "Success",Data = DbCategories });
+                return Ok(response);
 
-            } catch (Exception ex)
+            }catch (Exception ex)
             {
-                return BadRequest(new ApiResponse<AnyType> { Status = false, Message = ex.Message });
+                return BadRequest(ex.Message);
             }
         }
 
@@ -49,12 +49,12 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var dbCategory = await _context.Categories.SingleOrDefaultAsync(c => c.IdCategory == Id);
-                if(dbCategory == null)
+                var response = await _categoryService.GetCategoryById(Id);
+                if(response.Data == null)
                 {
                     return Ok(new ApiResponse<AnyType> { Status = false, Message = "Not found " });
                 }
-                return Ok(new ApiResponse<Category> { Status = true, Message = "Success", Data = dbCategory});
+                return Ok(response);
 
             }
             catch (Exception ex)
@@ -65,19 +65,12 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createCategory")]
-        public async Task<IActionResult> getCategoryById([FromBody] categoryInfo categoryInfo)
+        public async Task<IActionResult> getCategoryById([FromBody] CategoryDto CategoryDto)
         {
             try
             {
-                string Id = Guid.NewGuid().ToString().Substring(0,10);
-                var category = new Category
-                {
-                    IdCategory = Id,
-                    Name = categoryInfo.Name,
-                };
-                _context.Categories.Add(category); 
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<Category> { Status = true, Message = "Success",Data = category });
+                var response = await _categoryService.CreateCategory(CategoryDto);
+                return Ok(response);
 
             }
             catch (Exception ex)
@@ -88,19 +81,12 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateCategory/{Id}")]
-        public async Task<IActionResult> UpdateCategory(string Id, [FromBody] categoryInfo categoryInfo)
+        public async Task<IActionResult> UpdateCategory(string Id, [FromBody] CategoryDto CategoryDto)
         {
             try
             {
-                var dbCategory = await _context.Categories.SingleOrDefaultAsync(c => c.IdCategory == Id);
-                if(dbCategory == null)
-                {
-                    return NotFound();
-                }
-                _mapper.Map(categoryInfo, dbCategory);
-                _context.Categories.Update(dbCategory);
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<Category> { Status = true, Message = "Success",Data = dbCategory });
+               var response = await _categoryService.UpdateCategory(Id, CategoryDto);
+                return Ok(response);    
             }
             catch (Exception ex)
             {
@@ -114,14 +100,8 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var dbCategory = await _context.Categories.SingleOrDefaultAsync(c => c.IdCategory == Id);
-                if (dbCategory == null)
-                {
-                    return NotFound();
-                }
-                _context.Categories.Remove(dbCategory);
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<AnyType> { Status = true, Message = "Success" });
+               var response = await _categoryService.DeleteCategory(Id);
+                return Ok(response);    
 
             }
             catch (Exception ex)

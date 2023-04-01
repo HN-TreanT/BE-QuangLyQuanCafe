@@ -8,16 +8,10 @@ using System.Net;
 using Microsoft.OpenApi.Any;
 using System.Security.Principal;
 using Microsoft.EntityFrameworkCore;
+using QuanLyQuanCafe.Tools;
 
 namespace QuanLyQuanCafe.Controllers
 {
-    public class ApiResponse<T>
-    {
-        public bool Status { get; set; }
-        public string Message { get; set; }
-        public T Data { get; set; }
-    }
-
     public class LoginInfo
     {
         public string Username { get; set; }

@@ -4,25 +4,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Models;
-
+using QuanLyQuanCafe.Dto;
+using QuanLyQuanCafe.Tools;
+using QuanLyQuanCafe.Services.TableFoodServices;
 namespace QuanLyQuanCafe.Controllers
 {
-    public class InfoTableFood
-    {
-        public string? Name { get; set; }
-        public byte? Status { get; set; }
-    }
+ 
     [Route("api/[controller]")]
     [ApiController]
     public class TableFoodController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly CafeContext _context;
+        private readonly ITableFoodService _tableFoodService;
 
-        public TableFoodController(IMapper mapper, CafeContext context)
+        public TableFoodController(IMapper mapper, CafeContext context,ITableFoodService tableFoodService)
         {
             this._mapper = mapper;
             this._context = context;
+            this._tableFoodService = tableFoodService;  
         }
 
         [HttpGet]
@@ -31,12 +31,9 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var dbTableFoods = await _context.TableFoods.ToListAsync();
-                if(dbTableFoods.Count <= 0 )
-                {
-                    return NotFound();
-                }
-               return  Ok(new ApiResponse<List<TableFood>> { Status = true, Message = "Success",Data = dbTableFoods });
+                var response = await _tableFoodService.GetAllTableFood();   
+                return Ok(response);
+                
             }catch (Exception ex) {
                 return BadRequest(ex.Message);
             }
@@ -48,12 +45,9 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var dbTableFood = await _context.TableFoods.SingleOrDefaultAsync(tb => tb.IdTable == Id);
-                if(dbTableFood == null)
-                {
-                    return NotFound();
-                }
-                return Ok(new ApiResponse<TableFood> { Status = true, Message = "Success",Data = dbTableFood });
+                var response = await _tableFoodService.GetTableFoodById(Id);
+                return Ok(response);
+                
             }
             catch (Exception ex)
             {
@@ -63,20 +57,13 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createTableFood")]
-        public async Task<IActionResult> CreateTableFood([FromBody] InfoTableFood InfotableFood )
+        public async Task<IActionResult> CreateTableFood([FromBody] TableFoodDto TableFoodDto )
         {
             try
             {
-                string Id = Guid.NewGuid().ToString().Substring(0,10);
-                var tableFood = new TableFood
-                {
-                    IdTable = Id,
-                    Name = InfotableFood.Name,
-                    Status = InfotableFood.Status,
-                };
-                _context.TableFoods.Add(tableFood);
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<TableFood> { Status = true, Message = "Success",Data = tableFood });
+                var response = await _tableFoodService.CreateTableFood(TableFoodDto);
+                return Ok(response);
+              
             }
             catch (Exception ex)
             {
@@ -86,19 +73,12 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateTablefood/{Id}")]
-        public async Task<IActionResult> UpdateTableFood(string Id, [FromBody] InfoTableFood tableFood)
+        public async Task<IActionResult> UpdateTableFood(string Id, [FromBody] TableFoodDto tableFood)
         {
             try
             {
-                var dbTableFood = await _context.TableFoods.SingleOrDefaultAsync(tb => tb.IdTable == Id);
-                if (dbTableFood == null)
-                {
-                    return NotFound();
-                }
-                _mapper.Map(tableFood, dbTableFood);
-                _context.TableFoods.Update(dbTableFood);
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<TableFood> { Status = true, Message = "Success",Data = dbTableFood });
+                var response = await _tableFoodService.UpdateTableFood(Id,tableFood);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -112,14 +92,8 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var dbTableFood = await _context.TableFoods.SingleOrDefaultAsync(tb => tb.IdTable == Id);
-                if (dbTableFood == null)
-                {
-                    return NotFound();
-                }
-                _context.TableFoods.Remove(dbTableFood);
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<AnyType> { Status = true, Message = "Success" });
+                var response = await _tableFoodService.DeleteTableFood(Id);
+               return Ok(response);
             }
             catch (Exception ex)
             {

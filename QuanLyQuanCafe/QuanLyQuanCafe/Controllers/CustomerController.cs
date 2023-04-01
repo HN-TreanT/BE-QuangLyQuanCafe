@@ -4,38 +4,34 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Models;
-
+using QuanLyQuanCafe.Dto;
+using QuanLyQuanCafe.Tools;
+using QuanLyQuanCafe.Services.CustomerServices;
 namespace QuanLyQuanCafe.Controllers
 {
 
-    public class InfoCustomer
-    {
-        public string? Fullname { get; set; }
-        public string? Gender { get; set; }
-        public string? PhoneNumber { get; set; }
-    }
+
     [Route("api/[controller]")]
     [ApiController]
     public class CustomerController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly CafeContext _context;
-        public CustomerController(CafeContext context, IMapper mapper)
+        private readonly ICustomerServices _customerServices;
+        public CustomerController(CafeContext context, IMapper mapper,ICustomerServices customerServices)
         {
             this._mapper = mapper;
             this._context = context;
+            this._customerServices = customerServices;
         }
         [HttpGet]
         [Route("getAllCustomer")]
         public async Task<IActionResult> GetAllCustomer()
         {
             try
-            {var dbCustomers = await _context.Customers.ToListAsync();
-                if(dbCustomers.Count <= 0)
-                {
-                    return Ok(new ApiResponse<AnyType> { Status = false, Message = "not found customer" });
-                }
-                return Ok(new ApiResponse<List<Customer>> { Status = true, Message = "sucess",Data = dbCustomers });
+            {
+                var response = await _customerServices.GetAllCustomer();    
+                return Ok(response);
 
             }catch (Exception ex)
             {
@@ -49,12 +45,8 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var dbCustomer = await _context.Customers.SingleOrDefaultAsync(c => c.IdCustomer == Id);
-                if(dbCustomer == null)
-                {
-                    return Ok(new ApiResponse<AnyType> { Status= false, Message = "Not found customer"});
-                }
-                return Ok(new ApiResponse<Customer> { Status = true, Message = "sucess",Data = dbCustomer });
+                var response = await _customerServices.GetCustomerById(Id);
+                return Ok(response);
 
             }
             catch (Exception ex)
@@ -65,21 +57,12 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createCustomer")]
-        public async Task<IActionResult> CreateCustomer([FromBody] InfoCustomer infoCustomer)
+        public async Task<IActionResult> CreateCustomer([FromBody] CustomerDto CustomerDto)
         {
             try
             {
-                string Id = Guid.NewGuid().ToString().Substring(0, 10);
-                var customer = new Customer
-                {
-                    IdCustomer = Id,
-                    Fullname = infoCustomer.Fullname,
-                    Gender = infoCustomer.Gender,
-                    PhoneNumber = infoCustomer.PhoneNumber
-                };
-                _context.Customers.Add(customer);
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<Customer> { Status = true, Message = "sucess", Data = customer });
+                var response = await _customerServices.CreateCustomer(CustomerDto);
+                return Ok(response);
 
             }
             catch (Exception ex)
@@ -89,20 +72,13 @@ namespace QuanLyQuanCafe.Controllers
         }
 
         [HttpPut]
-        [Route("updateInfoCustomer/{Id}")]
-        public async Task<IActionResult> UpdateInfoCustomer(string Id, [FromBody] InfoCustomer infoUpdate)
+        [Route("updateCustomerDto/{Id}")]
+        public async Task<IActionResult> UpdateCustomerDto(string Id, [FromBody] CustomerDto infoUpdate)
         {
             try
             {
-                var dbCustomer =await _context.Customers.SingleOrDefaultAsync(c => c.IdCustomer == Id);
-                if(dbCustomer == null)
-                {
-                    return Ok(new ApiResponse<AnyType> { Status = true, Message = "Not found customer" });
-                }
-                _mapper.Map(infoUpdate, dbCustomer);
-                _context.Customers.Update(dbCustomer);
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<Customer> { Status = true, Message = "sucess",Data = dbCustomer });
+               var response = await _customerServices.UpdateCustomerDto(Id, infoUpdate);
+                return Ok(response);
 
             }
             catch (Exception ex)
@@ -118,15 +94,8 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var dbCustomer = await _context.Customers.SingleOrDefaultAsync(u => u.IdCustomer == Id);
-                if (dbCustomer == null)
-                {
-                    return Ok(new ApiResponse<AnyType> { Status = true, Message = "Not found customer" });
-                }
-                _context.Customers.Remove(dbCustomer);
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<AnyType> { Status = true, Message = "sucess" });
-
+              var response = await _customerServices.DeleteCustomer(Id);
+                return Ok(response);
             }
             catch (Exception ex)
             {

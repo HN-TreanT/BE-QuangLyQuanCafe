@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Models;
 using AutoMapper;
-
+using QuanLyQuanCafe.Dto;
+using QuanLyQuanCafe.Tools;
+using QuanLyQuanCafe.Services.WorkShiftServices;
 namespace QuanLyQuanCafe.Controllers
 {
     [Route("api/[controller]")]
@@ -13,27 +15,24 @@ namespace QuanLyQuanCafe.Controllers
     {
         private readonly IMapper _mapper;
         private readonly CafeContext _context;
-        public WorkShiftController(CafeContext _context, IMapper mapper)
+        private readonly IWorkShiftService _workShiftService;
+        public WorkShiftController(CafeContext _context, IMapper mapper, IWorkShiftService workShiftService)
         {
             this._context = _context;
             this._mapper = mapper;
+            this._workShiftService = workShiftService;
         }
 
-        public class InfoWS
-        {
-            public int? WorkShift1 { get; set; }
-            public TimeSpan? ArrivalTime { get; set; }
-            public TimeSpan? TimeOn { get; set; }
-
-        }
+        
         [HttpGet]
         [Route("GetWorkShift")]
         public async Task<IActionResult> GetWorkShift()
         {
             try
             {
-                var dbWorkShifts = await _context.WorkShifts.ToListAsync();   
-               return Ok(new ApiResponse<List<WorkShift>> { Status=true, Message= "Success", Data = dbWorkShifts });
+                var response = await _workShiftService.GetWorkShift();
+                return Ok(response);
+               
 
             }catch(Exception ex)
             {
@@ -42,19 +41,13 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpPost]
         [Route("CreateWorkShift")]
-        public async Task<IActionResult> CreateWorshift(InfoWS workShift)
+        public async Task<IActionResult> CreateWorkShift(WorkShiftDto workShift)
         {
             try
             {
-                var newWorkShift = new WorkShift
-                {
-                    WorkShift1 = workShift.WorkShift1,
-                    ArrivalTime = workShift.ArrivalTime,
-                    TimeOn = workShift.TimeOn
-                };
-                _context.WorkShifts.Add(newWorkShift);
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<List<WorkShift>> { Status = true, Message = "Success"});
+                var response = await _workShiftService.CreateWorkShift(workShift);
+                return Ok(response);
+                
             }
             catch(Exception ex) {
                 return BadRequest(new ApiResponse<AnyType> { Status = false, Message = ex.Message });
@@ -62,19 +55,12 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpPut]
         [Route("UpdateWorkShift/{Id}")]
-        public async Task<IActionResult> UpdateWorkShift(int Id, [FromBody] InfoWS workShift )
+        public async Task<IActionResult> UpdateWorkShift(int Id, [FromBody] WorkShiftDto workShift )
         {
             try
             {
-                var DbWorkShift = await _context.WorkShifts.SingleOrDefaultAsync(u => u.IdWorkShift == Id);
-                if(DbWorkShift == null)
-                {
-                    return NotFound(new ApiResponse<AnyType> { Status = false, Message = "Not found " });
-                }
-                 _mapper.Map(workShift,DbWorkShift);
-                _context.WorkShifts.Update(DbWorkShift);
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<WorkShift> { Status = true, Message = "Success" ,Data= DbWorkShift});
+                var response = await _workShiftService.UpdateWorkShift(Id, workShift);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -87,14 +73,8 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var dbWorkShift = await _context.WorkShifts.FindAsync(Id);
-                if(dbWorkShift == null)
-                {
-                    return NotFound(new ApiResponse<AnyType> { Status = true, Message = "Not found" });
-                }
-                _context.WorkShifts.Remove(dbWorkShift);
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<List<WorkShift>> { Status = true, Message = " delete Success" });
+                var response = await _workShiftService.DeleteWorkShift(Id);
+                return Ok(response);
             }
             catch (Exception ex)
             {

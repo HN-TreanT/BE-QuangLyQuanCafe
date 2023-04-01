@@ -1,0 +1,140 @@
+﻿using AutoMapper;
+using QuanLyQuanCafe.Models;
+using QuanLyQuanCafe.Tools;
+using QuanLyQuanCafe.Dto;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Any;
+namespace QuanLyQuanCafe.Services.TableFoodServices
+{
+    public class TableFoodServices:ITableFoodService
+    {
+
+        private readonly CafeContext _context;
+        private readonly IMapper _mapper;
+        public TableFoodServices(CafeContext context, IMapper mapper)
+        {
+            this._context = context;
+            this._mapper = mapper;
+        }
+
+        public async Task<ApiResponse<List<TableFood>>> GetAllTableFood()
+        {
+            var response = new ApiResponse<List<TableFood>>();
+            try
+            {
+                var dbTableFoods = await _context.TableFoods.ToListAsync();
+                if (dbTableFoods.Count <= 0)
+                {
+                    response.Status = false;
+                    response.Message = "Not found";
+                    return response;
+                }
+                response.Data = dbTableFoods;
+
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ApiResponse<TableFood>> GetTableFoodById(string Id)
+        {
+            var response = new ApiResponse<TableFood>();
+            try
+            {
+                var dbTableFood = await _context.TableFoods.SingleOrDefaultAsync(tb => tb.IdTable == Id);
+                if (dbTableFood == null)
+                {
+                    response.Status = false;
+                    response.Message = "not found";
+                    return response;
+                }
+               response.Data = dbTableFood;
+
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ApiResponse<TableFood>> CreateTableFood(TableFoodDto TableFoodDto)
+        {
+            var response = new ApiResponse<TableFood>();
+            try
+            {
+                string Id = Guid.NewGuid().ToString().Substring(0, 10);
+                var tableFood = new TableFood
+                {
+                    IdTable = Id,
+                    Name = TableFoodDto.Name,
+                    Status = TableFoodDto.Status,
+                };
+                _context.TableFoods.Add(tableFood);
+                await _context.SaveChangesAsync();
+                response.Data = tableFood;
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ApiResponse<TableFood>> UpdateTableFood(string Id, TableFoodDto TableFoodDto)
+        {
+            var response = new ApiResponse<TableFood>();
+            try
+            {
+                var dbTableFood = await _context.TableFoods.SingleOrDefaultAsync(tb => tb.IdTable == Id);
+                if (dbTableFood == null)
+                {
+                    response.Status = false;
+                    response.Message = "not found";
+                    return response;
+                }
+                _mapper.Map(TableFoodDto, dbTableFood);
+                _context.TableFoods.Update(dbTableFood);
+                await _context.SaveChangesAsync();
+                response.Data = dbTableFood;
+
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ApiResponse<AnyType>> DeleteTableFood(string Id)
+        {
+            var response = new ApiResponse<AnyType>();
+            try
+            {
+                var dbTableFood = await _context.TableFoods.SingleOrDefaultAsync(tb => tb.IdTable == Id);
+                if (dbTableFood == null)
+                {
+                    response.Status =false;
+                    response.Message = "not found";
+                    return response;
+                }
+                _context.TableFoods.Remove(dbTableFood);
+                await _context.SaveChangesAsync();
+    
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+    }
+}

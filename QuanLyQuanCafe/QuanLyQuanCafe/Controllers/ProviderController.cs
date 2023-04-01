@@ -4,26 +4,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Models;
-
+using QuanLyQuanCafe.Dto;
+using QuanLyQuanCafe.Tools;
+using QuanLyQuanCafe.Services.ProvideServices;
 namespace QuanLyQuanCafe.Controllers
 {
-    public class ProviderInfo
-    {
-        public string? Name { get; set; }
-        public string? PhoneNumber { get; set; } = null!;
-        public string? Address { get; set; } = null!;
-        public string? Email { get; set; } = null!;
-    }
+   
     [Route("api/[controller]")]
     [ApiController]
     public class ProviderController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly CafeContext _context;
-        public ProviderController(CafeContext context, IMapper mapper)
+        private readonly IProviderService _serviceProvider;
+        public ProviderController(CafeContext context, IMapper mapper,IProviderService providerService)
         {
             this._mapper = mapper;
             this._context = context;
+            this._serviceProvider = providerService;
         }
         [HttpGet]
         [Route("getAllProvider")]
@@ -31,12 +29,8 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var dbProviders = await _context.Providers.ToListAsync();
-                if(dbProviders.Count <= 0)
-                {
-                    return Ok(new ApiResponse<AnyType> { Status = true, Message = "Not found provider" });
-                }
-                return Ok(new ApiResponse<List<Provider>> { Status = false, Message = "success",Data = dbProviders });
+               var response = await _serviceProvider.GetAllProvider();
+                return Ok(response);
 
             }
             catch (Exception ex)
@@ -51,12 +45,8 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var dbProvider = await _context.Providers.SingleOrDefaultAsync(p => p.IdProvider == Id);
-                if(dbProvider == null)
-                {
-                    return Ok(new ApiResponse<AnyType> { Status = false, Message = "not found usser" });
-                }
-                return Ok(new ApiResponse<Provider> { Status = true, Message = "success",Data = dbProvider });
+              var response = await _serviceProvider.GetProviderById(Id);
+                return Ok(response);
 
             }
             catch (Exception ex)
@@ -67,23 +57,14 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createProvider")]
-        public async Task<IActionResult> CreateProvider([FromBody] ProviderInfo providerInfo)
+        public async Task<IActionResult> CreateProvider([FromBody] ProviderDto ProviderDto)
         {
             try
             {
-                string Id = Guid.NewGuid().ToString().Substring(0, 10);
-                var provider = new Provider
-                {
-                    IdProvider = Id,
-                    Name = providerInfo.Name,
-                    PhoneNumber = providerInfo.PhoneNumber,
-                    Address = providerInfo.Address,
-                    Email = providerInfo.Email,
 
-                };
-                _context.Providers.Add(provider);
-                await _context.SaveChangesAsync();  
-                return Ok(new ApiResponse<Provider> { Status = false, Message = "success", Data = provider });
+                var response = await _serviceProvider.CreateProvider(ProviderDto);
+                return Ok(response);    
+               
 
             }
             catch (Exception ex)
@@ -94,20 +75,13 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateProvider/{Id}")]
-        public async Task<IActionResult> UpdateProvider(string Id, [FromBody] ProviderInfo providerInfo)
+        public async Task<IActionResult> UpdateProvider(string Id, [FromBody] ProviderDto ProviderDto)
         {
             try
             {
-                var dbProvider = await _context.Providers.SingleOrDefaultAsync(p => p.IdProvider == Id);
-                if(dbProvider == null)
-                {
-                    return Ok(new ApiResponse<AnyType> { Status = false, Message = "Not found provider" });
-                }
-                _mapper.Map(providerInfo, dbProvider);
-                _context.Providers.Update(dbProvider);
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<Provider> { Status = false, Message = "success", Data = dbProvider });
-
+                var response = await _serviceProvider.UpdateProvider(Id,ProviderDto);
+                return Ok(response);
+     
             }
             catch (Exception ex)
             {
@@ -122,14 +96,9 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var dbProvider = await _context.Providers.SingleOrDefaultAsync(p => p.IdProvider == Id);
-                if(dbProvider == null)
-                {
-                    return Ok(new ApiResponse<AnyType> { Status = false, Message = " not found provider" });
-                }
-                _context.Providers.Remove(dbProvider);
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<AnyType> { Status = false, Message = "success" });
+                var response = await _serviceProvider.Deleteprovider(Id);
+                return Ok(response);
+                
 
             }
             catch (Exception ex)

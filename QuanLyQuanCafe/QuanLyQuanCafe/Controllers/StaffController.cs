@@ -1,27 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Models;
+using QuanLyQuanCafe.Dto;
+using QuanLyQuanCafe.Tools;
+using QuanLyQuanCafe.Services.StaffServices;
+using AutoMapper;
 
 namespace QuanLyQuanCafe.Controllers
 {
-    public class StaffInfo
-    {
-        public string Fullname { get; set; }
-        public DateTime Birthday { get; set; }
-        public string Address { get; set; }
-        public string Email { get; set; }
-        public string Gender { get; set; }
-        public string PhoneNumber { get; set; }
-        public float Salary { get; set; }
-    }
+    
     [Route("api/[controller]")]
     [ApiController]
     public class StaffController : ControllerBase
     {
         private readonly CafeContext _context;
-        public StaffController(CafeContext _context)
+        private readonly IStaffService _staffService;
+        private readonly IMapper _mapper;
+        public StaffController(CafeContext _context,IMapper mapper, IStaffService staffService)
         {
             this._context = _context;
+            this._staffService = staffService;
+            this._mapper = mapper;
         }
         [HttpGet]
         [Route("GetAllStaff")]
@@ -29,7 +28,9 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                return Ok(new ApiResponse<AnyType> { Status = true, Message = "Success" });
+                var response = await _staffService.GetAllStaff();
+                return Ok(response);
+               
             }
             catch (Exception ex)
             {
@@ -38,7 +39,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpPost]
         [Route("CreateStaff")]
-        public async Task<IActionResult> CreateStaff([FromBody] StaffInfo staffInfo) 
+        public async Task<IActionResult> CreateStaff([FromBody] StaffDto StaffDto) 
         {
             try
             {
@@ -50,13 +51,13 @@ namespace QuanLyQuanCafe.Controllers
                 var staff = new staff
                 {
                     IdStaff= Id,
-                    Fullname = staffInfo.Fullname,
-                    Birthday = staffInfo.Birthday,
-                    Address = staffInfo.Address,
-                    Email = staffInfo.Email,
-                    Gender = staffInfo.Gender,
-                    PhoneNumber = staffInfo.PhoneNumber,
-                    Salary = staffInfo.Salary,
+                    Fullname = StaffDto.Fullname,
+                    Birthday = StaffDto.Birthday,
+                    Address = StaffDto.Address,
+                    Email = StaffDto.Email,
+                    Gender = StaffDto.Gender,
+                    PhoneNumber = StaffDto.PhoneNumber,
+                    Salary = StaffDto.Salary,
                 };
                 _context.staff.Add(staff);
                 await _context.SaveChangesAsync();
@@ -100,8 +101,10 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                return Ok(new ApiResponse<AnyType> { Status = true, Message = "success" });
-            }catch(Exception ex)
+                var response = await _staffService.getStaff(Id);
+                return Ok(response);
+            }
+            catch(Exception ex)
             {
                 return BadRequest(new ApiResponse<AnyType> { Status = false , Message = ex.Message});
             }
