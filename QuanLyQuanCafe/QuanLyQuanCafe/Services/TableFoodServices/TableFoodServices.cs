@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using QuanLyQuanCafe.Models;
 using QuanLyQuanCafe.Tools;
-using QuanLyQuanCafe.Dto;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
+using QuanLyQuanCafe.Dto.TableFood;
+
 namespace QuanLyQuanCafe.Services.TableFoodServices
 {
     public class TableFoodServices:ITableFoodService

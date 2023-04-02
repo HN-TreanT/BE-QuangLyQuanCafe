@@ -1,4 +1,4 @@
-﻿namespace QuanLyQuanCafe.Dto
+﻿namespace QuanLyQuanCafe.Dto.WorkShift
 {
     public class WorkShiftDto
     {

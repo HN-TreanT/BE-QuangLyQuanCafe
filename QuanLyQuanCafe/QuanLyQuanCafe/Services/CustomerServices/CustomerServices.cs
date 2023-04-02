@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using QuanLyQuanCafe.Models;
 using QuanLyQuanCafe.Tools;
-using QuanLyQuanCafe.Dto;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
+using QuanLyQuanCafe.Dto.Customer;
+
 namespace QuanLyQuanCafe.Services.CustomerServices
 {
     public class CustomerServices:ICustomerServices
@@ -131,6 +132,48 @@ namespace QuanLyQuanCafe.Services.CustomerServices
                 response.Message = ex.Message;
             }
             return response;
+        }
+
+        public async Task<ApiResponse<List<Customer>>>  SearchCustomerByName(string CustomerName)
+        {
+            var response = new ApiResponse<List<Customer>>();
+            try
+            {            
+                    var dbCustomers = await _context.Customers
+                   .Where(c => c.Fullname != null && c.Fullname.Contains(CustomerName))
+                   .ToListAsync();
+                   response.Data = dbCustomers;
+
+            }
+            catch (Exception ex) {
+                response.Status = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ApiResponse<Customer>> SearchCustomerByPhone(string CustomerPhone)
+        {
+            var response = new ApiResponse<Customer>();
+            try
+            {
+                var dbCustomer =await     _context.Customers.FirstOrDefaultAsync(c => c.PhoneNumber != null && c.PhoneNumber.Equals(CustomerPhone));
+                if (dbCustomer == null)
+                {
+                    response.Status = false;
+                    response.Message = "Not found";
+                    return response;
+                }
+                response.Data = dbCustomer;
+                
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+            }
+            return response;
+
         }
     }
 }

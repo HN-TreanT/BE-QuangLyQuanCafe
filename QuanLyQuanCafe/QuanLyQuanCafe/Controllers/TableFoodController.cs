@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Models;
-using QuanLyQuanCafe.Dto;
 using QuanLyQuanCafe.Tools;
 using QuanLyQuanCafe.Services.TableFoodServices;
+using QuanLyQuanCafe.Dto.TableFood;
+
 namespace QuanLyQuanCafe.Controllers
 {
- 
+
     [Route("api/[controller]")]
     [ApiController]
     public class TableFoodController : ControllerBase

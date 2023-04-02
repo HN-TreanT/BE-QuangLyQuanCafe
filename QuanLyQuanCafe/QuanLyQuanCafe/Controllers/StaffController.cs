@@ -1,14 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Models;
-using QuanLyQuanCafe.Dto;
 using QuanLyQuanCafe.Tools;
 using QuanLyQuanCafe.Services.StaffServices;
 using AutoMapper;
+using QuanLyQuanCafe.Dto.Staff;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json.Linq;
 
 namespace QuanLyQuanCafe.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class StaffController : ControllerBase
@@ -39,42 +43,28 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpPost]
         [Route("CreateStaff")]
-        public async Task<IActionResult> CreateStaff([FromBody] StaffDto StaffDto) 
+        public async Task<IActionResult> CreateStaff([FromBody] StaffCreateDto StaffDto) 
         {
             try
             {
-                string Id = Guid.NewGuid().ToString().Substring(0, 10);
-                var dbStaff = _context.staff.Where(u=> u.IdStaff == Id).FirstOrDefault();
-                if(dbStaff != null) {
-                    return Ok(new ApiResponse<AnyType> { Status = false, Message = "staff already exist" });
-                }
-                var staff = new staff
-                {
-                    IdStaff= Id,
-                    Fullname = StaffDto.Fullname,
-                    Birthday = StaffDto.Birthday,
-                    Address = StaffDto.Address,
-                    Email = StaffDto.Email,
-                    Gender = StaffDto.Gender,
-                    PhoneNumber = StaffDto.PhoneNumber,
-                    Salary = StaffDto.Salary,
-                };
-                _context.staff.Add(staff);
-                await _context.SaveChangesAsync();
-                return Ok(new ApiResponse<AnyType> { Status = true, Message = "Create success" });
+                var res = await _staffService.CreateStaff(StaffDto);    
+                
+                return Ok(res);
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiResponse<AnyType> { Status= false, Message = ex.Message});
+                return BadRequest(new ApiResponse<AnyType> { Status = false, Message = ex.Message });
             }
         }
         [HttpPatch]
         [Route("UpdateInfoStaff/{Id}")]
-        public async Task<IActionResult> UpdateInfoStaff(string Id)
+        public async Task<IActionResult> UpdateInfoStaff(string Id, [FromBody] StaffCreateDto staffDto)
         {
             try
             {
-                return Ok(new ApiResponse<AnyType> { Status = true, Message = "update success" });
+                var response = await _staffService.UpdateInfoStaff(Id, staffDto);
+                
+                return Ok(response);
 
             }catch (Exception ex)
             {
@@ -87,7 +77,8 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                return Ok(new ApiResponse<AnyType> { Status = true, Message = "delete success" });
+               var response = await _staffService.DeleteStaff(Id);
+                return Ok(response);
 
             }
             catch (Exception ex)
@@ -107,6 +98,36 @@ namespace QuanLyQuanCafe.Controllers
             catch(Exception ex)
             {
                 return BadRequest(new ApiResponse<AnyType> { Status = false , Message = ex.Message});
+            }
+        }
+
+        [HttpGet]
+        [Route("searchStaffByName/{staffName}")]
+        public async Task<IActionResult> SearchStaffByName(string staffName)
+        {
+            try
+            {
+                var response = await _staffService.SearchStaffByName(staffName);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse<AnyType> { Status = false, Message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("searchStaffByPhone/{staffPhone}")]
+        public async Task<IActionResult> SearchStaffByPhone(string staffPhone)
+        {
+            try
+            {
+                var response = await _staffService.SearchStaffByPhone(staffPhone);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse<AnyType> { Status = false, Message = ex.Message });
             }
         }
     }

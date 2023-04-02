@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Models;
-using QuanLyQuanCafe.Dto;
 using QuanLyQuanCafe.Tools;
 using QuanLyQuanCafe.Services.CategoryServices;
+using QuanLyQuanCafe.Dto.Category;
+
 namespace QuanLyQuanCafe.Controllers
 {
 

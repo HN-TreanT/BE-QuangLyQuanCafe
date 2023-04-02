@@ -2,7 +2,12 @@
 using QuanLyQuanCafe.Controllers;
 using QuanLyQuanCafe.Models;
 using static QuanLyQuanCafe.Controllers.WorkShiftController;
-using QuanLyQuanCafe.Dto;
+using QuanLyQuanCafe.Dto.Category;
+using QuanLyQuanCafe.Dto.Customer;
+using QuanLyQuanCafe.Dto.Provider;
+using QuanLyQuanCafe.Dto.TableFood;
+using QuanLyQuanCafe.Dto.WorkShift;
+
 namespace QuanLyQuanCafe.Tools
 {
     public class MappingProfile :Profile

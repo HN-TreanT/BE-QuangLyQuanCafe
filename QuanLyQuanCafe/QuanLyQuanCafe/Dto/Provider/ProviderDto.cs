@@ -1,4 +1,4 @@
-﻿namespace QuanLyQuanCafe.Dto
+﻿namespace QuanLyQuanCafe.Dto.Provider
 {
     public class ProviderDto
     {

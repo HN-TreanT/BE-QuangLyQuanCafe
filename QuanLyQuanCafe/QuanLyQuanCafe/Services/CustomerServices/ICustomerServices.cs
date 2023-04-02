@@ -1,7 +1,7 @@
 ﻿using QuanLyQuanCafe.Tools;
-using QuanLyQuanCafe.Dto;
 using QuanLyQuanCafe.Models;
 using Microsoft.OpenApi.Any;
+using QuanLyQuanCafe.Dto.Customer;
 
 namespace QuanLyQuanCafe.Services.CustomerServices
 {
@@ -13,5 +13,7 @@ namespace QuanLyQuanCafe.Services.CustomerServices
 
         Task<ApiResponse<Customer>> UpdateCustomerDto(string Id, CustomerDto CustomerDto);
         Task<ApiResponse<AnyType>> DeleteCustomer(string Id);
+        Task<ApiResponse<List<Customer>>> SearchCustomerByName(string CustomerName);
+        Task<ApiResponse<Customer>> SearchCustomerByPhone(string CustomerPhone);
     }
 }

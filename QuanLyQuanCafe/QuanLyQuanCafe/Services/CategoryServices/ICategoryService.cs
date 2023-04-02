@@ -1,6 +1,6 @@
 ﻿using QuanLyQuanCafe.Tools;
-using QuanLyQuanCafe.Dto;
 using QuanLyQuanCafe.Models;
+using QuanLyQuanCafe.Dto.Category;
 
 namespace QuanLyQuanCafe.Services.CategoryServices
 {

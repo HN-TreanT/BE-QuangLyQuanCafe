@@ -1,7 +1,7 @@
 ﻿using QuanLyQuanCafe.Tools;
-using QuanLyQuanCafe.Dto;
 using QuanLyQuanCafe.Models;
 using Microsoft.OpenApi.Any;
+using QuanLyQuanCafe.Dto.Provider;
 
 namespace QuanLyQuanCafe.Services.ProvideServices
 {

@@ -4,9 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Models;
 using AutoMapper;
-using QuanLyQuanCafe.Dto;
 using QuanLyQuanCafe.Tools;
 using QuanLyQuanCafe.Services.WorkShiftServices;
+using QuanLyQuanCafe.Dto.WorkShift;
+
 namespace QuanLyQuanCafe.Controllers
 {
     [Route("api/[controller]")]

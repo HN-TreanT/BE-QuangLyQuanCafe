@@ -1,7 +1,7 @@
 ﻿using QuanLyQuanCafe.Tools;
-using QuanLyQuanCafe.Dto;
 using QuanLyQuanCafe.Models;
 using Microsoft.OpenApi.Any;
+using QuanLyQuanCafe.Dto.WorkShift;
 
 namespace QuanLyQuanCafe.Services.WorkShiftServices
 {

@@ -424,14 +424,13 @@ namespace QuanLyQuanCafe.Models
 
             modelBuilder.Entity<SelectedWorkShift>(entity =>
             {
-                entity.HasKey(e => e.IdSelectedWs);
+                entity.HasKey(e => e.IdSeletedWorkShift);
 
                 entity.ToTable("SelectedWorkShift");
 
-                entity.Property(e => e.IdSelectedWs)
+                entity.Property(e => e.IdSeletedWorkShift)
                     .HasMaxLength(10)
                     .IsUnicode(false)
-                    .HasColumnName("IdSelectedWS")
                     .IsFixedLength();
 
                 entity.Property(e => e.IdStaff)

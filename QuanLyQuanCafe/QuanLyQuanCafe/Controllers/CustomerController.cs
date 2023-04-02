@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Models;
-using QuanLyQuanCafe.Dto;
 using QuanLyQuanCafe.Tools;
 using QuanLyQuanCafe.Services.CustomerServices;
+using QuanLyQuanCafe.Dto.Customer;
+
 namespace QuanLyQuanCafe.Controllers
 {
 
@@ -18,7 +19,7 @@ namespace QuanLyQuanCafe.Controllers
         private readonly IMapper _mapper;
         private readonly CafeContext _context;
         private readonly ICustomerServices _customerServices;
-        public CustomerController(CafeContext context, IMapper mapper,ICustomerServices customerServices)
+        public CustomerController(CafeContext context, IMapper mapper, ICustomerServices customerServices)
         {
             this._mapper = mapper;
             this._context = context;
@@ -30,15 +31,15 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-                var response = await _customerServices.GetAllCustomer();    
+                var response = await _customerServices.GetAllCustomer();
                 return Ok(response);
 
-            }catch (Exception ex)
+            } catch (Exception ex)
             {
-                return BadRequest(new ApiResponse<AnyType> { Status=false, Message=ex.Message });
+                return BadRequest(new ApiResponse<AnyType> { Status = false, Message = ex.Message });
             }
         }
-                
+
         [HttpGet]
         [Route("getCutomerById/{Id}")]
         public async Task<IActionResult> GetCustomerById(string Id)
@@ -77,7 +78,7 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-               var response = await _customerServices.UpdateCustomerDto(Id, infoUpdate);
+                var response = await _customerServices.UpdateCustomerDto(Id, infoUpdate);
                 return Ok(response);
 
             }
@@ -94,12 +95,42 @@ namespace QuanLyQuanCafe.Controllers
         {
             try
             {
-              var response = await _customerServices.DeleteCustomer(Id);
+                var response = await _customerServices.DeleteCustomer(Id);
                 return Ok(response);
             }
             catch (Exception ex)
             {
                 return BadRequest(new ApiResponse<AnyType> { Status = false, Message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("searchByName/{CustomerName}")]
+        public async Task<IActionResult> SearchByName( string CustomerName)
+        {
+            try
+            {
+              var response = await _customerServices.SearchCustomerByName(CustomerName);
+              return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        [Route("searchByPhone/{CustomerPhone}")]
+        public async Task<IActionResult> SearchByPhone(string CustomerPhone)
+        {
+            try
+            {
+                var response = await _customerServices.SearchCustomerByPhone(CustomerPhone);    
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
             }
         }
 
