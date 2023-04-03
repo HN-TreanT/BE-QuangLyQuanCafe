@@ -4,10 +4,7 @@ using QuanLyQuanCafe.Tools;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Dto.Staff;
-
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace QuanLyQuanCafe.Services.StaffServices
 {
@@ -26,7 +23,7 @@ namespace QuanLyQuanCafe.Services.StaffServices
             var response = new ApiResponse<List<staff>>();
             try
             {
-                var dbStaffs = await _context.staff.ToListAsync();
+                var dbStaffs = await _context.staff.Include(s => s.SelectedWorkShifts).ToListAsync();
                 if(dbStaffs.Count <= 0)
                 {
                     response.Status = false;
@@ -97,7 +94,7 @@ namespace QuanLyQuanCafe.Services.StaffServices
 
                 foreach (var WorkShift in StaffDto.WorkShifts)
                 {
-                    var workShift = await _context.WorkShifts.SingleOrDefaultAsync(e => e.WorkShift1 == WorkShift);
+                    var workShift = await _context.WorkShifts.SingleOrDefaultAsync(e => e.IdWorkShift == WorkShift);
                     if (workShift != null)
                     {
                         string idSelectedWorkShift = Guid.NewGuid().ToString().Substring(0, 10);
@@ -105,7 +102,7 @@ namespace QuanLyQuanCafe.Services.StaffServices
                         {
                             IdSeletedWorkShift = idSelectedWorkShift,
                             IdStaff = IdStaff,
-                            IdWorkShift = workShift.IdWorkShift
+                            IdWorkShift = WorkShift,
                         };
 
                         staff.SelectedWorkShifts.Add(selectedWorkShift);
@@ -130,6 +127,51 @@ namespace QuanLyQuanCafe.Services.StaffServices
             var response = new ApiResponse<staff>();
             try
             {
+                var dbStaff = await _context.staff.Include(s => s.SelectedWorkShifts).SingleOrDefaultAsync(st => st.IdStaff == Id);
+                if(dbStaff == null)
+                {
+                    response.Status = false;
+                    response.Message = "not found";
+                    return response;
+                }
+                //update SelectedWorkShift
+                if(staffDto.WorkShifts != null)
+                {
+                    var workShiftsToRemove = dbStaff.SelectedWorkShifts
+                   .Where(selectedWS => staffDto.WorkShifts.All(ws => ws != (int)selectedWS.IdWorkShift)).ToList();
+                    var workShiftsToAdd = staffDto.WorkShifts
+                    .Except(dbStaff.SelectedWorkShifts.Select(selectedWS => (int)selectedWS.IdWorkShift));
+                   
+                    foreach (var ws in workShiftsToAdd)
+                    {
+                        var workShift = await _context.WorkShifts.SingleOrDefaultAsync(e => e.IdWorkShift == ws);
+                        if (workShift != null)
+                        {
+                            string idSelectedWorkShift = Guid.NewGuid().ToString().Substring(0, 10);
+                            var selectedWorkShift = new SelectedWorkShift
+                            {
+                                IdSeletedWorkShift = idSelectedWorkShift,
+                                IdStaff = dbStaff.IdStaff,
+                                IdWorkShift = ws,
+                            };
+
+                            dbStaff.SelectedWorkShifts.Add(selectedWorkShift);
+                            _context.SelectedWorkShifts.Add(selectedWorkShift);
+                        }
+
+                    }
+                    foreach (var selected in workShiftsToRemove)
+                    {
+                        dbStaff.SelectedWorkShifts.Remove(selected);
+                    }
+                    _context.SelectedWorkShifts.RemoveRange(workShiftsToRemove);
+                }
+                /////////////////////////////////////////
+
+                _mapper.Map(staffDto, dbStaff);
+                _context.staff.Update(dbStaff);
+                await _context.SaveChangesAsync();
+                response.Data = dbStaff;
 
             }
             catch (Exception ex)
@@ -152,9 +194,11 @@ namespace QuanLyQuanCafe.Services.StaffServices
                     response.Message = "Not found";
                     return response;
                 }
+                var ListSelectedWS = _context.SelectedWorkShifts
+                                      .Where(sws => sws.IdStaff == dbStaff.IdStaff);
+                _context.SelectedWorkShifts.RemoveRange(ListSelectedWS);
                 _context.staff.Remove(dbStaff);
                 await _context.SaveChangesAsync();
-
             }
             catch (Exception ex)
             {

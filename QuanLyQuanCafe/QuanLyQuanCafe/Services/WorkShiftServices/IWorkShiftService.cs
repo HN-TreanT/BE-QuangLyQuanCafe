@@ -11,7 +11,7 @@ namespace QuanLyQuanCafe.Services.WorkShiftServices
         Task<ApiResponse<List<WorkShift>>> GetWorkShift();
         Task<ApiResponse<WorkShift>> CreateWorkShift(WorkShiftDto WorkShiftDto);
 
-        Task<ApiResponse<WorkShift>> UpdateWorkShift(int Id, WorkShiftDto WorkShiftDto);
+        Task<ApiResponse<WorkShift>> UpdateWorkShift(int Id, UpdateWorkShiftDto WorkShiftDto);
         Task<ApiResponse<AnyType>> DeleteWorkShift(int Id);
     }
 }

@@ -56,7 +56,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpPut]
         [Route("UpdateWorkShift/{Id}")]
-        public async Task<IActionResult> UpdateWorkShift(int Id, [FromBody] WorkShiftDto workShift )
+        public async Task<IActionResult> UpdateWorkShift(int Id, [FromBody] UpdateWorkShiftDto workShift )
         {
             try
             {

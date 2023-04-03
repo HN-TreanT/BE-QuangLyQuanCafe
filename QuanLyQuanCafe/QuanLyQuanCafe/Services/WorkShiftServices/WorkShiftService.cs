@@ -48,7 +48,7 @@ namespace QuanLyQuanCafe.Services.WorkShiftServices
             {
                 var newWorkShift = new WorkShift
                 {
-                    WorkShift1 = WorkShiftDto.WorkShift1,
+                    IdWorkShift = WorkShiftDto.IdWorkShift,
                     ArrivalTime = WorkShiftDto.ArrivalTime,
                     TimeOn = WorkShiftDto.TimeOn
                 };
@@ -65,7 +65,7 @@ namespace QuanLyQuanCafe.Services.WorkShiftServices
             return response;
         }
 
-        public async Task<ApiResponse<WorkShift>> UpdateWorkShift(int Id, WorkShiftDto WorkShiftDto)
+        public async Task<ApiResponse<WorkShift>> UpdateWorkShift(int Id, UpdateWorkShiftDto WorkShiftDto)
         {
             var response = new ApiResponse<WorkShift>();
             try

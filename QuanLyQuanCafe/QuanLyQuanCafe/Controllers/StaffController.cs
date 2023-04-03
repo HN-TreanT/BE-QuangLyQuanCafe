@@ -5,11 +5,6 @@ using QuanLyQuanCafe.Tools;
 using QuanLyQuanCafe.Services.StaffServices;
 using AutoMapper;
 using QuanLyQuanCafe.Dto.Staff;
-using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json.Linq;
-
 namespace QuanLyQuanCafe.Controllers
 {
 
@@ -56,7 +51,7 @@ namespace QuanLyQuanCafe.Controllers
                 return BadRequest(new ApiResponse<AnyType> { Status = false, Message = ex.Message });
             }
         }
-        [HttpPatch]
+        [HttpPut]
         [Route("UpdateInfoStaff/{Id}")]
         public async Task<IActionResult> UpdateInfoStaff(string Id, [FromBody] StaffCreateDto staffDto)
         {

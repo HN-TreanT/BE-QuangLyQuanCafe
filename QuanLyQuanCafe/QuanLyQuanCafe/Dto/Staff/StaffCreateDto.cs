@@ -8,8 +8,8 @@
         public string? Email { get; set; }
         public string? Gender { get; set; }
         public string? PhoneNumber { get; set; }
-        public float Salary { get; set; }
-        public int[]? WorkShifts { get; set; } 
+        public float? Salary { get; set; }
+        public List<int>? WorkShifts { get; set; } 
 
     }
 }

@@ -488,7 +488,7 @@ namespace QuanLyQuanCafe.Models
 
                 entity.ToTable("WorkShift");
 
-                entity.Property(e => e.WorkShift1).HasColumnName("work_shift");
+                entity.Property(e => e.IdWorkShift).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<staff>(entity =>
