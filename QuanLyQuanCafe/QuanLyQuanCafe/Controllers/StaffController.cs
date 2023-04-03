@@ -125,5 +125,18 @@ namespace QuanLyQuanCafe.Controllers
                 return BadRequest(new ApiResponse<AnyType> { Status = false, Message = ex.Message });
             }
         }
+        [HttpPost]
+        [Route("UploadAvartarStaff")]
+        public async Task<IActionResult> UploadAvartarStaff( [FromForm] ModelAvartarImage avartarStaffImage)
+        {
+            try
+            {              
+                var response =await _staffService.UploadAvartarStaff(avartarStaffImage.IdStaff,avartarStaffImage.file);
+                return Ok(response);
+            }catch(Exception ex) {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

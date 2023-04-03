@@ -1,11 +1,54 @@
 {
   "Version": 1,
-  "Hash": "35kH+1Ry5F921DQWGQ4Y1e1/fZKAA9O6C1kAhmZjCo0=",
+  "Hash": "9upCH2/2k0XxhEckubF5rriHOKbjR4HUarCzaD8QWtQ=",
   "Source": "QuanLyQuanCafe",
   "BasePath": "_content/QuanLyQuanCafe",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "QuanLyQuanCafe\\wwwroot",
+      "Source": "QuanLyQuanCafe",
+      "ContentRoot": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\",
+      "BasePath": "_content/QuanLyQuanCafe",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\StaffImage\\d8512827-af43-4c96-b6a0-ce5fda885757-Screenshot 2023-03-08 172146.png",
+      "SourceId": "QuanLyQuanCafe",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\",
+      "BasePath": "_content/QuanLyQuanCafe",
+      "RelativePath": "StaffImage/d8512827-af43-4c96-b6a0-ce5fda885757-Screenshot 2023-03-08 172146.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\StaffImage\\d8512827-af43-4c96-b6a0-ce5fda885757-Screenshot 2023-03-08 172146.png"
+    },
+    {
+      "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\StaffImage\\image.png",
+      "SourceId": "QuanLyQuanCafe",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\",
+      "BasePath": "_content/QuanLyQuanCafe",
+      "RelativePath": "StaffImage/image.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\StaffImage\\image.png"
+    }
+  ]
 }

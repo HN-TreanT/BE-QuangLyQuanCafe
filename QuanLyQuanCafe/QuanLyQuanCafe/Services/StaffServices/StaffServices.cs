@@ -12,10 +12,19 @@ namespace QuanLyQuanCafe.Services.StaffServices
     {
         private readonly CafeContext _context;
         private readonly IMapper _mapper;
-        public StaffServices(CafeContext context, IMapper mapper)
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        readonly string coverImageFolderPath = string.Empty;
+        public StaffServices(CafeContext context, IMapper mapper, IWebHostEnvironment hostingEnvironment)
         {
             this._context = context;
             this._mapper = mapper;
+            _hostingEnvironment = hostingEnvironment;
+            /*coverImageFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, "StaffPic/");
+            if (!Directory.Exists(coverImageFolderPath))
+            {
+                Directory.CreateDirectory(coverImageFolderPath);
+            }*/
+
         }
 
         public async Task<ApiResponse<List<staff>>> GetAllStaff()
@@ -245,6 +254,45 @@ namespace QuanLyQuanCafe.Services.StaffServices
             {
                 response.Status = false;
                 response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ApiResponse<staff>> UploadAvartarStaff(string IdStaff, IFormFile file)
+        {
+
+            var response = new ApiResponse<staff>();
+            try {
+                var dbStaff = await _context.staff.FindAsync(IdStaff);
+                
+                if(dbStaff == null)
+                {
+                    response.Status = false;
+                    response.Message = "not found staff";
+                    return response;
+                }
+                if (dbStaff.PathImage != null)
+                { 
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), dbStaff.PathImage);
+                    File.Delete(path);
+                }
+                var special = Guid.NewGuid().ToString();
+                var filepath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\StaffImage", special + "-" + file.FileName);
+                using (FileStream ms = new FileStream(filepath, FileMode.Create))
+                {
+                    await file.CopyToAsync(ms);
+                }
+                var pathImage = Path.Combine("wwwroot", "StaffImage", special + "-" + file.FileName);
+                dbStaff.PathImage = pathImage;
+                await _context.SaveChangesAsync();
+                response.Data = dbStaff;
+
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+               
             }
             return response;
         }

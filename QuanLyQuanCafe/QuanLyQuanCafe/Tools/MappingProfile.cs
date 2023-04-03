@@ -44,6 +44,8 @@ namespace QuanLyQuanCafe.Tools
               .ForMember(dest => dest.Address, opt => opt.Condition(src => src.Address != null))
               .ForMember(dest => dest.Salary, opt => opt.Condition(src => src.Salary != null))
               .ForMember(dest => dest.Email, opt => opt.Condition(src => src.Email != null));
+              
+
         }
     }
 }

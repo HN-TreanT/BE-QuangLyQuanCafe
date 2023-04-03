@@ -527,6 +527,8 @@ namespace QuanLyQuanCafe.Models
                     .HasMaxLength(16)
                     .HasColumnName("gender");
 
+                entity.Property(e => e.PathImage).HasColumnName("pathImage");
+
                 entity.Property(e => e.PhoneNumber)
                     .HasMaxLength(16)
                     .HasColumnName("phone_number");

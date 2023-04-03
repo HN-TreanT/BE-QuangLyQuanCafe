@@ -17,5 +17,8 @@ namespace QuanLyQuanCafe.Services.StaffServices
 
         Task<ApiResponse<List<staff>>> SearchStaffByName(string staffName);
         Task<ApiResponse<staff>> SearchStaffByPhone(string staffPhone);
+        Task<ApiResponse<staff>> UploadAvartarStaff(string IdStaff,IFormFile file);
+        /* Task<string> UploadAvartarStaff(IFormFile file);*/
+
     }
 }

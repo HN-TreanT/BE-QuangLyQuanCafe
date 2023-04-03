@@ -20,6 +20,7 @@ namespace QuanLyQuanCafe.Models
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public double? Salary { get; set; }
+        public string? PathImage { get; set; }
 
         public virtual ICollection<SelectedWorkShift> SelectedWorkShifts { get; set; }
     }

@@ -1,5 +1,6 @@
 using QuanLyQuanCafe.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 using QuanLyQuanCafe.Services.CategoryServices;
 using QuanLyQuanCafe.Services.CustomerServices;
 using QuanLyQuanCafe.Services.ProvideServices;
@@ -8,8 +9,7 @@ using QuanLyQuanCafe.Services.WorkShiftServices;
 using QuanLyQuanCafe.Services.StaffServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-
-
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,8 +31,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<CafeContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("Cafe")));
 builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
 {
-    // build.WithOrigins("http://localhost:3000");
-    build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+    build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
 }));
 /*builder.Services.AddAutoMapper(typeof(Program).Assembly);*/
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -50,6 +49,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("MyCors");
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
+    RequestPath = "/public"
+}
+) ; 
 
 app.UseHttpsRedirection();
 
