@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "kFtXappCeJNUV51LHzvumVl1u/SimWzZA4HJuZroxG4=",
+  "Hash": "y/AmbW8F/0Wai/hPylAgIvgRLjhhjcL3oWCOPR0evPA=",
   "Source": "QuanLyQuanCafe",
   "BasePath": "_content/QuanLyQuanCafe",
   "Mode": "Default",
@@ -17,12 +17,12 @@
   ],
   "Assets": [
     {
-      "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\StaffImage\\ea8f0db3-6e46-43b1-b4dd-e53b93ca69b6-Screenshot 2023-03-09 215550.png",
+      "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\StaffImage\\5e6a24e4-d598-4faf-a09e-fd92ab3414cf-Screenshot 2023-03-08 172146.png",
       "SourceId": "QuanLyQuanCafe",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\",
       "BasePath": "_content/QuanLyQuanCafe",
-      "RelativePath": "StaffImage/ea8f0db3-6e46-43b1-b4dd-e53b93ca69b6-Screenshot 2023-03-09 215550.png",
+      "RelativePath": "StaffImage/5e6a24e4-d598-4faf-a09e-fd92ab3414cf-Screenshot 2023-03-08 172146.png",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -31,7 +31,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\StaffImage\\ea8f0db3-6e46-43b1-b4dd-e53b93ca69b6-Screenshot 2023-03-09 215550.png"
+      "OriginalItemSpec": "wwwroot\\StaffImage\\5e6a24e4-d598-4faf-a09e-fd92ab3414cf-Screenshot 2023-03-08 172146.png"
     }
   ]
 }

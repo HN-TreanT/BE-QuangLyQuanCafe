@@ -20,7 +20,6 @@ namespace QuanLyQuanCafe.Models
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Customer> Customers { get; set; } = null!;
         public virtual DbSet<DetailImportGood> DetailImportGoods { get; set; } = null!;
-        public virtual DbSet<ImportGood> ImportGoods { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
@@ -161,15 +160,16 @@ namespace QuanLyQuanCafe.Models
                     .HasColumnName("created_at")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.IdImportGoods)
-                    .HasMaxLength(10)
-                    .HasColumnName("id_import_goods")
-                    .IsFixedLength();
-
                 entity.Property(e => e.IdProduct)
                     .HasMaxLength(10)
                     .IsUnicode(false)
                     .HasColumnName("id_product")
+                    .IsFixedLength();
+
+                entity.Property(e => e.IdProvider)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("id_provider")
                     .IsFixedLength();
 
                 entity.Property(e => e.Price).HasColumnName("price");
@@ -179,47 +179,15 @@ namespace QuanLyQuanCafe.Models
                     .HasColumnName("updated_at")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.HasOne(d => d.IdImportGoodsNavigation)
-                    .WithMany(p => p.DetailImportGoods)
-                    .HasForeignKey(d => d.IdImportGoods)
-                    .HasConstraintName("FK__detailImp__id_im__66603565");
-
                 entity.HasOne(d => d.IdProductNavigation)
                     .WithMany(p => p.DetailImportGoods)
                     .HasForeignKey(d => d.IdProduct)
                     .HasConstraintName("FK__detailImp__id_pr__6754599E");
-            });
-
-            modelBuilder.Entity<ImportGood>(entity =>
-            {
-                entity.HasKey(e => e.IdImportGoods)
-                    .HasName("PK__ImportGo__0CD0C8E93AFFC00D");
-
-                entity.Property(e => e.IdImportGoods)
-                    .HasMaxLength(10)
-                    .HasColumnName("idImportGoods")
-                    .IsFixedLength();
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.IdProvider)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("id_provider")
-                    .IsFixedLength();
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updated_at")
-                    .HasDefaultValueSql("(getdate())");
 
                 entity.HasOne(d => d.IdProviderNavigation)
-                    .WithMany(p => p.ImportGoods)
+                    .WithMany(p => p.DetailImportGoods)
                     .HasForeignKey(d => d.IdProvider)
-                    .HasConstraintName("FK__ImportGoo__id_pr__440B1D61");
+                    .HasConstraintName("FK_detailImportGoods_provider");
             });
 
             modelBuilder.Entity<Order>(entity =>
@@ -244,12 +212,6 @@ namespace QuanLyQuanCafe.Models
                     .HasMaxLength(10)
                     .IsUnicode(false)
                     .HasColumnName("id_customer")
-                    .IsFixedLength();
-
-                entity.Property(e => e.IdStaff)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("id_staff")
                     .IsFixedLength();
 
                 entity.Property(e => e.IdTable)

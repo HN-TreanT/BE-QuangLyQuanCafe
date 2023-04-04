@@ -11,7 +11,6 @@ namespace QuanLyQuanCafe.Models
         }
 
         public string IdOrder { get; set; } = null!;
-        public string? IdStaff { get; set; }
         public string? IdCustomer { get; set; }
         public string? IdTable { get; set; }
         public DateTime? OrderDate { get; set; }

@@ -1,11 +1,11 @@
 ﻿<Project>
   <ItemGroup>
-    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\StaffImage\ea8f0db3-6e46-43b1-b4dd-e53b93ca69b6-Screenshot 2023-03-09 215550.png))">
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\StaffImage\5e6a24e4-d598-4faf-a09e-fd92ab3414cf-Screenshot 2023-03-08 172146.png))">
       <SourceType>Package</SourceType>
       <SourceId>QuanLyQuanCafe</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
       <BasePath>_content/QuanLyQuanCafe</BasePath>
-      <RelativePath>StaffImage/ea8f0db3-6e46-43b1-b4dd-e53b93ca69b6-Screenshot 2023-03-09 215550.png</RelativePath>
+      <RelativePath>StaffImage/5e6a24e4-d598-4faf-a09e-fd92ab3414cf-Screenshot 2023-03-08 172146.png</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
       <AssetRole>Primary</AssetRole>
@@ -14,7 +14,7 @@
       <AssetTraitValue></AssetTraitValue>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\StaffImage\ea8f0db3-6e46-43b1-b4dd-e53b93ca69b6-Screenshot 2023-03-09 215550.png))</OriginalItemSpec>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\StaffImage\5e6a24e4-d598-4faf-a09e-fd92ab3414cf-Screenshot 2023-03-08 172146.png))</OriginalItemSpec>
     </StaticWebAsset>
   </ItemGroup>
 </Project>

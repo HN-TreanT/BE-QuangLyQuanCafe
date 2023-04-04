@@ -149,3 +149,4 @@ D:\C#\BE-QuangLyQuanCafe\QuanLyQuanCafe\QuanLyQuanCafe\obj\Debug\net6.0\QuanLyQu
 D:\C#\BE-QuangLyQuanCafe\QuanLyQuanCafe\QuanLyQuanCafe\obj\Debug\net6.0\QuanLyQuanCafe.genruntimeconfig.cache
 D:\C#\BE-QuangLyQuanCafe\QuanLyQuanCafe\QuanLyQuanCafe\obj\Debug\net6.0\ref\QuanLyQuanCafe.dll
 D:\C#\BE-QuangLyQuanCafe\QuanLyQuanCafe\QuanLyQuanCafe\bin\Debug\net6.0\QuanLyQuanCafe.staticwebassets.runtime.json
+D:\C#\BE-QuangLyQuanCafe\QuanLyQuanCafe\QuanLyQuanCafe\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

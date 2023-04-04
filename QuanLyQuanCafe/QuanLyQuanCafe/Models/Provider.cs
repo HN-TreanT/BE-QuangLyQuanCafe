@@ -7,7 +7,7 @@ namespace QuanLyQuanCafe.Models
     {
         public Provider()
         {
-            ImportGoods = new HashSet<ImportGood>();
+            DetailImportGoods = new HashSet<DetailImportGood>();
         }
 
         public string IdProvider { get; set; } = null!;
@@ -18,6 +18,6 @@ namespace QuanLyQuanCafe.Models
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-        public virtual ICollection<ImportGood> ImportGoods { get; set; }
+        public virtual ICollection<DetailImportGood> DetailImportGoods { get; set; }
     }
 }

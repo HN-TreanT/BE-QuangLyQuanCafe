@@ -225,6 +225,11 @@ namespace QuanLyQuanCafe.Services.StaffServices
                 var dbStaffs = await _context.staff
                  .Where(c => c.Fullname != null && c.Fullname.Contains(staffName))
                  .ToListAsync();
+                if(dbStaffs.Count <= 0)
+                {
+                    response.Status = false;
+                    response.Message = "not found";
+                }
                 response.Data = dbStaffs;
 
             }

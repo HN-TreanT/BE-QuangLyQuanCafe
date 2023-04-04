@@ -44,14 +44,18 @@ builder.Services.AddAuthentication(options =>
 }).AddJwtBearer(options =>
 {
     options.SaveToken = false;
-    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidAudience = builder.Configuration["JWT:ValidAudience"],
         ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
-    };
+      /*  ValidateIssuerSigningKey = true,
+        ValidateIssuer = false,
+        ValidateAudience = false,*/
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"])   
+        
+    )};
 });
 /*builder.Services.AddAutoMapper(typeof(Program).Assembly);*/
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -80,6 +84,8 @@ app.UseStaticFiles(new StaticFileOptions()
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
