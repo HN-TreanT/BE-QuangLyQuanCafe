@@ -1,4 +1,4 @@
-using QuanLyQuanCafe.Models;
+﻿using QuanLyQuanCafe.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Cors;
 using QuanLyQuanCafe.Services.CategoryServices;
@@ -10,6 +10,9 @@ using QuanLyQuanCafe.Services.StaffServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +36,23 @@ builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
 {
     build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
 }));
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.SaveToken = false;
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["JWT:ValidAudience"],
+        ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+    };
+});
 /*builder.Services.AddAutoMapper(typeof(Program).Assembly);*/
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ICategoryService, CategoryServices>();
@@ -41,6 +61,7 @@ builder.Services.AddScoped<IProviderService, ProviderServices>();
 builder.Services.AddScoped<ITableFoodService, TableFoodServices>();
 builder.Services.AddScoped<IWorkShiftService, WorkShiftService>();
 builder.Services.AddScoped<IStaffService, StaffServices>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -50,13 +71,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors("MyCors");
-app.UseStaticFiles(new StaticFileOptions
+//truy cập localhost:7066/public/ + folder+ tên ảnh => truy cập ảnh trên server
+app.UseStaticFiles(new StaticFileOptions()
 {
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
-    RequestPath = "/public"
-}
-) ; 
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
+    RequestPath = new PathString("/public")
+});
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 

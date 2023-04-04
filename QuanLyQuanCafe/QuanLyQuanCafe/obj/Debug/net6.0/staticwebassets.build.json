@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "9upCH2/2k0XxhEckubF5rriHOKbjR4HUarCzaD8QWtQ=",
+  "Hash": "kFtXappCeJNUV51LHzvumVl1u/SimWzZA4HJuZroxG4=",
   "Source": "QuanLyQuanCafe",
   "BasePath": "_content/QuanLyQuanCafe",
   "Mode": "Default",
@@ -17,12 +17,12 @@
   ],
   "Assets": [
     {
-      "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\StaffImage\\d8512827-af43-4c96-b6a0-ce5fda885757-Screenshot 2023-03-08 172146.png",
+      "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\StaffImage\\ea8f0db3-6e46-43b1-b4dd-e53b93ca69b6-Screenshot 2023-03-09 215550.png",
       "SourceId": "QuanLyQuanCafe",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\",
       "BasePath": "_content/QuanLyQuanCafe",
-      "RelativePath": "StaffImage/d8512827-af43-4c96-b6a0-ce5fda885757-Screenshot 2023-03-08 172146.png",
+      "RelativePath": "StaffImage/ea8f0db3-6e46-43b1-b4dd-e53b93ca69b6-Screenshot 2023-03-09 215550.png",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -31,24 +31,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\StaffImage\\d8512827-af43-4c96-b6a0-ce5fda885757-Screenshot 2023-03-08 172146.png"
-    },
-    {
-      "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\StaffImage\\image.png",
-      "SourceId": "QuanLyQuanCafe",
-      "SourceType": "Discovered",
-      "ContentRoot": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\",
-      "BasePath": "_content/QuanLyQuanCafe",
-      "RelativePath": "StaffImage/image.png",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\StaffImage\\image.png"
+      "OriginalItemSpec": "wwwroot\\StaffImage\\ea8f0db3-6e46-43b1-b4dd-e53b93ca69b6-Screenshot 2023-03-09 215550.png"
     }
   ]
 }

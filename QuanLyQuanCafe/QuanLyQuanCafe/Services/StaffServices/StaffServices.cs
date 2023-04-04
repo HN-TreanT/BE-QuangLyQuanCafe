@@ -19,11 +19,11 @@ namespace QuanLyQuanCafe.Services.StaffServices
             this._context = context;
             this._mapper = mapper;
             _hostingEnvironment = hostingEnvironment;
-            /*coverImageFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, "StaffPic/");
+            coverImageFolderPath = Path.Combine(_hostingEnvironment.WebRootPath, "StaffPic/");
             if (!Directory.Exists(coverImageFolderPath))
             {
                 Directory.CreateDirectory(coverImageFolderPath);
-            }*/
+            }
 
         }
 
@@ -272,8 +272,8 @@ namespace QuanLyQuanCafe.Services.StaffServices
                     return response;
                 }
                 if (dbStaff.PathImage != null)
-                { 
-                    var path = Path.Combine(Directory.GetCurrentDirectory(), dbStaff.PathImage);
+                {                  
+                    var path = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot", dbStaff.PathImage);
                     File.Delete(path);
                 }
                 var special = Guid.NewGuid().ToString();
@@ -282,7 +282,7 @@ namespace QuanLyQuanCafe.Services.StaffServices
                 {
                     await file.CopyToAsync(ms);
                 }
-                var pathImage = Path.Combine("wwwroot", "StaffImage", special + "-" + file.FileName);
+                var pathImage = Path.Combine( "StaffImage", special + "-" + file.FileName);
                 dbStaff.PathImage = pathImage;
                 await _context.SaveChangesAsync();
                 response.Data = dbStaff;

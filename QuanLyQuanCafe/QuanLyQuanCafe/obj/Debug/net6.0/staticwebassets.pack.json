@@ -1,12 +1,8 @@
 {
   "Files": [
     {
-      "Id": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\StaffImage\\d8512827-af43-4c96-b6a0-ce5fda885757-Screenshot 2023-03-08 172146.png",
-      "PackagePath": "staticwebassets\\StaffImage\\d8512827-af43-4c96-b6a0-ce5fda885757-Screenshot 2023-03-08 172146.png"
-    },
-    {
-      "Id": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\StaffImage\\image.png",
-      "PackagePath": "staticwebassets\\StaffImage\\image.png"
+      "Id": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\StaffImage\\ea8f0db3-6e46-43b1-b4dd-e53b93ca69b6-Screenshot 2023-03-09 215550.png",
+      "PackagePath": "staticwebassets\\StaffImage\\ea8f0db3-6e46-43b1-b4dd-e53b93ca69b6-Screenshot 2023-03-09 215550.png"
     },
     {
       "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.QuanLyQuanCafe.Microsoft.AspNetCore.StaticWebAssets.props",

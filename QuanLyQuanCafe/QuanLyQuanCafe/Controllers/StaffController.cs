@@ -137,6 +137,17 @@ namespace QuanLyQuanCafe.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet]
+        [Route("StaffImage/{imageName}")]
+        public async Task<IActionResult> GetImage(string imageName)
+        {
+            var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "StaffImage", imageName);
+            Console.WriteLine(imagePath);
+            var imageStream = System.IO.File.OpenRead(imagePath);
+            return File(imageStream, "image/jpeg");
+
+        }
+       
 
     }
 }
