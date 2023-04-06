@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Any;
 using System.Security.Principal;
 using Microsoft.EntityFrameworkCore;
 using QuanLyQuanCafe.Tools;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QuanLyQuanCafe.Controllers
 {
@@ -185,6 +186,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("GetAllAccount")]
+        [Authorize(Roles="Admin")]
         public async Task<IActionResult> GetAllAccount()
         {
             try

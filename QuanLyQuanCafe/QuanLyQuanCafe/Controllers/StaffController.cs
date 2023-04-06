@@ -5,6 +5,8 @@ using QuanLyQuanCafe.Tools;
 using QuanLyQuanCafe.Services.StaffServices;
 using AutoMapper;
 using QuanLyQuanCafe.Dto.Staff;
+using Microsoft.AspNetCore.Authorization;
+
 namespace QuanLyQuanCafe.Controllers
 {
 
@@ -23,6 +25,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("GetAllStaff")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllStaff()
         {
             try

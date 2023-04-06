@@ -13,6 +13,8 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
+using QuanLyQuanCafe.Services.TokenServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,21 +29,27 @@ builder.Services.AddControllers().AddJsonOptions(options=>
     options.JsonSerializerOptions.WriteIndented = true;
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
+/*builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+*/
 //connect database
 builder.Services.AddDbContext<CafeContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("Cafe")));
 builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
 {
     build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
 }));
+//for Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<CafeContext>()
+    .AddDefaultTokenProviders();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
+})
+// Adding Jwt Bearer
+.AddJwtBearer(options =>
 {
     options.SaveToken = false;
     options.TokenValidationParameters = new TokenValidationParameters
@@ -50,9 +58,7 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidAudience = builder.Configuration["JWT:ValidAudience"],
         ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-      /*  ValidateIssuerSigningKey = true,
-        ValidateIssuer = false,
-        ValidateAudience = false,*/
+        ClockSkew = TimeSpan.Zero,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"])   
         
     )};
@@ -65,15 +71,19 @@ builder.Services.AddScoped<IProviderService, ProviderServices>();
 builder.Services.AddScoped<ITableFoodService, TableFoodServices>();
 builder.Services.AddScoped<IWorkShiftService, WorkShiftService>();
 builder.Services.AddScoped<IStaffService, StaffServices>();
+builder.Services.AddTransient<ITokenService, TokenServices>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+/*if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    });
+}*/
 app.UseCors("MyCors");
 //truy cập localhost:7066/public/ + folder+ tên ảnh => truy cập ảnh trên server
 app.UseStaticFiles(new StaticFileOptions()

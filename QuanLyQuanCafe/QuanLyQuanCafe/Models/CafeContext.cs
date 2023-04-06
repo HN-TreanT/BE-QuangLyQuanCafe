@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace QuanLyQuanCafe.Models
 {
-    public partial class CafeContext : DbContext
+    public partial class CafeContext : IdentityDbContext<ApplicationUser>
     {
         public CafeContext()
         {
@@ -27,7 +30,8 @@ namespace QuanLyQuanCafe.Models
         public virtual DbSet<SelectedWorkShift> SelectedWorkShifts { get; set; } = null!;
         public virtual DbSet<TableFood> TableFoods { get; set; } = null!;
         public virtual DbSet<WorkShift> WorkShifts { get; set; } = null!;
-        public virtual DbSet<staff> staff { get; set; } = null!;
+        public virtual DbSet<staff> staff { get; set; } = null!;   
+        public DbSet<TokenInfo> TokenInfo { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -40,6 +44,12 @@ namespace QuanLyQuanCafe.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<IdentityUserLogin<string>>()
+             .HasKey(l => new { l.LoginProvider, l.ProviderKey });
+            modelBuilder.Entity<IdentityUserRole<string>>()
+             .HasKey(ur => new { ur.UserId, ur.RoleId });
+            modelBuilder.Entity<IdentityUserToken<string>>()
+              .HasKey(t => new { t.UserId, t.LoginProvider, t.Name });
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.ToTable("account");
