@@ -138,5 +138,54 @@ namespace QuanLyQuanCafe.Services.ProvideServices
             }
             return response;
         }
+
+        public async Task<ApiResponse<List<Provider>>> GetProviderByName(string Name)
+        {
+
+            var response = new ApiResponse<List<Provider>>();
+            try
+            {
+                var dbProviders = await _context.Providers.Where(c => c.Name != null && c.Name.Contains(Name))
+                                   .ToListAsync();  
+                if(dbProviders.Count <= 0)
+                {
+                    response.Status = false;
+                    response.Message = "not found provider";
+                    return response;
+                }
+                response.Data = dbProviders;
+                
+
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ApiResponse<Provider>> GetProviderByPhone(string Phone)
+        {
+            var response = new ApiResponse<Provider>();
+            try
+            {
+                var dbProvider = await _context.Providers.SingleOrDefaultAsync(p=> p.PhoneNumber== Phone);
+                if(dbProvider == null)
+                {
+                    response.Status = false;
+                    response.Message = "not found provider ";
+                    return response;
+                }
+                response.Data = dbProvider;
+              
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
     }
 }

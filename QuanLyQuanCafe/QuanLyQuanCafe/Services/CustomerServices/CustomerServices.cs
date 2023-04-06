@@ -157,7 +157,7 @@ namespace QuanLyQuanCafe.Services.CustomerServices
             var response = new ApiResponse<Customer>();
             try
             {
-                var dbCustomer =await     _context.Customers.FirstOrDefaultAsync(c => c.PhoneNumber != null && c.PhoneNumber.Equals(CustomerPhone));
+                var dbCustomer =await _context.Customers.FirstOrDefaultAsync(c => c.PhoneNumber != null && c.PhoneNumber.Equals(CustomerPhone));
                 if (dbCustomer == null)
                 {
                     response.Status = false;

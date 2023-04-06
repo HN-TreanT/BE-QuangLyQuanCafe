@@ -7,6 +7,7 @@ using QuanLyQuanCafe.Models;
 using QuanLyQuanCafe.Tools;
 using QuanLyQuanCafe.Services.TableFoodServices;
 using QuanLyQuanCafe.Dto.TableFood;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QuanLyQuanCafe.Controllers
 {
@@ -28,6 +29,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllTableFood")]
+        [Authorize]
         public async Task<IActionResult> GetAllTableFood()
         {
             try
@@ -42,6 +44,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getTableFoodDetail/{Id}")]
+        [Authorize]
         public async Task<IActionResult> GetAllTableFood(string Id)
         {
             try
@@ -58,6 +61,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createTableFood")]
+        [Authorize]
         public async Task<IActionResult> CreateTableFood([FromBody] TableFoodDto TableFoodDto )
         {
             try
@@ -74,6 +78,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateTablefood/{Id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateTableFood(string Id, [FromBody] TableFoodDto tableFood)
         {
             try
@@ -89,6 +94,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteTableFood/{Id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteTableFood(string Id)
         {
             try

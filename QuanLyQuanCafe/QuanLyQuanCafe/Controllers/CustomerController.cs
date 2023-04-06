@@ -7,6 +7,7 @@ using QuanLyQuanCafe.Models;
 using QuanLyQuanCafe.Tools;
 using QuanLyQuanCafe.Services.CustomerServices;
 using QuanLyQuanCafe.Dto.Customer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QuanLyQuanCafe.Controllers
 {
@@ -27,6 +28,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getAllCustomer")]
+        [Authorize]
         public async Task<IActionResult> GetAllCustomer()
         {
             try
@@ -42,6 +44,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getCutomerById/{Id}")]
+        [Authorize]
         public async Task<IActionResult> GetCustomerById(string Id)
         {
             try
@@ -58,6 +61,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createCustomer")]
+        [Authorize]
         public async Task<IActionResult> CreateCustomer([FromBody] CustomerDto CustomerDto)
         {
             try
@@ -74,6 +78,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateCustomerDto/{Id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateCustomerDto(string Id, [FromBody] CustomerDto infoUpdate)
         {
             try
@@ -91,6 +96,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteCustomer/{Id}")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> DeleteCustomer(string Id)
         {
             try
@@ -106,6 +112,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("searchByName/{CustomerName}")]
+        [Authorize]
         public async Task<IActionResult> SearchByName( string CustomerName)
         {
             try
@@ -121,6 +128,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("searchByPhone/{CustomerPhone}")]
+        [Authorize]
         public async Task<IActionResult> SearchByPhone(string CustomerPhone)
         {
             try

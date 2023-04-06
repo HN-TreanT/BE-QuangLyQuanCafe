@@ -13,5 +13,9 @@ namespace QuanLyQuanCafe.Services.ProvideServices
 
         Task<ApiResponse<Provider>> UpdateProvider(string Id, ProviderDto ProviderDto);
         Task<ApiResponse<AnyType>> Deleteprovider(string Id);
+        Task<ApiResponse<List<Provider>>> GetProviderByName(string Name);
+        Task<ApiResponse<Provider>> GetProviderByPhone(string Phone);
+
+
     }
 }

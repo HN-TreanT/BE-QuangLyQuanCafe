@@ -7,6 +7,7 @@ using AutoMapper;
 using QuanLyQuanCafe.Tools;
 using QuanLyQuanCafe.Services.WorkShiftServices;
 using QuanLyQuanCafe.Dto.WorkShift;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QuanLyQuanCafe.Controllers
 {
@@ -27,6 +28,7 @@ namespace QuanLyQuanCafe.Controllers
         
         [HttpGet]
         [Route("GetWorkShift")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetWorkShift()
         {
             try
@@ -42,6 +44,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpPost]
         [Route("CreateWorkShift")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateWorkShift(WorkShiftDto workShift)
         {
             try
@@ -56,6 +59,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpPut]
         [Route("UpdateWorkShift/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateWorkShift(int Id, [FromBody] UpdateWorkShiftDto workShift )
         {
             try
@@ -70,6 +74,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpDelete]
         [Route("DeleteWS/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteWorkShift(int Id)
         {
             try

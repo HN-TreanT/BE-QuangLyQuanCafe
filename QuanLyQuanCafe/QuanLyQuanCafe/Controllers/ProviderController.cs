@@ -7,6 +7,7 @@ using QuanLyQuanCafe.Models;
 using QuanLyQuanCafe.Tools;
 using QuanLyQuanCafe.Services.ProvideServices;
 using QuanLyQuanCafe.Dto.Provider;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QuanLyQuanCafe.Controllers
 {
@@ -26,6 +27,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getAllProvider")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> GetAllProvider()
         {
             try
@@ -42,6 +44,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getProviderById/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetProviderById(string Id)
         {
             try
@@ -58,6 +61,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createProvider")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProvider([FromBody] ProviderDto ProviderDto)
         {
             try
@@ -76,6 +80,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateProvider/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProvider(string Id, [FromBody] ProviderDto ProviderDto)
         {
             try
@@ -93,6 +98,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteProvider/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Deleteprovider( string Id)
         {
             try
@@ -105,6 +111,39 @@ namespace QuanLyQuanCafe.Controllers
             catch (Exception ex)
             {
                 return BadRequest(new ApiResponse<AnyType> { Status = false, Message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("searchProviderByName/{name}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SearchProviderByName(string name)
+        {
+            try
+            {
+                var response = await _serviceProvider.GetProviderByName(name);
+                return Ok(response);
+
+            }catch (Exception ex) {
+            return  BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpGet]
+        [Route("searchProviderByPhone/{phone}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SearchProviderByPhone(string phone)
+        {
+            try
+            {
+                var response = await _serviceProvider.GetProviderByPhone(phone);
+                return Ok(response);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

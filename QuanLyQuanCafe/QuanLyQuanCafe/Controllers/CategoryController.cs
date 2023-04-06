@@ -7,6 +7,7 @@ using QuanLyQuanCafe.Models;
 using QuanLyQuanCafe.Tools;
 using QuanLyQuanCafe.Services.CategoryServices;
 using QuanLyQuanCafe.Dto.Category;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QuanLyQuanCafe.Controllers
 {
@@ -27,6 +28,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getAllCategory")]
+        [Authorize]
         public async Task<IActionResult> getAllCategory()
         {
             try
@@ -46,6 +48,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getCategoryById/{Id}")]
+        [Authorize]
         public async Task<IActionResult> getCategoryById(string Id)
         {
             try
@@ -66,6 +69,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createCategory")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> getCategoryById([FromBody] CategoryDto CategoryDto)
         {
             try
@@ -82,6 +86,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateCategory/{Id}")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> UpdateCategory(string Id, [FromBody] CategoryDto CategoryDto)
         {
             try
@@ -97,6 +102,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteCategory/{Id}")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> DeleteCategory(string Id)
         {
             try
