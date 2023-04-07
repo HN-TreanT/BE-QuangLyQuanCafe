@@ -20,8 +20,6 @@ namespace QuanLyQuanCafe.Services.WorkShiftServices
         public async Task<ApiResponse<List<WorkShift>>> GetWorkShift()
         {
             var response = new ApiResponse<List<WorkShift>>();
-            try
-            {
                 var dbWorkShifts = await _context.WorkShifts.ToListAsync();
                 if(dbWorkShifts == null)
                 {
@@ -29,13 +27,7 @@ namespace QuanLyQuanCafe.Services.WorkShiftServices
                     response.Message = "Not found";
                     return response;
                 }
-                response.Data = dbWorkShifts;
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = dbWorkShifts;          
             return response;
         }
 
@@ -44,8 +36,6 @@ namespace QuanLyQuanCafe.Services.WorkShiftServices
         public async Task<ApiResponse<WorkShift>> CreateWorkShift(WorkShiftDto WorkShiftDto)
         {
             var response = new ApiResponse<WorkShift>();
-            try
-            {
                 var newWorkShift = new WorkShift
                 {
                     IdWorkShift = WorkShiftDto.IdWorkShift,
@@ -54,22 +44,13 @@ namespace QuanLyQuanCafe.Services.WorkShiftServices
                 };
                 _context.WorkShifts.Add(newWorkShift);
                 await _context.SaveChangesAsync();
-                response.Data = newWorkShift;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = newWorkShift;        
             return response;
         }
 
         public async Task<ApiResponse<WorkShift>> UpdateWorkShift(int Id, UpdateWorkShiftDto WorkShiftDto)
         {
             var response = new ApiResponse<WorkShift>();
-            try
-            {
                 var DbWorkShift = await _context.WorkShifts.SingleOrDefaultAsync(u => u.IdWorkShift == Id);
                 if (DbWorkShift == null)
                 {
@@ -81,21 +62,12 @@ namespace QuanLyQuanCafe.Services.WorkShiftServices
                 _context.WorkShifts.Update(DbWorkShift);
                 await _context.SaveChangesAsync();
                response.Data = DbWorkShift;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
             return response;
         }
 
         public async Task<ApiResponse<AnyType>> DeleteWorkShift(int Id)
         {
             var response = new ApiResponse<AnyType>();
-            try
-            {
                 var dbWorkShift = await _context.WorkShifts.FindAsync(Id);
                 if (dbWorkShift == null)
                 {
@@ -105,13 +77,6 @@ namespace QuanLyQuanCafe.Services.WorkShiftServices
                 }
                 _context.WorkShifts.Remove(dbWorkShift);
                 await _context.SaveChangesAsync();
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
             return response;
         }
     }

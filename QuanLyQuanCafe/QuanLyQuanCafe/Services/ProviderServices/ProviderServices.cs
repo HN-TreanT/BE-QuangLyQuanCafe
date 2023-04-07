@@ -20,8 +20,6 @@ namespace QuanLyQuanCafe.Services.ProvideServices
         public async Task<ApiResponse<List<Provider>>> GetAllProvider()
         {
             var response = new ApiResponse<List<Provider>>();
-            try
-            {
                 var dbProviders = await _context.Providers.ToListAsync();
                 if (dbProviders.Count <= 0)
                 {
@@ -29,21 +27,13 @@ namespace QuanLyQuanCafe.Services.ProvideServices
                     response.Message = "Not found";
                     return response;
                 }
-                response.Data = dbProviders;
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = dbProviders;           
             return response;
         }
 
         public async Task<ApiResponse<Provider>> GetProviderById(string Id)
         {
-            var response = new ApiResponse<Provider>();
-            try
-            {
+            var response = new ApiResponse<Provider>();           
                 var dbProvider = await _context.Providers.SingleOrDefaultAsync(p => p.IdProvider == Id);
                 if (dbProvider == null)
                 {
@@ -52,21 +42,13 @@ namespace QuanLyQuanCafe.Services.ProvideServices
                     return response;
                 }
                 response.Data = dbProvider;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+           
             return response;
         }
 
         public async Task<ApiResponse<Provider>> CreateProvider(ProviderDto ProviderDto)
         {
-            var response = new ApiResponse<Provider>();
-            try
-            {
+            var response = new ApiResponse<Provider>();          
                 string Id = Guid.NewGuid().ToString().Substring(0, 10);
                 var provider = new Provider
                 {
@@ -80,21 +62,12 @@ namespace QuanLyQuanCafe.Services.ProvideServices
                 _context.Providers.Add(provider);
                 await _context.SaveChangesAsync();
                 response.Data = provider;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
             return response;
         }
 
         public async Task<ApiResponse<Provider>> UpdateProvider(string Id, ProviderDto ProviderDto)
         {
-            var response = new ApiResponse<Provider>();
-            try
-            {
+            var response = new ApiResponse<Provider>();          
                 var dbProvider = await _context.Providers.SingleOrDefaultAsync(p => p.IdProvider == Id);
                 if (dbProvider == null)
                 {
@@ -105,21 +78,13 @@ namespace QuanLyQuanCafe.Services.ProvideServices
                 _mapper.Map(ProviderDto, dbProvider);
                 _context.Providers.Update(dbProvider);
                 await _context.SaveChangesAsync();
-                response.Data = dbProvider;
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = dbProvider;          
             return response;
         }
 
         public async Task<ApiResponse<AnyType>> Deleteprovider(string Id)
         {
             var response = new ApiResponse<AnyType>();
-            try
-            {
                 var dbProvider = await _context.Providers.SingleOrDefaultAsync(p => p.IdProvider == Id);
                 if (dbProvider == null)
                 {
@@ -129,13 +94,7 @@ namespace QuanLyQuanCafe.Services.ProvideServices
                 }
                 _context.Providers.Remove(dbProvider);
                 await _context.SaveChangesAsync();
- 
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+            
             return response;
         }
 
@@ -143,8 +102,6 @@ namespace QuanLyQuanCafe.Services.ProvideServices
         {
 
             var response = new ApiResponse<List<Provider>>();
-            try
-            {
                 var dbProviders = await _context.Providers.Where(c => c.Name != null && c.Name.Contains(Name))
                                    .ToListAsync();  
                 if(dbProviders.Count <= 0)
@@ -153,23 +110,13 @@ namespace QuanLyQuanCafe.Services.ProvideServices
                     response.Message = "not found provider";
                     return response;
                 }
-                response.Data = dbProviders;
-                
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = dbProviders;                        
             return response;
         }
 
         public async Task<ApiResponse<Provider>> GetProviderByPhone(string Phone)
         {
-            var response = new ApiResponse<Provider>();
-            try
-            {
+            var response = new ApiResponse<Provider>();        
                 var dbProvider = await _context.Providers.SingleOrDefaultAsync(p=> p.PhoneNumber== Phone);
                 if(dbProvider == null)
                 {
@@ -177,14 +124,7 @@ namespace QuanLyQuanCafe.Services.ProvideServices
                     response.Message = "not found provider ";
                     return response;
                 }
-                response.Data = dbProvider;
-              
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = dbProvider;                      
             return response;
         }
     }

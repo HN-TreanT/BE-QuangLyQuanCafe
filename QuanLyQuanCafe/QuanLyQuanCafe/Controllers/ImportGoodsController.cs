@@ -29,7 +29,7 @@ namespace QuanLyQuanCafe.Controllers
             try
             {
                 var response = await _importGoodsService.GetDTGoodsById(Id);
-                return Ok();
+                return Ok(response);
             }catch (Exception ex) { 
                 return BadRequest(ex.Message);
             }
@@ -42,7 +42,7 @@ namespace QuanLyQuanCafe.Controllers
             try
             {
                 var response = await _importGoodsService.GetAllDTGoods();
-                return Ok();
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -50,14 +50,14 @@ namespace QuanLyQuanCafe.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("createImportGoods")]
         public async Task<IActionResult> CreateImportGoods([FromBody] ImportGoodsDto ImportGoodsDto)
         {
             try
             {
                 var response = await _importGoodsService.CreateDtIGoods(ImportGoodsDto);
-                return Ok();
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -65,14 +65,14 @@ namespace QuanLyQuanCafe.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPut]
         [Route("updateImportGoods/{Id}")]
         public async Task<IActionResult> UpdateImportGoods(string Id, [FromBody] ImportGoodsDto ImportGoodsDto)
         {
             try
             {
                 var response = await _importGoodsService.UpdateDtIGoods(Id,ImportGoodsDto);
-                return Ok();
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -80,14 +80,14 @@ namespace QuanLyQuanCafe.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpDelete]
         [Route("deleteImportGoods/{Id}")]
         public async Task<IActionResult> DeleteImportGoods(string Id)
         {
             try
             {
                 var response = await _importGoodsService.DeleteDtIGoods(Id);
-                return Ok();
+                return Ok(response);
             }
             catch (Exception ex)
             {

@@ -20,9 +20,7 @@ namespace QuanLyQuanCafe.Services.TableFoodServices
 
         public async Task<ApiResponse<List<TableFood>>> GetAllTableFood()
         {
-            var response = new ApiResponse<List<TableFood>>();
-            try
-            {
+            var response = new ApiResponse<List<TableFood>>(); 
                 var dbTableFoods = await _context.TableFoods.ToListAsync();
                 if (dbTableFoods.Count <= 0)
                 {
@@ -30,22 +28,13 @@ namespace QuanLyQuanCafe.Services.TableFoodServices
                     response.Message = "Not found";
                     return response;
                 }
-                response.Data = dbTableFoods;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = dbTableFoods;          
             return response;
         }
 
         public async Task<ApiResponse<TableFood>> GetTableFoodById(string Id)
         {
-            var response = new ApiResponse<TableFood>();
-            try
-            {
+            var response = new ApiResponse<TableFood>();        
                 var dbTableFood = await _context.TableFoods.SingleOrDefaultAsync(tb => tb.IdTable == Id);
                 if (dbTableFood == null)
                 {
@@ -54,21 +43,12 @@ namespace QuanLyQuanCafe.Services.TableFoodServices
                     return response;
                 }
                response.Data = dbTableFood;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
             return response;
         }
 
         public async Task<ApiResponse<TableFood>> CreateTableFood(TableFoodDto TableFoodDto)
         {
-            var response = new ApiResponse<TableFood>();
-            try
-            {
+            var response = new ApiResponse<TableFood>();   
                 string Id = Guid.NewGuid().ToString().Substring(0, 10);
                 var tableFood = new TableFood
                 {
@@ -78,21 +58,13 @@ namespace QuanLyQuanCafe.Services.TableFoodServices
                 };
                 _context.TableFoods.Add(tableFood);
                 await _context.SaveChangesAsync();
-                response.Data = tableFood;
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = tableFood;         
             return response;
         }
 
         public async Task<ApiResponse<TableFood>> UpdateTableFood(string Id, TableFoodDto TableFoodDto)
         {
             var response = new ApiResponse<TableFood>();
-            try
-            {
                 var dbTableFood = await _context.TableFoods.SingleOrDefaultAsync(tb => tb.IdTable == Id);
                 if (dbTableFood == null)
                 {
@@ -103,22 +75,13 @@ namespace QuanLyQuanCafe.Services.TableFoodServices
                 _mapper.Map(TableFoodDto, dbTableFood);
                 _context.TableFoods.Update(dbTableFood);
                 await _context.SaveChangesAsync();
-                response.Data = dbTableFood;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = dbTableFood;           
             return response;
         }
 
         public async Task<ApiResponse<AnyType>> DeleteTableFood(string Id)
         {
-            var response = new ApiResponse<AnyType>();
-            try
-            {
+            var response = new ApiResponse<AnyType>();        
                 var dbTableFood = await _context.TableFoods.SingleOrDefaultAsync(tb => tb.IdTable == Id);
                 if (dbTableFood == null)
                 {
@@ -127,14 +90,7 @@ namespace QuanLyQuanCafe.Services.TableFoodServices
                     return response;
                 }
                 _context.TableFoods.Remove(dbTableFood);
-                await _context.SaveChangesAsync();
-    
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                await _context.SaveChangesAsync();            
             return response;
         }
     }

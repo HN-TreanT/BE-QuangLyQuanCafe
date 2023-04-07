@@ -20,9 +20,6 @@ namespace QuanLyQuanCafe.Services.ProductServices
         public async Task<ApiResponse<Product>> GetProductById(string Id)
         {
             var response = new ApiResponse<Product>();
-
-            try
-            {
                 var product = await _context.Products.FindAsync(Id);
                 if (product == null) {
                     response.Status = false;
@@ -30,12 +27,6 @@ namespace QuanLyQuanCafe.Services.ProductServices
                     return response;
                  }
                 response.Data = product;
-
-            }catch (Exception ex) {
-                response.Status = false;
-                response.Message = ex.Message;
-                return response;
-           }
             return response;
         }
 
@@ -43,8 +34,6 @@ namespace QuanLyQuanCafe.Services.ProductServices
         {
             var response = new ApiResponse<List<Product>>();
 
-            try
-            {
                 var products = await _context.Products.ToListAsync();
                 if(products.Count <= 0)
                 {
@@ -53,23 +42,14 @@ namespace QuanLyQuanCafe.Services.ProductServices
                     return response;
                 }
                 response.Data = products;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-                return response;
-            }
+        
             return response;
         }
 
         public async Task<ApiResponse<Product>> CreatePoduct(ProductDto productDto)
         {
             var response = new ApiResponse<Product>();
-
-            try
-            {
+           
                 string Id = Guid.NewGuid().ToString().Substring(0,10);
                 var special = Guid.NewGuid().ToString();
                 var newProduct = new Product
@@ -95,23 +75,12 @@ namespace QuanLyQuanCafe.Services.ProductServices
                 _context.Products.Add(newProduct);
                 await _context.SaveChangesAsync();
                 response.Data = newProduct;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-                return response;
-            }
             return response;
         }
 
         public async Task<ApiResponse<Product>> UpdatePoduct(string Id,ProductDto productDto)
         {
             var response = new ApiResponse<Product>();
-
-            try
-            {
                 var special = Guid.NewGuid().ToString();
                 var dbProduct = await _context.Products.FindAsync(Id);               
                 if(dbProduct == null)
@@ -141,22 +110,13 @@ namespace QuanLyQuanCafe.Services.ProductServices
                 }
                 _mapper.Map(productDto,dbProduct);
                 await _context.SaveChangesAsync();
-                response.Data = dbProduct;  
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-                return response;
-            }
+                response.Data = dbProduct;           
             return response;
         }
 
         public async Task<ApiResponse<AnyType>> DeletePoduct(string Id)
         {
-            var response = new ApiResponse<AnyType>();
-            try
-            {
+            var response = new ApiResponse<AnyType>();         
                 var dbProduct = await _context.Products.FindAsync(Id);  
                 if (dbProduct == null)
                 {
@@ -174,15 +134,7 @@ namespace QuanLyQuanCafe.Services.ProductServices
 
                 }
                 _context.Products.Remove(dbProduct);
-                await _context.SaveChangesAsync();
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-                return response;
-            }
+                await _context.SaveChangesAsync();         
             return response;
         }
     }

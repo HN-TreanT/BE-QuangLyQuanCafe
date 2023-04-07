@@ -33,9 +33,7 @@ namespace QuanLyQuanCafe.Services.CategoryServices
 
         public async Task<ApiResponse<Category>> CreateCategory(CategoryDto categoryDto)
         {
-            var response = new ApiResponse<Category>();
-            try
-            {
+            var response = new ApiResponse<Category>();          
                 string Id = Guid.NewGuid().ToString().Substring(0, 10);
                 var category = new Category
                 {
@@ -46,20 +44,12 @@ namespace QuanLyQuanCafe.Services.CategoryServices
                 await _context.SaveChangesAsync();
                 response.Data = category;
                 return response;
-
-            }
-            catch (Exception ex) {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
-            return response;
         }
 
         public async Task<ApiResponse<Category>> UpdateCategory(string Id, CategoryDto categoryDto)
         {
             var response = new ApiResponse<Category>();
-            try
-            {
+           
                 var dbCategory = await _context.Categories.SingleOrDefaultAsync(c => c.IdCategory == Id);
                 if (dbCategory == null)
                 {
@@ -70,13 +60,7 @@ namespace QuanLyQuanCafe.Services.CategoryServices
                 _mapper.Map(categoryDto, dbCategory);
                 _context.Categories.Update(dbCategory);
                 await _context.SaveChangesAsync();
-                response.Data = dbCategory;
-
-            }
-            catch(Exception ex) {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = dbCategory;          
             return response;
 
         }
@@ -84,8 +68,7 @@ namespace QuanLyQuanCafe.Services.CategoryServices
         public async Task<ApiResponse<Category>> DeleteCategory(string Id)
         {
             var response = new ApiResponse<Category>();
-            try
-            {
+            
                 var dbCategory = await _context.Categories.SingleOrDefaultAsync(c => c.IdCategory == Id);
                 if (dbCategory == null)
                 {
@@ -94,13 +77,7 @@ namespace QuanLyQuanCafe.Services.CategoryServices
                     return response;
                 }
                 _context.Categories.Remove(dbCategory);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                await _context.SaveChangesAsync();         
             return response;
 
         }

@@ -20,51 +20,32 @@ namespace QuanLyQuanCafe.Services.CustomerServices
         public async Task<ApiResponse<List<Customer>>> GetAllCustomer()
         {
             var response = new ApiResponse<List<Customer>>();
-            try
-            {
                 var dbCustomers = await _context.Customers.ToListAsync();
                 if (dbCustomers.Count <= 0)
                 {
                     response.Message = "Not found";
                     return response;
                  }
-                response.Data = dbCustomers;
-
-            }
-            catch(Exception ex) {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = dbCustomers;          
             return response;
         }
 
         public async Task<ApiResponse<Customer>> GetCustomerById(string Id)
         {
-            var response = new ApiResponse<Customer>();
-            try
-            {
+            var response = new ApiResponse<Customer>();        
                 var dbCustomer = await _context.Customers.SingleOrDefaultAsync(c => c.IdCustomer == Id);
                 if (dbCustomer == null)
                 {
                     response.Message = "not found customer";
                     return response;
                 }
-                response.Data = dbCustomer;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = dbCustomer;         
             return response;
         }
 
         public async Task<ApiResponse<Customer>> CreateCustomer(CustomerDto CustomerDto)
         {
-            var response = new ApiResponse<Customer>();
-            try
-            {
+            var response = new ApiResponse<Customer>();          
                 string Id = Guid.NewGuid().ToString().Substring(0, 10);
                 var customer = new Customer
                 {
@@ -75,21 +56,13 @@ namespace QuanLyQuanCafe.Services.CustomerServices
                 };
                 _context.Customers.Add(customer);
                 await _context.SaveChangesAsync();
-                response.Data = customer;   
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = customer;                
             return response;
         }
 
         public async Task<ApiResponse<Customer>> UpdateCustomerDto(string Id, CustomerDto CustomerDto)
         {
-            var response = new ApiResponse<Customer>();
-            try
-            {
+            var response = new ApiResponse<Customer>();           
                 /* var dbCustomer = await _context.Customers.SingleOrDefaultAsync(c => c.IdCustomer == Id);*/
                 var dbCustomer = await _context.Customers.FindAsync(Id);
                 if (dbCustomer == null)
@@ -100,22 +73,13 @@ namespace QuanLyQuanCafe.Services.CustomerServices
                 }
                 _mapper.Map(CustomerDto, dbCustomer);
                 _context.Customers.Update(dbCustomer);
-                await _context.SaveChangesAsync();
-                response.Data = dbCustomer;
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                await _context.SaveChangesAsync();         
             return response;
         }
 
         public async Task<ApiResponse<AnyType>> DeleteCustomer(string Id)
         {
-            var response = new ApiResponse<AnyType>();
-            try
-            {
+            var response = new ApiResponse<AnyType>();          
                 var dbCustomer = await _context.Customers.SingleOrDefaultAsync(u => u.IdCustomer == Id);
                 if (dbCustomer == null)
                 {
@@ -124,39 +88,23 @@ namespace QuanLyQuanCafe.Services.CustomerServices
                 }
                 _context.Customers.Remove(dbCustomer);
                 await _context.SaveChangesAsync();
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
             return response;
         }
 
         public async Task<ApiResponse<List<Customer>>>  SearchCustomerByName(string CustomerName)
         {
-            var response = new ApiResponse<List<Customer>>();
-            try
-            {            
+            var response = new ApiResponse<List<Customer>>();                    
                     var dbCustomers = await _context.Customers
                    .Where(c => c.Fullname != null && c.Fullname.Contains(CustomerName))
                    .ToListAsync();
                    response.Data = dbCustomers;
-
-            }
-            catch (Exception ex) {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+          
             return response;
         }
 
         public async Task<ApiResponse<Customer>> SearchCustomerByPhone(string CustomerPhone)
         {
-            var response = new ApiResponse<Customer>();
-            try
-            {
+            var response = new ApiResponse<Customer>();         
                 var dbCustomer =await _context.Customers.FirstOrDefaultAsync(c => c.PhoneNumber != null && c.PhoneNumber.Equals(CustomerPhone));
                 if (dbCustomer == null)
                 {
@@ -164,14 +112,7 @@ namespace QuanLyQuanCafe.Services.CustomerServices
                     response.Message = "Not found";
                     return response;
                 }
-                response.Data = dbCustomer;
-                
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = dbCustomer;                          
             return response;
 
         }

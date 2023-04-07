@@ -30,8 +30,6 @@ namespace QuanLyQuanCafe.Services.StaffServices
         public async Task<ApiResponse<List<staff>>> GetAllStaff()
         {
             var response = new ApiResponse<List<staff>>();
-            try
-            {
                 var dbStaffs = await _context.staff.Include(s => s.SelectedWorkShifts).ToListAsync();
                 if(dbStaffs.Count <= 0)
                 {
@@ -39,22 +37,13 @@ namespace QuanLyQuanCafe.Services.StaffServices
                     response.Message = "Not found";
                     return response;
                 }
-                response.Data = dbStaffs;   
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = dbStaffs;             
             return response;
         }
 
         public async Task<ApiResponse<staff>> getStaff(string Id)
         {
-            var response = new ApiResponse<staff>();
-            try
-            {
-
+            var response = new ApiResponse<staff>();          
                 var dbStaff = await _context.staff.Include(s => s.SelectedWorkShifts)
                 .SingleOrDefaultAsync(s => s.IdStaff == Id);
                 if (dbStaff == null)
@@ -64,21 +53,12 @@ namespace QuanLyQuanCafe.Services.StaffServices
                     return response;
                 }
                 response.Data = dbStaff;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
             return response;
         }
 
         public async Task<ApiResponse<staff>> CreateStaff(StaffCreateDto StaffDto)
         {
-            var response = new ApiResponse<staff>();
-            try
-            {
+            var response = new ApiResponse<staff>();          
                 string IdStaff = Guid.NewGuid().ToString().Substring(0, 10);
                 var dbStaff = _context.staff.Where(u => u.IdStaff == IdStaff).FirstOrDefault();
                 if (dbStaff != null)
@@ -121,21 +101,12 @@ namespace QuanLyQuanCafe.Services.StaffServices
                 _context.staff.Add(staff);
                 await _context.SaveChangesAsync();
                 response.Data = staff;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
             return response;
         }
 
         public async Task<ApiResponse<staff>> UpdateInfoStaff(string Id, StaffCreateDto staffDto)
         {
-            var response = new ApiResponse<staff>();
-            try
-            {
+            var response = new ApiResponse<staff>();          
                 var dbStaff = await _context.staff.Include(s => s.SelectedWorkShifts).SingleOrDefaultAsync(st => st.IdStaff == Id);
                 if(dbStaff == null)
                 {
@@ -181,21 +152,12 @@ namespace QuanLyQuanCafe.Services.StaffServices
                 _context.staff.Update(dbStaff);
                 await _context.SaveChangesAsync();
                 response.Data = dbStaff;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
             return response;
         }
 
         public async Task<ApiResponse<AnyType>> DeleteStaff(string Id)
         {
-            var response = new ApiResponse<AnyType>();
-            try
-            {
+            var response = new ApiResponse<AnyType>();         
                 staff dbStaff = await _context.staff.FindAsync(Id);
                 if(dbStaff == null)
                 {
@@ -207,21 +169,13 @@ namespace QuanLyQuanCafe.Services.StaffServices
                                       .Where(sws => sws.IdStaff == dbStaff.IdStaff);
                 _context.SelectedWorkShifts.RemoveRange(ListSelectedWS);
                 _context.staff.Remove(dbStaff);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                await _context.SaveChangesAsync();         
             return response;
         }
 
         public async Task<ApiResponse<List<staff>>> SearchStaffByName(string staffName)
         {
-            var response = new ApiResponse<List<staff>>();
-            try
-            {
+            var response = new ApiResponse<List<staff>>();        
                 var dbStaffs = await _context.staff
                  .Where(c => c.Fullname != null && c.Fullname.Contains(staffName))
                  .ToListAsync();
@@ -230,22 +184,13 @@ namespace QuanLyQuanCafe.Services.StaffServices
                     response.Status = false;
                     response.Message = "not found";
                 }
-                response.Data = dbStaffs;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = dbStaffs;         
             return response;
         }
 
         public async Task<ApiResponse<staff>> SearchStaffByPhone(string staffPhone)
         {
-            var response = new ApiResponse<staff>();
-            try
-            {
+            var response = new ApiResponse<staff>();          
                 var dbStaff = await _context.staff.FirstOrDefaultAsync(c => c.PhoneNumber != null && c.PhoneNumber.Equals(staffPhone));
                 if (dbStaff == null)
                 {
@@ -253,21 +198,14 @@ namespace QuanLyQuanCafe.Services.StaffServices
                     response.Message = "Not found";
                     return response;
                 }
-                response.Data = dbStaff;
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-            }
+                response.Data = dbStaff;        
             return response;
         }
 
         public async Task<ApiResponse<staff>> UploadAvartarStaff(string IdStaff, IFormFile file)
         {
 
-            var response = new ApiResponse<staff>();
-            try {
+            var response = new ApiResponse<staff>();         
                 var dbStaff = await _context.staff.FindAsync(IdStaff);
                 
                 if(dbStaff == null)
@@ -290,15 +228,7 @@ namespace QuanLyQuanCafe.Services.StaffServices
                 var pathImage = Path.Combine( "StaffImage", special + "-" + file.FileName);
                 dbStaff.PathImage = pathImage;
                 await _context.SaveChangesAsync();
-                response.Data = dbStaff;
-
-            }
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.Message = ex.Message;
-               
-            }
+                response.Data = dbStaff;              
             return response;
         }
 
