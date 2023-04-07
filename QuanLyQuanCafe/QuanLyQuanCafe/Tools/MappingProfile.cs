@@ -8,6 +8,7 @@ using QuanLyQuanCafe.Dto.Provider;
 using QuanLyQuanCafe.Dto.TableFood;
 using QuanLyQuanCafe.Dto.WorkShift;
 using QuanLyQuanCafe.Dto.Staff;
+using QuanLyQuanCafe.Dto.Product;
 
 namespace QuanLyQuanCafe.Tools
 {
@@ -44,7 +45,17 @@ namespace QuanLyQuanCafe.Tools
               .ForMember(dest => dest.Address, opt => opt.Condition(src => src.Address != null))
               .ForMember(dest => dest.Salary, opt => opt.Condition(src => src.Salary != null))
               .ForMember(dest => dest.Email, opt => opt.Condition(src => src.Email != null));
-              
+            CreateMap<ProductDto, Product>()
+               .ForMember(dest => dest.Title, opt => opt.Condition(src => src.Title != null))
+              .ForMember(dest => dest.Thumbnail, opt => opt.Condition(src => src.Thumbnail != null))
+              .ForMember(dest => dest.Description, opt => opt.Condition(src => src.Description != null))
+              .ForMember(dest => dest.Price, opt => opt.Condition(src => src.Price != null))
+              .ForMember(dest => dest.Unit, opt => opt.Condition(src => src.Unit != null))
+              .ForMember(dest => dest.IdCategory, opt => opt.Condition(src => src.IdCategory != null));
+             
+
+
+
 
         }
     }

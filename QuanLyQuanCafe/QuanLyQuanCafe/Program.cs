@@ -7,6 +7,7 @@ using QuanLyQuanCafe.Services.ProvideServices;
 using QuanLyQuanCafe.Services.TableFoodServices;
 using QuanLyQuanCafe.Services.WorkShiftServices;
 using QuanLyQuanCafe.Services.StaffServices;
+using QuanLyQuanCafe.Services.ProductServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Extensions.FileProviders;
@@ -15,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using QuanLyQuanCafe.Services.TokenServices;
+using QuanLyQuanCafe.Services.ImportGoodsServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +74,8 @@ builder.Services.AddScoped<ITableFoodService, TableFoodServices>();
 builder.Services.AddScoped<IWorkShiftService, WorkShiftService>();
 builder.Services.AddScoped<IStaffService, StaffServices>();
 builder.Services.AddTransient<ITokenService, TokenServices>();
+builder.Services.AddScoped<IProductService, ProductServices>();
+builder.Services.AddScoped<IImportGoodsService, ImportGoodsServices>();
 
 var app = builder.Build();
 
