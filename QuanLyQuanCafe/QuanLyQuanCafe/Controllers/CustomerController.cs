@@ -118,6 +118,10 @@ namespace QuanLyQuanCafe.Controllers
             try
             {
               var response = await _customerServices.SearchCustomerByName(CustomerName);
+               if(response.Data.Count <= 0)
+                {
+                    return Ok(new ApiResponse<AnyType> { Status = false, Message = "Not found" });
+                }
               return Ok(response);
             }
             catch

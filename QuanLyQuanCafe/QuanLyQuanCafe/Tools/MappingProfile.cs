@@ -10,6 +10,8 @@ using QuanLyQuanCafe.Dto.WorkShift;
 using QuanLyQuanCafe.Dto.Staff;
 using QuanLyQuanCafe.Dto.Product;
 using QuanLyQuanCafe.Dto.ImportGoods;
+using QuanLyQuanCafe.Dto.Material;
+using QuanLyQuanCafe.Dto.UseMaterial;
 
 namespace QuanLyQuanCafe.Tools
 {
@@ -54,11 +56,23 @@ namespace QuanLyQuanCafe.Tools
               .ForMember(dest => dest.Unit, opt => opt.Condition(src => src.Unit != null))
               .ForMember(dest => dest.IdCategory, opt => opt.Condition(src => src.IdCategory != null));
             CreateMap<ImportGoodsDto, DetailImportGood>()
-               .ForMember(dest => dest.IdProduct, opt => opt.Condition(src => src.IdProduct != null))
+               .ForMember(dest => dest.IdMaterial, opt => opt.Condition(src => src.IdMaterial != null))
                .ForMember(dest => dest.IdProvider, opt => opt.Condition(src => src.IdProvider != null))
                .ForMember(dest => dest.Amount, opt => opt.Condition(src => src.Amount != null))
                .ForMember(dest => dest.Price, opt => opt.Condition(src => src.Price != null));
-
+            CreateMap<MaterialDto,Material>()
+               .ForMember(dest => dest.NameMaterial, opt => opt.Condition(src => src.NameMaterial != null))
+               .ForMember(dest => dest.Description, opt => opt.Condition(src => src.Description != null))
+               .ForMember(dest => dest.Unit, opt => opt.Condition(src => src.Unit != null))
+               .ForMember(dest => dest.Expiry, opt => opt.Condition(src => src.Expiry != null));
+            CreateMap<MaterialUpdateDto, Material>()
+                .ForMember(dest => dest.Description, opt => opt.Condition(src => src.Description != null))
+               .ForMember(dest => dest.Unit, opt => opt.Condition(src => src.Unit != null))
+               .ForMember(dest => dest.Expiry, opt => opt.Condition(src => src.Expiry != null));
+            CreateMap<UseMaterialDto,UseMaterial>()
+                .ForMember(dest => dest.IdMaterial, opt => opt.Condition(src => src.IdMaterial != null))
+               .ForMember(dest => dest.IdProduct, opt => opt.Condition(src => src.IdProduct != null))
+               .ForMember(dest => dest.Amount, opt => opt.Condition(src => src.Amount != null));
 
 
 

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace QuanLyQuanCafe.Models
 {
@@ -23,16 +22,18 @@ namespace QuanLyQuanCafe.Models
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Customer> Customers { get; set; } = null!;
         public virtual DbSet<DetailImportGood> DetailImportGoods { get; set; } = null!;
+        public virtual DbSet<Material> Materials { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
         public virtual DbSet<Provider> Providers { get; set; } = null!;
         public virtual DbSet<SelectedWorkShift> SelectedWorkShifts { get; set; } = null!;
         public virtual DbSet<TableFood> TableFoods { get; set; } = null!;
+        public virtual DbSet<TokenInfo> TokenInfos { get; set; } = null!;
+        public virtual DbSet<UseMaterial> UseMaterials { get; set; } = null!;
         public virtual DbSet<WorkShift> WorkShifts { get; set; } = null!;
-        public virtual DbSet<staff> staff { get; set; } = null!;   
+        public virtual DbSet<staff> staff { get; set; } = null!;
         public DbSet<TokenInfo> TokenInfo { get; set; }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -170,10 +171,10 @@ namespace QuanLyQuanCafe.Models
                     .HasColumnName("created_at")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.IdProduct)
+                entity.Property(e => e.IdMaterial)
                     .HasMaxLength(10)
                     .IsUnicode(false)
-                    .HasColumnName("id_product")
+                    .HasColumnName("id_material")
                     .IsFixedLength();
 
                 entity.Property(e => e.IdProvider)
@@ -189,15 +190,47 @@ namespace QuanLyQuanCafe.Models
                     .HasColumnName("updated_at")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.HasOne(d => d.IdProductNavigation)
+                entity.HasOne(d => d.IdMaterialNavigation)
                     .WithMany(p => p.DetailImportGoods)
-                    .HasForeignKey(d => d.IdProduct)
-                    .HasConstraintName("FK__detailImp__id_pr__6754599E");
+                    .HasForeignKey(d => d.IdMaterial)
+                    .HasConstraintName("FK_detailImportGoods_Material");
 
                 entity.HasOne(d => d.IdProviderNavigation)
                     .WithMany(p => p.DetailImportGoods)
                     .HasForeignKey(d => d.IdProvider)
                     .HasConstraintName("FK_detailImportGoods_provider");
+            });
+
+            modelBuilder.Entity<Material>(entity =>
+            {
+                entity.HasKey(e => e.IdMaterial);
+
+                entity.ToTable("Material");
+
+                entity.Property(e => e.IdMaterial)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Description).HasMaxLength(400);
+
+                entity.Property(e => e.Expiry).HasColumnName("expiry");
+
+                entity.Property(e => e.NameMaterial).HasMaxLength(50);
+
+                entity.Property(e => e.Unit)
+                    .HasMaxLength(10)
+                    .HasColumnName("unit");
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updated_at")
+                    .HasDefaultValueSql("(getdate())");
             });
 
             modelBuilder.Entity<Order>(entity =>
@@ -452,6 +485,72 @@ namespace QuanLyQuanCafe.Models
                     .HasColumnType("datetime")
                     .HasColumnName("updated_at")
                     .HasDefaultValueSql("(getdate())");
+            });
+
+            modelBuilder.Entity<TokenInfo>(entity =>
+            {
+                entity.ToTable("TokenInfo");
+            });
+
+            modelBuilder.Entity<UseMaterial>(entity =>
+            {
+                entity.HasKey(e => e.IdUseMaterial);
+
+                entity.ToTable("UseMaterial");
+
+                entity.Property(e => e.IdUseMaterial)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Amount).HasColumnName("amount");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.IdMaterial)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("id_material")
+                    .IsFixedLength();
+
+                entity.Property(e => e.IdProduct)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("id_product")
+                    .IsFixedLength();
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updated_at")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.IdMaterialNavigation)
+                    .WithMany(p => p.UseMaterials)
+                    .HasForeignKey(d => d.IdMaterial)
+                    .HasConstraintName("FK_UseMaterial_Material1");
+
+                entity.HasOne(d => d.IdProductNavigation)
+                    .WithMany(p => p.UseMaterials)
+                    .HasForeignKey(d => d.IdProduct)
+                    .HasConstraintName("FK_UseMaterial_product");
+            });
+
+            modelBuilder.Entity<UserLogin>(entity =>
+            {
+                entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
+            });
+
+            modelBuilder.Entity<UserRole>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.RoleId });
+            });
+
+            modelBuilder.Entity<UserToken>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
             });
 
             modelBuilder.Entity<WorkShift>(entity =>

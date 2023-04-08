@@ -111,6 +111,10 @@ namespace QuanLyQuanCafe.Controllers
             try
             {
                 var response = await _staffService.SearchStaffByName(staffName);
+                if(response.Data.Count <= 0)
+                {
+                    return Ok(new ApiResponse<AnyType> { Status = false, Message = "Not found" });
+                }
                 return Ok(response);
             }
             catch (Exception ex)

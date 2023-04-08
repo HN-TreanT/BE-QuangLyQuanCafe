@@ -19,14 +19,20 @@ namespace QuanLyQuanCafe.Services.CategoryServices
         public async Task<ApiResponse<List<Category>>> GetAllCategory()
         {
             var response = new ApiResponse<List<Category>>();
-            var DbCategories = await _context.Categories.ToListAsync();
+            var DbCategories = await _context.Categories.Include(p => p.Products).ToListAsync();
             response.Data = DbCategories;
             return response;
         }
         public async Task<ApiResponse<Category>> GetCategoryById(string Id)
         {
             var response = new ApiResponse<Category>();
-            var dbCategory = await _context.Categories.SingleOrDefaultAsync(c => c.IdCategory == Id);
+            var dbCategory = await _context.Categories.Include(p => p.Products).SingleOrDefaultAsync(c => c.IdCategory == Id);
+            if(dbCategory == null)
+            {
+                response.Status = false;
+                response.Message = "Not found";
+                return response;
+            }
             response.Data = dbCategory;
             return response;
         }

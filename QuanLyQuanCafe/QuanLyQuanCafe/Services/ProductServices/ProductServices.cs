@@ -20,7 +20,10 @@ namespace QuanLyQuanCafe.Services.ProductServices
         public async Task<ApiResponse<Product>> GetProductById(string Id)
         {
             var response = new ApiResponse<Product>();
-                var product = await _context.Products.FindAsync(Id);
+            /*  var product = await _context.Products.FindAsync(Id);*/
+            var product = await _context.Products.Include(p => p.UseMaterials)
+                 .ThenInclude(u => u.IdMaterialNavigation)
+                 .SingleOrDefaultAsync(p => p.IdProduct == Id);
                 if (product == null) {
                     response.Status = false;
                     response.Message = "not found product";
@@ -34,7 +37,8 @@ namespace QuanLyQuanCafe.Services.ProductServices
         {
             var response = new ApiResponse<List<Product>>();
 
-                var products = await _context.Products.ToListAsync();
+                var products = await _context.Products.Include(p => p.UseMaterials)
+                 .ToListAsync();
                 if(products.Count <= 0)
                 {
                     response.Status = false;
@@ -117,13 +121,21 @@ namespace QuanLyQuanCafe.Services.ProductServices
         public async Task<ApiResponse<AnyType>> DeletePoduct(string Id)
         {
             var response = new ApiResponse<AnyType>();         
-                var dbProduct = await _context.Products.FindAsync(Id);  
+                var dbProduct = await _context.Products.Include(u => u.UseMaterials).SingleOrDefaultAsync(p => p.IdProduct == Id);
+                foreach(var useMaterial in dbProduct.UseMaterials){
+                     var dbUseMaterial = await _context.UseMaterials.FindAsync(useMaterial.IdUseMaterial);
+                     if (dbUseMaterial != null)
+                     {
+                        _context.UseMaterials.Remove(dbUseMaterial);    
+                     }
+                 }
                 if (dbProduct == null)
                 {
                     response.Status = false;
                     response.Message = "not found";
                     return response;    
                 }
+
                 if (dbProduct.Thumbnail != null)
                 {
                     var path = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", dbProduct.Thumbnail);

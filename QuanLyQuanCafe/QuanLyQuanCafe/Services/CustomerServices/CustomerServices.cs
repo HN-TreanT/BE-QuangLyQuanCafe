@@ -4,6 +4,7 @@ using QuanLyQuanCafe.Tools;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Dto.Customer;
+using System.Xml.Linq;
 
 namespace QuanLyQuanCafe.Services.CustomerServices
 {
@@ -93,11 +94,11 @@ namespace QuanLyQuanCafe.Services.CustomerServices
 
         public async Task<ApiResponse<List<Customer>>>  SearchCustomerByName(string CustomerName)
         {
-            var response = new ApiResponse<List<Customer>>();                    
-                    var dbCustomers = await _context.Customers
-                   .Where(c => c.Fullname != null && c.Fullname.Contains(CustomerName))
-                   .ToListAsync();
-                   response.Data = dbCustomers;
+            var response = new ApiResponse<List<Customer>>();
+            var dbCustomers = _context.Customers.AsEnumerable()
+                                   .Where(m => _Convert.ConvertToUnSign(m.Fullname).Contains(_Convert.ConvertToUnSign(CustomerName)))
+                                   .ToList();
+            response.Data = dbCustomers;
           
             return response;
         }

@@ -7,8 +7,8 @@ namespace QuanLyQuanCafe.Models
     {
         public Product()
         {
-            DetailImportGoods = new HashSet<DetailImportGood>();
             OrderDetails = new HashSet<OrderDetail>();
+            UseMaterials = new HashSet<UseMaterial>();
         }
 
         public string IdProduct { get; set; } = null!;
@@ -22,7 +22,7 @@ namespace QuanLyQuanCafe.Models
         public DateTime? UpdatedAt { get; set; }
 
         public virtual Category? IdCategoryNavigation { get; set; }
-        public virtual ICollection<DetailImportGood> DetailImportGoods { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual ICollection<UseMaterial> UseMaterials { get; set; }
     }
 }

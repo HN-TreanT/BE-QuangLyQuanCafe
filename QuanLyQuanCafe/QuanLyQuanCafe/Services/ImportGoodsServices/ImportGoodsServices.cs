@@ -27,7 +27,7 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
                 response.Message = "Not found";
                 return response;
             }
-            var dbProduct = await _context.Products.FindAsync(DtIGoods.IdProduct);
+            var dbProduct = await _context.Products.FindAsync(DtIGoods.IdMaterial);
             var dbProvider = await _context.Providers.FindAsync(DtIGoods.IdProvider);
             if(dbProduct == null && dbProvider == null)
             {
@@ -35,7 +35,7 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
                 response.Message = "Not found";
                 return response;
             }
-            DtIGoods.IdProductNavigation = dbProduct;
+           // DtIGoods.IdMaterialNavigation = dbProduct;
             DtIGoods.IdProviderNavigation = dbProvider;
             response.Data = DtIGoods;   
             return response;
@@ -45,16 +45,16 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
         {
             var response = new ApiResponse<List<DetailImportGood>>();
             var ListDtIGoods = await _context.DetailImportGoods
-              .Include(d => d.IdProductNavigation)
+              .Include(d => d.IdMaterialNavigation)
               .Include(d => d.IdProviderNavigation)
               .Select(d => new DetailImportGood
               {
                   IdDetailImportGoods = d.IdDetailImportGoods,
-                  IdProduct = d.IdProduct,
+                  IdMaterial = d.IdMaterial,
                   IdProvider = d.IdProvider,
                   Amount = d.Amount,
                   Price = d.Price,  
-                  IdProductNavigation = d.IdProductNavigation,
+                  IdMaterialNavigation = d.IdMaterialNavigation,
                   IdProviderNavigation = d.IdProviderNavigation,
 
               }).ToListAsync();
@@ -77,7 +77,7 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
             var ImportGoods = new DetailImportGood {
                 IdDetailImportGoods = Id,
                 IdProvider = DtIGoods.IdProvider,
-                IdProduct = DtIGoods.IdProduct,
+                IdMaterial = DtIGoods.IdMaterial,
                 Amount = DtIGoods.Amount,
                 Price = DtIGoods.Price,            
             };

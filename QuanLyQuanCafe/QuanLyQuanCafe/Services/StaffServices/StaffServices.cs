@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Dto.Staff;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace QuanLyQuanCafe.Services.StaffServices
 {
@@ -175,15 +176,11 @@ namespace QuanLyQuanCafe.Services.StaffServices
 
         public async Task<ApiResponse<List<staff>>> SearchStaffByName(string staffName)
         {
-            var response = new ApiResponse<List<staff>>();        
-                var dbStaffs = await _context.staff
-                 .Where(c => c.Fullname != null && c.Fullname.Contains(staffName))
-                 .ToListAsync();
-                if(dbStaffs.Count <= 0)
-                {
-                    response.Status = false;
-                    response.Message = "not found";
-                }
+            var response = new ApiResponse<List<staff>>();
+            var dbStaffs = _context.staff.AsEnumerable()
+                                       .Where(m => _Convert.ConvertToUnSign(m.Fullname).Contains(_Convert.ConvertToUnSign(staffName)))
+                                       .ToList();
+            
                 response.Data = dbStaffs;         
             return response;
         }

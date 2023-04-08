@@ -17,6 +17,8 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using QuanLyQuanCafe.Services.TokenServices;
 using QuanLyQuanCafe.Services.ImportGoodsServices;
+using QuanLyQuanCafe.Services.MaterialServices;
+using QuanLyQuanCafe.Services.UseMaterialServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,6 +78,8 @@ builder.Services.AddScoped<IStaffService, StaffServices>();
 builder.Services.AddTransient<ITokenService, TokenServices>();
 builder.Services.AddScoped<IProductService, ProductServices>();
 builder.Services.AddScoped<IImportGoodsService, ImportGoodsServices>();
+builder.Services.AddScoped<IMaterialService, MaterialServices>();
+builder.Services.AddScoped<IUseMaterialServices, UseMaterialServices>();
 
 var app = builder.Build();
 

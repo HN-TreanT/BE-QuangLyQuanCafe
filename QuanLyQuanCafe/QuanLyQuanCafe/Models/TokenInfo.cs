@@ -1,10 +1,13 @@
-﻿namespace QuanLyQuanCafe.Models
+﻿using System;
+using System.Collections.Generic;
+
+namespace QuanLyQuanCafe.Models
 {
-    public class TokenInfo
+    public partial class TokenInfo
     {
         public int Id { get; set; }
-        public string UserName { get; set; }
-        public string RefreshToken { get; set; }
-        public DateTime RefreshTokenExpiry { get; set; }  
+        public string UserName { get; set; } = null!;
+        public string RefreshToken { get; set; } = null!;
+        public DateTime RefreshTokenExpiry { get; set; }
     }
 }
