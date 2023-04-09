@@ -91,5 +91,20 @@ namespace QuanLyQuanCafe.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost]
+        [Route("createManyUseMaterial")]
+        public async Task<IActionResult> CreateManyUseMaterial([FromBody] List<UseMaterialDto> useMaterialDto)
+        {
+            try
+            {
+                var response = await _useMaterialServices.CreateManyUseMaterial(useMaterialDto);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

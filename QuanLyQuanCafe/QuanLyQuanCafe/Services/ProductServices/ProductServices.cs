@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Controllers;
 using QuanLyQuanCafe.Dto.Product;
+using QuanLyQuanCafe.Dto.UseMaterial;
 using QuanLyQuanCafe.Models;
+using QuanLyQuanCafe.Services.UseMaterialServices;
 using QuanLyQuanCafe.Tools;
 
 namespace QuanLyQuanCafe.Services.ProductServices
@@ -12,10 +14,12 @@ namespace QuanLyQuanCafe.Services.ProductServices
     {
         private readonly CafeContext _context;
         private readonly IMapper _mapper;
-        public ProductServices(CafeContext context , IMapper mapper) 
+        private readonly IUseMaterialServices _useMaterialServices; 
+        public ProductServices(CafeContext context , IMapper mapper,IUseMaterialServices useMaterialServices) 
         { 
            _context = context;
             _mapper = mapper;
+            _useMaterialServices = useMaterialServices; 
         }
         public async Task<ApiResponse<Product>> GetProductById(string Id)
         {
@@ -54,9 +58,9 @@ namespace QuanLyQuanCafe.Services.ProductServices
         {
             var response = new ApiResponse<Product>();
            
-                string Id = Guid.NewGuid().ToString().Substring(0,10);
-                var special = Guid.NewGuid().ToString();
-                var newProduct = new Product
+            string Id = Guid.NewGuid().ToString().Substring(0,10);
+            var special = Guid.NewGuid().ToString();
+            var newProduct = new Product
                 {
                     IdProduct = Id,
                     Title = productDto.Title,
@@ -66,7 +70,7 @@ namespace QuanLyQuanCafe.Services.ProductServices
                     IdCategory = productDto.IdCategory,
                  
                 };
-                if(productDto.file != null)
+            if(productDto.file != null)
                 {
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ProductImage", special + "-" + productDto.file.FileName);
                     using (FileStream ms = new FileStream(filePath, FileMode.Create))
@@ -76,9 +80,9 @@ namespace QuanLyQuanCafe.Services.ProductServices
                     var pathImage = Path.Combine("ProductImage", special + "-" + productDto.file.FileName);
                     newProduct.Thumbnail = pathImage;
                 }
-                _context.Products.Add(newProduct);
-                await _context.SaveChangesAsync();
-                response.Data = newProduct;
+            _context.Products.Add(newProduct);
+             await _context.SaveChangesAsync();
+             response.Data = newProduct;
             return response;
         }
 

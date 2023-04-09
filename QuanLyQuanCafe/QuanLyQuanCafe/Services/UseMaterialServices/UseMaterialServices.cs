@@ -89,5 +89,24 @@ namespace QuanLyQuanCafe.Services.UseMaterialServices
             await _context.SaveChangesAsync();  
             return response;
         }
+
+        public async Task<ApiResponse<List<UseMaterial>>> CreateManyUseMaterial(List<UseMaterialDto> useMaterials)
+        {
+            var response = new ApiResponse<List<UseMaterial>>();
+            foreach( var useMaterial in useMaterials )
+            {
+                string Id = Guid.NewGuid().ToString().Substring(0,10);
+                var newUseMaterial = new UseMaterial
+                {
+                    IdUseMaterial = Id, 
+                    IdProduct = useMaterial.IdProduct,  
+                    IdMaterial = useMaterial.IdMaterial,
+                    Amount = useMaterial.Amount,    
+                };
+                _context.UseMaterials.Add(newUseMaterial);
+            }
+            await _context.SaveChangesAsync();
+            return response;
+        }
     }
 }

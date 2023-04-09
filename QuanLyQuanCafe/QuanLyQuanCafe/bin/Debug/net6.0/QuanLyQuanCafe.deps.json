@@ -19,8 +19,7 @@
           "Microsoft.EntityFrameworkCore.SqlServer.Design": "1.1.6",
           "Microsoft.EntityFrameworkCore.Tools": "6.0.12",
           "Swashbuckle.AspNetCore": "6.2.3",
-          "System.Globalization.Extensions": "4.3.0",
-          "UnidecodeSharpFork": "1.0.0"
+          "System.Globalization.Extensions": "4.3.0"
         },
         "runtime": {
           "QuanLyQuanCafe.dll": {}
@@ -1548,14 +1547,6 @@
           "System.Threading": "4.3.0",
           "System.Xml.ReaderWriter": "4.3.0"
         }
-      },
-      "UnidecodeSharpFork/1.0.0": {
-        "runtime": {
-          "lib/UnidecodeSharpFork.dll": {
-            "assemblyVersion": "0.0.0.0",
-            "fileVersion": "0.0.0.0"
-          }
-        }
       }
     }
   },
@@ -2726,13 +2717,6 @@
       "sha512": "sha512-5zJ0XDxAIg8iy+t4aMnQAu0MqVbqyvfoUVl1yDV61xdo3Vth45oA2FoY4pPkxYAH5f8ixpmTqXeEIya95x0aCQ==",
       "path": "system.xml.xdocument/4.3.0",
       "hashPath": "system.xml.xdocument.4.3.0.nupkg.sha512"
-    },
-    "UnidecodeSharpFork/1.0.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-8sTIyufB4n+a9HgfyIQsomc7xlObdPh7D9N46NwySNL+b9nZfNPfI5izs2Jl52ryQdsRjikB+hmjGfUgHPGQEg==",
-      "path": "unidecodesharpfork/1.0.0",
-      "hashPath": "unidecodesharpfork.1.0.0.nupkg.sha512"
     }
   }
 }

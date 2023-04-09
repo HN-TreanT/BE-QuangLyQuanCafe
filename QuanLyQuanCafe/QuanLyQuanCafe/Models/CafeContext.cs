@@ -29,11 +29,11 @@ namespace QuanLyQuanCafe.Models
         public virtual DbSet<Provider> Providers { get; set; } = null!;
         public virtual DbSet<SelectedWorkShift> SelectedWorkShifts { get; set; } = null!;
         public virtual DbSet<TableFood> TableFoods { get; set; } = null!;
-        public virtual DbSet<TokenInfo> TokenInfos { get; set; } = null!;
+        public virtual DbSet<TokenInfo> TokenInfo { get; set; }
         public virtual DbSet<UseMaterial> UseMaterials { get; set; } = null!;
         public virtual DbSet<WorkShift> WorkShifts { get; set; } = null!;
         public virtual DbSet<staff> staff { get; set; } = null!;
-        public DbSet<TokenInfo> TokenInfo { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -266,6 +266,10 @@ namespace QuanLyQuanCafe.Models
                 entity.Property(e => e.OrderDate)
                     .HasColumnType("datetime")
                     .HasColumnName("order_date");
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("status");
+                    /*.HasDefaultValue('0');*/
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("datetime")

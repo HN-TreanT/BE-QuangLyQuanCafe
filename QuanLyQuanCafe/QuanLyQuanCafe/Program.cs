@@ -19,6 +19,7 @@ using QuanLyQuanCafe.Services.TokenServices;
 using QuanLyQuanCafe.Services.ImportGoodsServices;
 using QuanLyQuanCafe.Services.MaterialServices;
 using QuanLyQuanCafe.Services.UseMaterialServices;
+using QuanLyQuanCafe.Services.OrderServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,6 +81,7 @@ builder.Services.AddScoped<IProductService, ProductServices>();
 builder.Services.AddScoped<IImportGoodsService, ImportGoodsServices>();
 builder.Services.AddScoped<IMaterialService, MaterialServices>();
 builder.Services.AddScoped<IUseMaterialServices, UseMaterialServices>();
+builder.Services.AddScoped<IOrderService, OrderServices>();
 
 var app = builder.Build();
 

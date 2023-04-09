@@ -12,5 +12,6 @@ namespace QuanLyQuanCafe.Services.UseMaterialServices
         Task<ApiResponse<UseMaterial>> CreateUseMaterial(UseMaterialDto useMaterialDto);
         Task<ApiResponse<UseMaterial>> UpdateUseMaterial(string Id,UseMaterialDto useMaterialDto);
         Task<ApiResponse<AnyType>> DeleteUseMaterial(string Id);
+        Task<ApiResponse<List<UseMaterial>>>  CreateManyUseMaterial(List<UseMaterialDto> useMaterialDtos);
     }
 }

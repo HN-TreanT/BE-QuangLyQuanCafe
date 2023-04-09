@@ -12,6 +12,7 @@ using QuanLyQuanCafe.Dto.Product;
 using QuanLyQuanCafe.Dto.ImportGoods;
 using QuanLyQuanCafe.Dto.Material;
 using QuanLyQuanCafe.Dto.UseMaterial;
+using QuanLyQuanCafe.Dto.Order;
 
 namespace QuanLyQuanCafe.Tools
 {
@@ -70,9 +71,14 @@ namespace QuanLyQuanCafe.Tools
                .ForMember(dest => dest.Unit, opt => opt.Condition(src => src.Unit != null))
                .ForMember(dest => dest.Expiry, opt => opt.Condition(src => src.Expiry != null));
             CreateMap<UseMaterialDto,UseMaterial>()
-                .ForMember(dest => dest.IdMaterial, opt => opt.Condition(src => src.IdMaterial != null))
+               .ForMember(dest => dest.IdMaterial, opt => opt.Condition(src => src.IdMaterial != null))
                .ForMember(dest => dest.IdProduct, opt => opt.Condition(src => src.IdProduct != null))
                .ForMember(dest => dest.Amount, opt => opt.Condition(src => src.Amount != null));
+            CreateMap<OrderDto,Order>()
+                .ForMember(dest => dest.IdCustomer, opt => opt.Condition(src => src.IdCustomer != null))
+               .ForMember(dest => dest.IdTable, opt => opt.Condition(src => src.IdTable != null))
+               .ForMember(dest => dest.OrderDate, opt => opt.Condition(src => src.OrderDate != null))
+               .ForMember(dest => dest.Status, opt => opt.Condition(src => src.Status != null));
 
 
 
