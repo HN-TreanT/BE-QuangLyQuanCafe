@@ -10,6 +10,13 @@ using QuanLyQuanCafe.Tools;
 
 namespace QuanLyQuanCafe.Services.ProductServices
 {
+    public class ProductOrderStatistic
+    {
+        public string? IdProduct { get; set; }
+        public string? Title { get; set; }
+        public int? TotalAmount { get; set; }
+        public double? Price { get; set; }  
+    }
     public class ProductServices:IProductService
     {
         private readonly CafeContext _context;
@@ -151,6 +158,25 @@ namespace QuanLyQuanCafe.Services.ProductServices
                 }
                 _context.Products.Remove(dbProduct);
                 await _context.SaveChangesAsync();         
+            return response;
+        }
+        public async Task<ApiResponse<List<ProductOrderStatistic>>> GetBestSellProduct(int time)
+        {
+            var response = new ApiResponse<List<ProductOrderStatistic>>();
+            var top5ProductsOrdered = _context.OrderDetails
+             .Where(od => od.CreatedAt >= DateTime.Now.AddDays(-time))
+             .GroupBy(od => od.IdProduct)
+             .Select(g => new ProductOrderStatistic
+             {
+                 IdProduct = g.Key,
+                 Title = g.First().IdProductNavigation.Title,
+                 TotalAmount = g.Sum(od => od.Amout),
+                 Price = g.Sum(od => od.Price),   
+              })
+            .OrderByDescending(s => s.TotalAmount)
+            .Take(5)
+           .ToList();
+            response.Data = top5ProductsOrdered;
             return response;
         }
     }

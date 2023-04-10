@@ -8,6 +8,7 @@ namespace QuanLyQuanCafe.Models
         public Product()
         {
             OrderDetails = new HashSet<OrderDetail>();
+            PromotionProducts = new HashSet<PromotionProduct>();
             UseMaterials = new HashSet<UseMaterial>();
         }
 
@@ -23,6 +24,7 @@ namespace QuanLyQuanCafe.Models
 
         public virtual Category? IdCategoryNavigation { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual ICollection<PromotionProduct> PromotionProducts { get; set; }
         public virtual ICollection<UseMaterial> UseMaterials { get; set; }
     }
 }

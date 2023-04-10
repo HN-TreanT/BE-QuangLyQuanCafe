@@ -26,10 +26,12 @@ namespace QuanLyQuanCafe.Models
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
+        public virtual DbSet<Promotion> Promotions { get; set; } = null!;
+        public virtual DbSet<PromotionProduct> PromotionProducts { get; set; } = null!;
         public virtual DbSet<Provider> Providers { get; set; } = null!;
         public virtual DbSet<SelectedWorkShift> SelectedWorkShifts { get; set; } = null!;
         public virtual DbSet<TableFood> TableFoods { get; set; } = null!;
-        public virtual DbSet<TokenInfo> TokenInfo { get; set; }
+        public virtual DbSet<TokenInfo> TokenInfo { get; set; } 
         public virtual DbSet<UseMaterial> UseMaterials { get; set; } = null!;
         public virtual DbSet<WorkShift> WorkShifts { get; set; } = null!;
         public virtual DbSet<staff> staff { get; set; } = null!;
@@ -45,6 +47,7 @@ namespace QuanLyQuanCafe.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.Entity<IdentityUserLogin<string>>()
              .HasKey(l => new { l.LoginProvider, l.ProviderKey });
             modelBuilder.Entity<IdentityUserRole<string>>()
@@ -246,6 +249,8 @@ namespace QuanLyQuanCafe.Models
                     .HasColumnName("idOrder")
                     .IsFixedLength();
 
+                entity.Property(e => e.Amount).HasColumnName("amount");
+
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("created_at")
@@ -263,14 +268,9 @@ namespace QuanLyQuanCafe.Models
                     .HasColumnName("id_table")
                     .IsFixedLength();
 
-                entity.Property(e => e.OrderDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("order_date");
-
                 entity.Property(e => e.Status)
-                    .HasColumnName("status");
-                    /*.HasDefaultValue('0');*/
-
+                      .HasColumnName("status");
+                     
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("updated_at")
@@ -390,6 +390,55 @@ namespace QuanLyQuanCafe.Models
                     .HasConstraintName("FK__product__id_cate__48CFD27E");
             });
 
+            modelBuilder.Entity<Promotion>(entity =>
+            {
+                entity.HasKey(e => e.IdPromotion);
+
+                entity.ToTable("Promotion");
+
+                entity.Property(e => e.IdPromotion)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.TimeEnd).HasColumnType("date");
+
+                entity.Property(e => e.TimeStart).HasColumnType("date");
+            });
+
+            modelBuilder.Entity<PromotionProduct>(entity =>
+            {
+                entity.HasKey(e => e.IdPp);
+
+                entity.ToTable("PromotionProduct");
+
+                entity.Property(e => e.IdPp)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("IdPP")
+                    .IsFixedLength();
+
+                entity.Property(e => e.IdProduct)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.IdPromotion)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.HasOne(d => d.IdProductNavigation)
+                    .WithMany(p => p.PromotionProducts)
+                    .HasForeignKey(d => d.IdProduct)
+                    .HasConstraintName("FK_PromotionProduct_product");
+
+                entity.HasOne(d => d.IdPromotionNavigation)
+                    .WithMany(p => p.PromotionProducts)
+                    .HasForeignKey(d => d.IdPromotion)
+                    .HasConstraintName("FK_PromotionProduct_Promotion");
+            });
+
             modelBuilder.Entity<Provider>(entity =>
             {
                 entity.HasKey(e => e.IdProvider)
@@ -477,9 +526,7 @@ namespace QuanLyQuanCafe.Models
                     .HasColumnName("created_at")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.Name)
-                    .HasMaxLength(14)
-                    .HasColumnName("name");
+                entity.Property(e => e.Name).HasColumnName("name");
 
                 entity.Property(e => e.Status)
                     .HasColumnName("status")

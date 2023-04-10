@@ -20,6 +20,9 @@ using QuanLyQuanCafe.Services.ImportGoodsServices;
 using QuanLyQuanCafe.Services.MaterialServices;
 using QuanLyQuanCafe.Services.UseMaterialServices;
 using QuanLyQuanCafe.Services.OrderServices;
+using QuanLyQuanCafe.Services.OrderDetailServices;
+using QuanLyQuanCafe.Services.PromotionServices;
+using QuanLyQuanCafe.Services.PProductServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,6 +85,9 @@ builder.Services.AddScoped<IImportGoodsService, ImportGoodsServices>();
 builder.Services.AddScoped<IMaterialService, MaterialServices>();
 builder.Services.AddScoped<IUseMaterialServices, UseMaterialServices>();
 builder.Services.AddScoped<IOrderService, OrderServices>();
+builder.Services.AddScoped<IOrderDtService, OrderDtServices>();
+builder.Services.AddScoped<IPromotionService, PromotionServices>();
+builder.Services.AddScoped<IPProductService, PProductServices>();
 
 var app = builder.Build();
 

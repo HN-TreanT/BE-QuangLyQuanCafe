@@ -4,7 +4,7 @@
     {
         public string? IdCustomer { get; set; }
         public string? IdTable { get; set; }
-        public DateTime? OrderDate { get; set; }
+        public int? Amount { get; set; }
         public byte? Status { get; set; }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuanLyQuanCafe.Dto.Product;
 using QuanLyQuanCafe.Models;
 using QuanLyQuanCafe.Services.ProductServices;
+using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace QuanLyQuanCafe.Controllers
 {
@@ -88,6 +90,21 @@ namespace QuanLyQuanCafe.Controllers
             try
             {
                 var response = await _productService.DeletePoduct(Id);    
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("getBestSellProduct/{time}")]
+        public async Task<IActionResult> GetBestSellProduct(int time)
+        {
+            try
+            {
+                var response = await _productService.GetBestSellProduct(time);
                 return Ok(response);
             }
             catch (Exception ex)

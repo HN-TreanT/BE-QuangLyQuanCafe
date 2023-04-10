@@ -53,7 +53,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                 IdOrder = Guid.NewGuid().ToString().Substring(0, 10),
                 IdCustomer = orderDto.IdCustomer,
                 IdTable = orderDto.IdTable, 
-                OrderDate = orderDto.OrderDate, 
+                Amount = orderDto.Amount, 
             };
             _context.Orders.Add(newOrder);  
             await _context.SaveChangesAsync();  
@@ -81,11 +81,17 @@ namespace QuanLyQuanCafe.Services.OrderServices
         public async Task<ApiResponse<AnyType>> DeleteOrder(string Id)
         {
             var response = new ApiResponse<AnyType>();
-            var dbOrder = await _context.Orders.FindAsync(Id);
-            if(dbOrder == null) {
+            // var dbOrder = await _context.Orders.FindAsync(Id);
+            var dbOrder = await _context.Orders.Include(o => o.OrderDetails).SingleOrDefaultAsync(o => o.IdOrder == Id);
+
+            if (dbOrder == null) {
                 response.Status = false;
                 response.Message = "Not found order";
                 return response;
+            }
+            foreach(var item in dbOrder.OrderDetails)
+            {
+                _context.OrderDetails.Remove(item); 
             }
             _context.Orders.Remove(dbOrder);
             await _context.SaveChangesAsync();  

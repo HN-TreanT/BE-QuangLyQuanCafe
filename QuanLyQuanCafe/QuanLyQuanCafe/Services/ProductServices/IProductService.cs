@@ -11,6 +11,7 @@ namespace QuanLyQuanCafe.Services.ProductServices
         Task<ApiResponse<List<Product>>> GetAllProduct();
         Task<ApiResponse<Product>> CreatePoduct(ProductDto productDto);
         Task<ApiResponse<Product>> UpdatePoduct(string Id,ProductDto productDto);
-        Task<ApiResponse<AnyType>> DeletePoduct(string Id);  
+        Task<ApiResponse<AnyType>> DeletePoduct(string Id);
+        Task<ApiResponse<List<ProductOrderStatistic>>> GetBestSellProduct(int time);
     }
 }

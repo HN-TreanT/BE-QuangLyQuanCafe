@@ -13,6 +13,9 @@ using QuanLyQuanCafe.Dto.ImportGoods;
 using QuanLyQuanCafe.Dto.Material;
 using QuanLyQuanCafe.Dto.UseMaterial;
 using QuanLyQuanCafe.Dto.Order;
+using QuanLyQuanCafe.Dto.OrderDetail;
+using QuanLyQuanCafe.Dto.Promotion;
+using QuanLyQuanCafe.Dto.PProduct;
 
 namespace QuanLyQuanCafe.Tools
 {
@@ -75,12 +78,23 @@ namespace QuanLyQuanCafe.Tools
                .ForMember(dest => dest.IdProduct, opt => opt.Condition(src => src.IdProduct != null))
                .ForMember(dest => dest.Amount, opt => opt.Condition(src => src.Amount != null));
             CreateMap<OrderDto,Order>()
-                .ForMember(dest => dest.IdCustomer, opt => opt.Condition(src => src.IdCustomer != null))
+               .ForMember(dest => dest.IdCustomer, opt => opt.Condition(src => src.IdCustomer != null))
                .ForMember(dest => dest.IdTable, opt => opt.Condition(src => src.IdTable != null))
-               .ForMember(dest => dest.OrderDate, opt => opt.Condition(src => src.OrderDate != null))
+               .ForMember(dest => dest.Amount, opt => opt.Condition(src => src.Amount != null))
                .ForMember(dest => dest.Status, opt => opt.Condition(src => src.Status != null));
-
-
+            CreateMap<UpdateOrderDetail, OrderDetail>()
+               .ForMember(dest => dest.Amout, opt => opt.Condition(src => src.Amount != null));
+            CreateMap<PromotionDto, Promotion>()
+               .ForMember(dest => dest.Name, opt => opt.Condition(src => src.Name != null))
+               .ForMember(dest => dest.TimeStart, opt => opt.Condition(src => src.TimeStart != null))
+               .ForMember(dest => dest.TimeEnd, opt => opt.Condition(src => src.TimeEnd != null))
+               .ForMember(dest => dest.Status, opt => opt.Condition(src => src.Status != null));
+            CreateMap<PromotionProductDto, PromotionProduct>()
+                .ForMember(dest => dest.IdPromotion, opt => opt.Condition(src => src.IdPromotion != null))
+               .ForMember(dest => dest.IdProduct, opt => opt.Condition(src => src.IdProduct != null))
+               .ForMember(dest => dest.MinCount, opt => opt.Condition(src => src.MinCount != null))
+               .ForMember(dest => dest.Sale, opt => opt.Condition(src => src.Sale != null));
+               
 
 
 
