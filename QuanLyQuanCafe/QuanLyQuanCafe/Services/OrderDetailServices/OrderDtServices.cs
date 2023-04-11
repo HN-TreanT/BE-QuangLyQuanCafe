@@ -183,23 +183,29 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
             var response = new ApiResponse<Overview>();
             var CustomerCount = _context.Customers.Where(c => c.CreatedAt >= DateTime.Now.AddDays(-time)).Count();
             var OrdersCount = _context.Orders.Where(c => c.CreatedAt >= DateTime.Now.AddDays(-time)).Count();
-            var ProductCount = _context.Products.Where(c => c.CreatedAt >= DateTime.Now.AddDays(-time)).Count();
+            var ProductCount = _context.OrderDetails.Where(c => c.CreatedAt >= DateTime.Now.AddDays(-time)).Count();
             
-            var Revenue = _context.OrderDetails.Where(c => c.CreatedAt >= DateTime.Now.AddDays(-time))
+            //tiền bán thực tế:(doanh thu)
+            var ActualSaleMoney = _context.OrderDetails.Where(c => c.CreatedAt >= DateTime.Now.AddDays(-time))
                                        .Sum(od => od.Price);
             //tiền hàng = tổng giá trị Mặt hàng* số lượng
             var MoneyProduct = _context.OrderDetails.Where(c => c.CreatedAt >= DateTime.Now.AddDays(-time))
                                     .Sum(Od => Od.IdProductNavigation != null ? Od.IdProductNavigation.Price * Od.Amout : 0);
-
-            var sale = MoneyProduct - Revenue;
+            //tiền nhập :
+            var MoneyMaterial = _context.DetailImportGoods.Where(c => c.CreatedAt >= DateTime.Now.AddDays(-time))
+                                    .Sum(d=>d.Price);    
+            var sale = MoneyProduct - ActualSaleMoney;
+            //doanh thu:
+          ///  var Revenue = ActualSaleMoney - MoneyMaterial;
             var newOverview = new Overview
             {
                 CustomerNumber= CustomerCount,
                 OrderNumber = OrdersCount,
                 ProductNumber = ProductCount,   
-                Revenue = Revenue,
+                Revenue = ActualSaleMoney,
                 MoneyProduct = MoneyProduct,
-                Sale = sale 
+                Sale = sale ,
+                MoneyMaterial = MoneyMaterial   
             };
             response.Data = newOverview;
             return response;

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuanLyQuanCafe.Dto.Order;
@@ -23,6 +24,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getOrderById/{Id}")]
+        [Authorize]
         public async Task<IActionResult> GetOrderById(string Id)
         {
             try
@@ -38,6 +40,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllOrder")]
+        [Authorize]
         public async Task<IActionResult> GetAllOrder()
         {
             try
@@ -53,6 +56,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("creatOrder")]
+        [Authorize]
         public async Task<IActionResult> CreateOrder([FromBody] OrderDto orderDto)
         {
             try
@@ -68,6 +72,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateOrder/{Id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateOrder(string Id,[FromBody] OrderDto orderDto)
         {
             try
@@ -83,6 +88,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteOrder/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteOrder(string Id)
         {
             try

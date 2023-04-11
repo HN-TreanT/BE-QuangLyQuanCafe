@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getProductById/{Id}")]
+        [Authorize]
         public async Task<IActionResult> GetProductById(string Id) {
             try
             {
@@ -38,6 +40,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllProduct")]
+        [Authorize]
         public async Task<IActionResult> GetAllProduct()
         {
             try
@@ -54,6 +57,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createProduct")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProduct([FromForm] ProductDto productDto)
         {
             try
@@ -70,6 +74,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateProduct/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProduct(string Id,[FromForm]ProductDto productDto)
         {
             try
@@ -85,6 +90,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteProduct/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProduct(string Id)
         {
             try
@@ -100,6 +106,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getBestSellProduct/{time}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetBestSellProduct(int time)
         {
             try

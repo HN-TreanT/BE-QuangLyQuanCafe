@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuanLyQuanCafe.Dto.Promotion;
@@ -23,6 +24,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getPromotionById/{Id}")]
+        [Authorize]
         public async Task<IActionResult> GetPromotionById(string Id) 
         {
             try
@@ -35,6 +37,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getAllPromotion")]
+        [Authorize]
         public async Task<IActionResult> GetAllPromotion()
         {
             try
@@ -50,6 +53,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createPromotion")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreatePromotion([FromBody]PromotionDto promotionDto)
         {
             try
@@ -65,6 +69,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updatePromotion/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdatePromotion(string Id, [FromBody] PromotionDto promotionDto)
         {
             try
@@ -80,6 +85,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deletePromotion/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeletePromotion(string Id)
         {
             try

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuanLyQuanCafe.Dto.UseMaterial;
 using QuanLyQuanCafe.Models;
 using QuanLyQuanCafe.Services.UseMaterialServices;
+using System.Data;
 
 namespace QuanLyQuanCafe.Controllers
 {
@@ -22,6 +24,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getUseMaterialById/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUseMaterialById(string Id) {
             try
             {
@@ -34,6 +37,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllUseMaterial")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUseMaterial()
         {
             try
@@ -49,6 +53,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createUseMaterial")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateUseMaterial([FromBody] UseMaterialDto useMaterialDto)
         {
             try
@@ -64,6 +69,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateUseMaterial/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateUseMaterial(string Id,[FromBody] UseMaterialDto useMaterialDto)
         {
             try
@@ -79,6 +85,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteUseMaterial/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUseMaterial(string Id)
         {
             try
@@ -94,6 +101,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createManyUseMaterial")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateManyUseMaterial([FromBody] List<UseMaterialDto> useMaterialDto)
         {
             try

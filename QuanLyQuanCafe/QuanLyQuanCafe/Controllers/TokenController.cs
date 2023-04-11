@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QuanLyQuanCafe.Dto.TokenAuth;
 using QuanLyQuanCafe.Models;
 using QuanLyQuanCafe.Services.TokenServices;
@@ -44,17 +45,23 @@ namespace QuanLyQuanCafe.Controllers
         }
 
         //revoken is use for removing token enntry
-        [HttpPost, Authorize]
-        public IActionResult Revoke()
+        [HttpPost,Authorize]
+       
+        public async Task<IActionResult> Revoke()
         {
             try
             {
+               
                 var username = User.Identity.Name;
-                var user = _ctx.TokenInfo.SingleOrDefault(u => u.UserName == username);
-                if (user is null)
+                
+                var user =await _ctx.TokenInfo.SingleOrDefaultAsync(u => u.UserName == username);
+                if (user == null)
+                {
                     return BadRequest();
-                user.RefreshToken = null;
-                _ctx.SaveChanges();
+                }
+                user.RefreshToken = "0";
+                _ctx.Update(user);   
+                await _ctx.SaveChangesAsync();
                 return Ok(true);
             }
             catch (Exception ex)

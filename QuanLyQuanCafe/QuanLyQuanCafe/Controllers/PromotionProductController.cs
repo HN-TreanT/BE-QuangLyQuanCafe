@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuanLyQuanCafe.Dto.PProduct;
@@ -22,6 +23,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getPPById/{Id}")]
+        [Authorize]
         public async Task<IActionResult> GetPPById(string Id)
         {
             try
@@ -34,6 +36,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllPP")]
+        [Authorize]
         public async Task<IActionResult> GetAllPP()
         {
             try
@@ -47,6 +50,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createPP")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreatePP([FromBody] PromotionProductDto ppDto)
         {
             try
@@ -60,6 +64,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updatePP/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdatePP(string Id, [FromBody] PromotionProductDto ppDto)
         {
             try
@@ -73,6 +78,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deletePP/{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeletePP(string Id)
         {
             try

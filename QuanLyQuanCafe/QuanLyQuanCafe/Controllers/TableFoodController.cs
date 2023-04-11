@@ -61,7 +61,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createTableFood")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateTableFood([FromBody] TableFoodDto TableFoodDto )
         {
             try
@@ -78,7 +78,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateTablefood/{Id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateTableFood(string Id, [FromBody] TableFoodDto tableFood)
         {
             try
@@ -94,7 +94,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteTableFood/{Id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTableFood(string Id)
         {
             try

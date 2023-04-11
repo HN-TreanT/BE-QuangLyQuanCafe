@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuanLyQuanCafe.Dto.OrderDetail;
@@ -22,6 +23,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getOrderDtById/{Id}")]
+        [Authorize]
         
         public async Task<IActionResult> GetOrderDtById(string Id)
         {
@@ -37,6 +39,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllOrderDt")]
+        [Authorize]
 
         public async Task<IActionResult> GetAllOrderDt()
         {
@@ -53,6 +56,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllOrderByIdOrder/{IdOrder}")]
+        [Authorize]
 
         public async Task<IActionResult> GetAllOrderByIdOrder(string IdOrder)
         {
@@ -69,6 +73,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createOrderDetail")]
+        [Authorize]
 
         public async Task<IActionResult> CreateOrderDetail([FromBody] OrderDetailDto orderDetailDto)
         {
@@ -85,6 +90,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateOrderDt/{Id}")]
+        [Authorize]
 
         public async Task<IActionResult> UpdateOrderDt(string Id,[FromBody] UpdateOrderDetail updateorderDetailDto)
         {
@@ -102,6 +108,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteOrderDt/{Id}")]
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> DeleteOrderDt(string Id)
         {
@@ -118,6 +125,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createListOrderDt")]
+        [Authorize]
         public async Task<IActionResult> CreateListOrderDt([FromBody] List<OrderDetailDto> listOrderDt)
         {
             try
@@ -133,6 +141,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getOverview/{time}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetOverview(int time)
         {
             try
