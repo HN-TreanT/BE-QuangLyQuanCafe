@@ -102,6 +102,15 @@ namespace QuanLyQuanCafe.Services.PromotionServices
             return response;
         }
 
+        public async Task<ApiResponse<List<Promotion>>> GetPromotionExpired()
+        {
+            var response = new ApiResponse<List<Promotion>>();
+            var dbPromotions = await _context.Promotions.Where(p => p.TimeEnd >= DateTime.Now).Take(5)
+                                      .ToListAsync();
+            response.Data = dbPromotions;
+            return response;
+        }
+
 
 
     }

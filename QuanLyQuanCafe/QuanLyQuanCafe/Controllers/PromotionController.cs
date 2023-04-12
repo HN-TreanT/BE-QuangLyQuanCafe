@@ -99,5 +99,21 @@ namespace QuanLyQuanCafe.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("getPromotionExpired")]
+        [Authorize]
+        public async Task<IActionResult> GetPromotionExpired()
+        {
+            try
+            {
+                var response = await _promotionService.GetPromotionExpired();
+                return Ok(response);
+
+            }catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }
