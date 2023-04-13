@@ -101,5 +101,37 @@ namespace QuanLyQuanCafe.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet]
+        [Route("getOrderPaid")]
+        [Authorize]
+        public async Task<IActionResult> GetOrderPaid()
+        {
+            try
+            {
+                var response = await _orderService.GetOrderPaid();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet]
+        [Route("getOrderUnpaid")]
+        [Authorize]
+        public async Task<IActionResult> GetOrderUnpaid()
+        {
+            try
+            {
+                var response = await _orderService.GetOrderUnpaid();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

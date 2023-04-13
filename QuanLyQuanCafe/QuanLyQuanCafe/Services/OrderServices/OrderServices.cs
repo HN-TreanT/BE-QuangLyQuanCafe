@@ -35,7 +35,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
             var response = new ApiResponse<List<Order>>();
             var dbOrder = await _context.Orders.Include(o => o.IdCustomerNavigation)
                                 .Include(o => o.IdTableNavigation).ToListAsync();
-            if(dbOrder.Count <= 0) {
+            if (dbOrder.Count <= 0) {
                 response.Status = false;
                 response.Message = "Not found order";
                 return response;
@@ -43,6 +43,8 @@ namespace QuanLyQuanCafe.Services.OrderServices
             response.Data = dbOrder;
             return response;
         }
+
+
 
         public async Task<ApiResponse<Order>> CreateOrder(OrderDto orderDto)
         {
@@ -72,6 +74,14 @@ namespace QuanLyQuanCafe.Services.OrderServices
                 response.Message = "Not found";
                 return response;
             }
+            if(orderDto.Status == 1)
+            {
+                dbOrder.TimePay = DateTime.Now;
+            }
+            if(orderDto.Status == 0)
+            {
+                dbOrder.TimePay = null;
+            }
             _mapper.Map(orderDto, dbOrder);
             await _context.SaveChangesAsync();
             response.Data = dbOrder;
@@ -95,6 +105,38 @@ namespace QuanLyQuanCafe.Services.OrderServices
             }
             _context.Orders.Remove(dbOrder);
             await _context.SaveChangesAsync();  
+            return response;
+        }
+
+
+        public async Task<ApiResponse<List<Order>>> GetOrderPaid()
+        {
+            var response = new ApiResponse<List<Order>>();
+            var dbOrder = await _context.Orders.Where(o=> o.Status ==1).Include(o => o.IdCustomerNavigation)
+                                .Include(o => o.IdTableNavigation).ToListAsync();
+            if (dbOrder.Count <= 0)
+            {
+                response.Status = false;
+                response.Message = "Not found order";
+                return response;
+            }
+            response.Data = dbOrder;
+            return response;
+        }
+
+
+        public async Task<ApiResponse<List<Order>>> GetOrderUnpaid()
+        {
+            var response = new ApiResponse<List<Order>>();
+            var dbOrder = await _context.Orders.Where(o => o.Status == 0).Include(o => o.IdCustomerNavigation)
+                                .Include(o => o.IdTableNavigation).ToListAsync();
+            if (dbOrder.Count <= 0)
+            {
+                response.Status = false;
+                response.Message = "Not found order";
+                return response;
+            }
+            response.Data = dbOrder;
             return response;
         }
     }

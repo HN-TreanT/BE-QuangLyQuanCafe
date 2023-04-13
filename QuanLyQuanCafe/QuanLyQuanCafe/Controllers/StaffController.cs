@@ -41,7 +41,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpPost]
         [Route("CreateStaff")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")] 
         public async Task<IActionResult> CreateStaff([FromBody] StaffCreateDto StaffDto) 
         {
             try

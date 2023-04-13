@@ -12,5 +12,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
         Task<ApiResponse<Order>> CreateOrder(OrderDto orderDto);
         Task<ApiResponse<Order>> UpdateOrder(string Id, OrderDto orderDto);
         Task<ApiResponse<AnyType>> DeleteOrder(string Id);
+        Task<ApiResponse<List<Order>>> GetOrderPaid();
+        Task<ApiResponse<List<Order>>> GetOrderUnpaid();
     }
 }

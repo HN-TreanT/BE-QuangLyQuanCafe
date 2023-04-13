@@ -31,7 +31,7 @@ namespace QuanLyQuanCafe.Models
         public virtual DbSet<Provider> Providers { get; set; } = null!;
         public virtual DbSet<SelectedWorkShift> SelectedWorkShifts { get; set; } = null!;
         public virtual DbSet<TableFood> TableFoods { get; set; } = null!;
-        public virtual DbSet<TokenInfo> TokenInfo { get; set; } 
+        public virtual DbSet<TokenInfo> TokenInfo { get; set; } = null!;
         public virtual DbSet<UseMaterial> UseMaterials { get; set; } = null!;
         public virtual DbSet<WorkShift> WorkShifts { get; set; } = null!;
         public virtual DbSet<staff> staff { get; set; } = null!;
@@ -47,9 +47,8 @@ namespace QuanLyQuanCafe.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
             modelBuilder.Entity<IdentityUserLogin<string>>()
-             .HasKey(l => new { l.LoginProvider, l.ProviderKey });
+            .HasKey(l => new { l.LoginProvider, l.ProviderKey });
             modelBuilder.Entity<IdentityUserRole<string>>()
              .HasKey(ur => new { ur.UserId, ur.RoleId });
             modelBuilder.Entity<IdentityUserToken<string>>()
@@ -268,9 +267,10 @@ namespace QuanLyQuanCafe.Models
                     .HasColumnName("id_table")
                     .IsFixedLength();
 
-                entity.Property(e => e.Status)
-                      .HasColumnName("status");
-                     
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.TimePay).HasColumnType("datetime");
+
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("updated_at")

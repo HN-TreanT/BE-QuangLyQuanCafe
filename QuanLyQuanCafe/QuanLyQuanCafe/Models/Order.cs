@@ -13,8 +13,9 @@ namespace QuanLyQuanCafe.Models
         public string IdOrder { get; set; } = null!;
         public string? IdCustomer { get; set; }
         public string? IdTable { get; set; }
+        public DateTime? TimePay { get; set; }
         public byte? Status { get; set; } = 0;
-        public int? Amount { get; set; } 
+        public int? Amount { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
