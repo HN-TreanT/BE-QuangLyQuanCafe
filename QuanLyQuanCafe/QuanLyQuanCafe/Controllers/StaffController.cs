@@ -89,7 +89,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getStaff/{Id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]    
         public async Task<IActionResult> getStaff(string Id)
         {
             try

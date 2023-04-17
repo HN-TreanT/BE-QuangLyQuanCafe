@@ -37,9 +37,9 @@ builder.Services.AddControllers().AddJsonOptions(options=>
     options.JsonSerializerOptions.WriteIndented = true;
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-/*builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-*/
+
 //connect database
 builder.Services.AddDbContext<CafeContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("Cafe")));
 builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
@@ -92,14 +92,14 @@ builder.Services.AddScoped<IPProductService, PProductServices>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-/*if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
     });
-}*/
+}
 app.UseCors("MyCors");
 //truy cập localhost:7066/public/ + folder+ tên ảnh => truy cập ảnh trên server
 app.UseStaticFiles(new StaticFileOptions()

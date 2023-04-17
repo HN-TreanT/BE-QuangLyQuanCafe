@@ -33,7 +33,7 @@ namespace QuanLyQuanCafe.Services.ProductServices
             var response = new ApiResponse<Product>();
             /*  var product = await _context.Products.FindAsync(Id);*/
             var product = await _context.Products.Include(p => p.UseMaterials)
-                 .ThenInclude(u => u.IdMaterialNavigation)
+                 .ThenInclude(u => u.IdMaterialNavigation).Include(p=>p.IdCategoryNavigation)
                  .SingleOrDefaultAsync(p => p.IdProduct == Id);
                 if (product == null) {
                     response.Status = false;
@@ -48,7 +48,7 @@ namespace QuanLyQuanCafe.Services.ProductServices
         {
             var response = new ApiResponse<List<Product>>();
 
-                var products = await _context.Products.Include(p => p.UseMaterials)
+                var products = await _context.Products.Include(p => p.UseMaterials).Include(p=>p.IdCategoryNavigation)
                  .ToListAsync();
                 if(products.Count <= 0)
                 {

@@ -91,7 +91,6 @@ namespace QuanLyQuanCafe.Services.OrderServices
         public async Task<ApiResponse<AnyType>> DeleteOrder(string Id)
         {
             var response = new ApiResponse<AnyType>();
-            // var dbOrder = await _context.Orders.FindAsync(Id);
             var dbOrder = await _context.Orders.Include(o => o.OrderDetails).SingleOrDefaultAsync(o => o.IdOrder == Id);
 
             if (dbOrder == null) {
