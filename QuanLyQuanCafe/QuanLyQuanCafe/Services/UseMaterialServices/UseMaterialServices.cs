@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Dto.UseMaterial;
 using QuanLyQuanCafe.Models;
@@ -106,6 +107,23 @@ namespace QuanLyQuanCafe.Services.UseMaterialServices
                 _context.UseMaterials.Add(newUseMaterial);
             }
             await _context.SaveChangesAsync();
+            return response;
+        }
+
+        public async Task<ApiResponse<AnyType>> DeleteAllUseMaterialByIdProduct(string IdProduct)
+        {
+            var response = new ApiResponse<AnyType>();
+            var dbProduct = await _context.Products.Include(p=> p.UseMaterials).SingleOrDefaultAsync(p=> p.IdProduct == IdProduct);
+            if(dbProduct == null )
+            {
+                response.Status = false;
+                response.Message = "Not found product";
+                return response;
+            }
+            foreach( var item in dbProduct.UseMaterials) { 
+                _context.UseMaterials.Remove(item);
+            }    
+            await _context.SaveChangesAsync();  
             return response;
         }
     }

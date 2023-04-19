@@ -49,7 +49,7 @@ namespace QuanLyQuanCafe.Services.ProductServices
             var response = new ApiResponse<List<Product>>();
 
                 var products = await _context.Products.Include(p => p.UseMaterials).Include(p=>p.IdCategoryNavigation)
-                 .ToListAsync();
+                 .Where(p=> p.Status ==1).ToListAsync();
                 if(products.Count <= 0)
                 {
                     response.Status = false;
@@ -132,22 +132,35 @@ namespace QuanLyQuanCafe.Services.ProductServices
         public async Task<ApiResponse<AnyType>> DeletePoduct(string Id)
         {
             var response = new ApiResponse<AnyType>();         
-                var dbProduct = await _context.Products.Include(u => u.UseMaterials).SingleOrDefaultAsync(p => p.IdProduct == Id);
-                foreach(var useMaterial in dbProduct.UseMaterials){
-                     var dbUseMaterial = await _context.UseMaterials.FindAsync(useMaterial.IdUseMaterial);
-                     if (dbUseMaterial != null)
-                     {
-                        _context.UseMaterials.Remove(dbUseMaterial);    
-                     }
-                 }
-                if (dbProduct == null)
+                var dbProduct = await _context.Products.Include(u => u.UseMaterials).Include(u=> u.PromotionProducts).SingleOrDefaultAsync(p => p.IdProduct == Id);
+               
+            if (dbProduct == null)
                 {
                     response.Status = false;
                     response.Message = "not found";
                     return response;    
                 }
+            foreach (var useMaterial in dbProduct.UseMaterials)
+            {
+                var dbUseMaterial = await _context.UseMaterials.FindAsync(useMaterial.IdUseMaterial);
+                if (dbUseMaterial != null)
+                {
+                    _context.UseMaterials.Remove(dbUseMaterial);
+                }
+            }
+            if (dbProduct.PromotionProducts.Count >= 0)
+            {
+                foreach (var pp in dbProduct.PromotionProducts)
+                {
+                    var dbPP = await _context.PromotionProducts.FindAsync(pp.IdPp);
+                    if (dbPP != null)
+                    {
+                        _context.PromotionProducts.Remove(dbPP);
+                    }
+                }
+            }
 
-                if (dbProduct.Thumbnail != null)
+            if (dbProduct.Thumbnail != null)
                 {
                     var path = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", dbProduct.Thumbnail);
                     if (File.Exists(path))
@@ -156,7 +169,8 @@ namespace QuanLyQuanCafe.Services.ProductServices
                     }
 
                 }
-                _context.Products.Remove(dbProduct);
+            dbProduct.Status = 0;
+                _context.Products.Update(dbProduct);
                 await _context.SaveChangesAsync();         
             return response;
         }

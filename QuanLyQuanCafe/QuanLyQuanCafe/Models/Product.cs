@@ -17,6 +17,7 @@ namespace QuanLyQuanCafe.Models
         public string? Thumbnail { get; set; }
         public string? Description { get; set; }
         public double? Price { get; set; }
+        public byte? Status { get; set; }
         public string? Unit { get; set; }
         public string? IdCategory { get; set; }
         public DateTime? CreatedAt { get; set; }

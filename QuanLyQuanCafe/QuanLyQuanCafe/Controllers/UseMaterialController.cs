@@ -114,5 +114,21 @@ namespace QuanLyQuanCafe.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpDelete]
+        [Route("deleteManyUseMaterialByIdProduct/{Id}")]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> DeleteManyUseMaterialsByIdProduct(string Id)
+        {
+            try
+            {
+                var response = await _useMaterialServices.DeleteAllUseMaterialByIdProduct(Id);  
+                return Ok(response);
+
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }
