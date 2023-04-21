@@ -21,6 +21,28 @@ namespace QuanLyQuanCafe.Controllers
 
         }
 
+        /* [HttpPost]
+         public IActionResult Refresh(RefreshTokenRequest tokenApiModel)
+         {
+             if (tokenApiModel is null)
+                 return BadRequest("Invalid client request");
+             string accessToken = tokenApiModel.AccessToken;
+             string refreshToken = tokenApiModel.RefreshToken;
+             var principal = _service.GetPrincipalFromExpiredToken(accessToken);
+             var username = principal.Identity.Name;
+             var user = _ctx.TokenInfo.SingleOrDefault(u => u.UserName == username);
+             if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiry <= DateTime.Now)
+                 return BadRequest("Invalid client request");
+             var newAccessToken = _service.GetToken(principal.Claims);
+             var newRefreshToken = _service.GetRefreshToken();
+             user.RefreshToken = newRefreshToken;
+             _ctx.SaveChanges();
+             return Ok(new RefreshTokenRequest()
+             {
+                 AccessToken = newAccessToken.TokenString,
+                 RefreshToken = newRefreshToken
+             });
+         }*/
         [HttpPost]
         public IActionResult Refresh(RefreshTokenRequest tokenApiModel)
         {
@@ -34,13 +56,10 @@ namespace QuanLyQuanCafe.Controllers
             if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiry <= DateTime.Now)
                 return BadRequest("Invalid client request");
             var newAccessToken = _service.GetToken(principal.Claims);
-            var newRefreshToken = _service.GetRefreshToken();
-            user.RefreshToken = newRefreshToken;
             _ctx.SaveChanges();
             return Ok(new RefreshTokenRequest()
             {
                 AccessToken = newAccessToken.TokenString,
-                RefreshToken = newRefreshToken
             });
         }
 

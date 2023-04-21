@@ -53,7 +53,7 @@ namespace QuanLyQuanCafe.Services.TokenServices
             var token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.Now.AddMinutes(1),
                 claims: claim,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );

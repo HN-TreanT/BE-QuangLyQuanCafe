@@ -97,7 +97,7 @@ namespace QuanLyQuanCafe.Controllers
                     {
                         UserName = user.UserName,
                         RefreshToken = refreshToken,
-                        RefreshTokenExpiry = DateTime.Now.AddDays(1)
+                        RefreshTokenExpiry = DateTime.Now.AddDays(30)
                     };
                     _context.TokenInfo.Add(info);
                 }
@@ -105,7 +105,7 @@ namespace QuanLyQuanCafe.Controllers
                 else
                 {
                     tokenInfo.RefreshToken = refreshToken;
-                    tokenInfo.RefreshTokenExpiry = DateTime.Now.AddDays(1);
+                    tokenInfo.RefreshTokenExpiry = DateTime.Now.AddDays(30);
                 }
                 try
                 {
