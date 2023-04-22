@@ -7,7 +7,8 @@ namespace QuanLyQuanCafe.Services.WorkShiftServices
 {
     public interface IWorkShiftService
     {
-     
+
+        Task<ApiResponse<WorkShift>> GetWorkShiftDetail(int Id);
         Task<ApiResponse<List<WorkShift>>> GetWorkShift();
         Task<ApiResponse<WorkShift>> CreateWorkShift(WorkShiftDto WorkShiftDto);
 

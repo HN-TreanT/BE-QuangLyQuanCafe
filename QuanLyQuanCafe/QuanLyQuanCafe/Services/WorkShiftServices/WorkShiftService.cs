@@ -16,11 +16,25 @@ namespace QuanLyQuanCafe.Services.WorkShiftServices
             this._context = context;
             this._mapper = mapper;
         }
+        public async Task<ApiResponse<WorkShift>> GetWorkShiftDetail(int Id)
+        {
+            var response = new ApiResponse<WorkShift>();
+            var dbWorkShifts = await _context.WorkShifts.Include(ws => ws.SelectedWorkShifts).SingleOrDefaultAsync(ws=> ws.IdWorkShift == Id);
+            if (dbWorkShifts == null)
+            {
+                response.Status = false;
+                response.Message = "Not found";
+                return response;
+            }
+            response.Data = dbWorkShifts;
+            return response;
+        }
 
         public async Task<ApiResponse<List<WorkShift>>> GetWorkShift()
         {
             var response = new ApiResponse<List<WorkShift>>();
-                var dbWorkShifts = await _context.WorkShifts.ToListAsync();
+              //  var dbWorkShifts = await _context.WorkShifts.ToListAsync();
+               var dbWorkShifts = await _context.WorkShifts.Include(ws=> ws.SelectedWorkShifts).ToListAsync();
                 if(dbWorkShifts == null)
                 {
                     response.Status = false;
@@ -36,7 +50,14 @@ namespace QuanLyQuanCafe.Services.WorkShiftServices
         public async Task<ApiResponse<WorkShift>> CreateWorkShift(WorkShiftDto WorkShiftDto)
         {
             var response = new ApiResponse<WorkShift>();
-                var newWorkShift = new WorkShift
+            var dbWorkShift = await _context.WorkShifts.FindAsync(WorkShiftDto.IdWorkShift);
+            if(dbWorkShift != null)
+            {
+                response.Status = false;
+                response.Message = "work shift exist";
+                return response;
+            } 
+               var newWorkShift = new WorkShift
                 {
                     IdWorkShift = WorkShiftDto.IdWorkShift,
                     ArrivalTime = WorkShiftDto.ArrivalTime,
@@ -75,7 +96,10 @@ namespace QuanLyQuanCafe.Services.WorkShiftServices
                     response.Message = "not found";
                     return response;
                 }
-                _context.WorkShifts.Remove(dbWorkShift);
+                var ListSelectedWS = _context.SelectedWorkShifts
+                                  .Where(sws => sws.IdWorkShift == dbWorkShift.IdWorkShift);
+                _context.SelectedWorkShifts.RemoveRange(ListSelectedWS);
+               _context.WorkShifts.Remove(dbWorkShift);
                 await _context.SaveChangesAsync();
             return response;
         }

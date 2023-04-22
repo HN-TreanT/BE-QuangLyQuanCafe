@@ -24,8 +24,22 @@ namespace QuanLyQuanCafe.Controllers
             this._mapper = mapper;
             this._workShiftService = workShiftService;
         }
+        [HttpGet]
+        [Route("GetWorkShiftDetail/{Id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetWorkShiftDetail(int Id)
+        {
+            try
+            {
+                var reponse =await _workShiftService.GetWorkShiftDetail(Id);
+                return Ok(reponse);
 
-        
+            }catch (Exception ex) {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
         [HttpGet]
         [Route("GetWorkShift")]
         [Authorize(Roles = "Admin")]

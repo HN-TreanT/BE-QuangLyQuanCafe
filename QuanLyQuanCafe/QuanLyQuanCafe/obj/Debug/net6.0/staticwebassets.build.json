@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "3vhPQ0irKbffd1xpQ8aXUp3KsLGMkTQxPw78CWZHFuY=",
+  "Hash": "XnFatuoX/oBHenOb6UIFuNkI95BWh6bm9WKcVqvODlE=",
   "Source": "QuanLyQuanCafe",
   "BasePath": "_content/QuanLyQuanCafe",
   "Mode": "Default",
@@ -16,6 +16,57 @@
     }
   ],
   "Assets": [
+    {
+      "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\ProductImage\\00d75bc6-f302-40ad-a280-41664b961e95-Screenshot 2023-03-08 172146.png",
+      "SourceId": "QuanLyQuanCafe",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\",
+      "BasePath": "_content/QuanLyQuanCafe",
+      "RelativePath": "ProductImage/00d75bc6-f302-40ad-a280-41664b961e95-Screenshot 2023-03-08 172146.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\ProductImage\\00d75bc6-f302-40ad-a280-41664b961e95-Screenshot 2023-03-08 172146.png"
+    },
+    {
+      "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\ProductImage\\12925bf9-b659-4c16-a0ff-6b97b53b774d-Screenshot 2023-03-31 134205.png",
+      "SourceId": "QuanLyQuanCafe",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\",
+      "BasePath": "_content/QuanLyQuanCafe",
+      "RelativePath": "ProductImage/12925bf9-b659-4c16-a0ff-6b97b53b774d-Screenshot 2023-03-31 134205.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\ProductImage\\12925bf9-b659-4c16-a0ff-6b97b53b774d-Screenshot 2023-03-31 134205.png"
+    },
+    {
+      "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\ProductImage\\134ec24b-45f0-4f9b-aee2-ed2e94b517e7-Screenshot 2023-04-16 181715.png",
+      "SourceId": "QuanLyQuanCafe",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\",
+      "BasePath": "_content/QuanLyQuanCafe",
+      "RelativePath": "ProductImage/134ec24b-45f0-4f9b-aee2-ed2e94b517e7-Screenshot 2023-04-16 181715.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\ProductImage\\134ec24b-45f0-4f9b-aee2-ed2e94b517e7-Screenshot 2023-04-16 181715.png"
+    },
     {
       "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\ProductImage\\25fb922c-ec1f-411e-a4cc-839910a1686a-Screenshot_20230222_060955.png",
       "SourceId": "QuanLyQuanCafe",
@@ -66,6 +117,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\ProductImage\\3027d651-7049-4907-9a71-035f8a67bdeb-MoHinhER.png"
+    },
+    {
+      "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\ProductImage\\32424e67-6799-4159-ae16-69a4d83a42d0-MoHinhER.png",
+      "SourceId": "QuanLyQuanCafe",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\",
+      "BasePath": "_content/QuanLyQuanCafe",
+      "RelativePath": "ProductImage/32424e67-6799-4159-ae16-69a4d83a42d0-MoHinhER.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\ProductImage\\32424e67-6799-4159-ae16-69a4d83a42d0-MoHinhER.png"
     },
     {
       "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\ProductImage\\3e409b2f-79e6-438a-be9e-62fe09dac1ca-MoHinhER.png",
@@ -119,12 +187,12 @@
       "OriginalItemSpec": "wwwroot\\ProductImage\\607ca9f2-c4cb-4563-8a6b-df9eb5156305-Screenshot 2023-03-20 164941.png"
     },
     {
-      "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\ProductImage\\7984d1ef-cf63-4d21-a0de-1162fe8564f4-Screenshot_20230222_064708.png",
+      "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\ProductImage\\8665c626-de42-4d15-ad4b-dec6bf43ee4e-Screenshot 2023-03-08 172146.png",
       "SourceId": "QuanLyQuanCafe",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\",
       "BasePath": "_content/QuanLyQuanCafe",
-      "RelativePath": "ProductImage/7984d1ef-cf63-4d21-a0de-1162fe8564f4-Screenshot_20230222_064708.png",
+      "RelativePath": "ProductImage/8665c626-de42-4d15-ad4b-dec6bf43ee4e-Screenshot 2023-03-08 172146.png",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -133,7 +201,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\ProductImage\\7984d1ef-cf63-4d21-a0de-1162fe8564f4-Screenshot_20230222_064708.png"
+      "OriginalItemSpec": "wwwroot\\ProductImage\\8665c626-de42-4d15-ad4b-dec6bf43ee4e-Screenshot 2023-03-08 172146.png"
     },
     {
       "Identity": "D:\\C#\\BE-QuangLyQuanCafe\\QuanLyQuanCafe\\QuanLyQuanCafe\\wwwroot\\ProductImage\\9650664e-2182-45b3-86ad-da1ead4ab50c-Screenshot 2023-03-07 150638.png",
