@@ -19,7 +19,7 @@ namespace QuanLyQuanCafe.Services.WorkShiftServices
         public async Task<ApiResponse<WorkShift>> GetWorkShiftDetail(int Id)
         {
             var response = new ApiResponse<WorkShift>();
-            var dbWorkShifts = await _context.WorkShifts.Include(ws => ws.SelectedWorkShifts).SingleOrDefaultAsync(ws=> ws.IdWorkShift == Id);
+            var dbWorkShifts = await _context.WorkShifts.Include(ws => ws.SelectedWorkShifts).ThenInclude(sws=> sws.IdStaffNavigation ).SingleOrDefaultAsync(ws=> ws.IdWorkShift == Id);
             if (dbWorkShifts == null)
             {
                 response.Status = false;
