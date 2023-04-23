@@ -20,20 +20,45 @@ namespace QuanLyQuanCafe.Services.CustomerServices
         }
         
 
-        public async Task<ApiResponse<List<Customer>>> GetAllCustomer(int page)
+        public async Task<ApiResponse<List<Customer>>> GetAllCustomer(int page, string? name)
         {
             var response = new ApiResponse<List<Customer>>();
-                var dbCustomers = await _context.Customers.Skip((page - 1)* PAGE_SIZE).Take(PAGE_SIZE).ToListAsync();
-               int count =await  _context.Customers.CountAsync();
+            if (!string.IsNullOrEmpty(name)  )
+            {
+                var dbCustomers = _context.Customers
+                                   .Include(cus => cus.Orders).ThenInclude(order => order.OrderDetails)
+                                   .AsEnumerable()
+                                   .Where(m => _Convert.ConvertToUnSign(m.Fullname).Contains(_Convert.ConvertToUnSign(name)))
+                                   .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                   .ToList();
+                var count = _context.Customers
+                                       .AsEnumerable()
+                                       .Where(m => _Convert.ConvertToUnSign(m.Fullname).Contains(_Convert.ConvertToUnSign(name)))
+                                       .ToList().Count();
                 if (dbCustomers.Count <= 0)
                 {
                     response.Message = "Not found";
                     return response;
-                 }
+                }
                 response.Data = dbCustomers;
-                response.TotalPage = count/PAGE_SIZE +1;
-            
-            return response;
+                response.TotalPage = count;
+
+                return response;
+            }
+            else
+            {
+                var dbCustomers = await _context.Customers.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).Include(cus => cus.Orders).ThenInclude(order => order.OrderDetails).ToListAsync();
+                int count = await _context.Customers.CountAsync();
+                if (dbCustomers.Count <= 0)
+                {
+                    response.Message = "Not found";
+                    return response;
+                }
+                response.Data = dbCustomers;
+                response.TotalPage = count;
+
+                return response;
+            }
         }
 
         public async Task<ApiResponse<Customer>> GetCustomerById(string Id)
@@ -97,13 +122,21 @@ namespace QuanLyQuanCafe.Services.CustomerServices
             return response;
         }
 
-        public async Task<ApiResponse<List<Customer>>>  SearchCustomerByName(string CustomerName)
+        public async Task<ApiResponse<List<Customer>>>  SearchCustomerByName(int page,   string CustomerName)
         {
             var response = new ApiResponse<List<Customer>>();
-            var dbCustomers = _context.Customers.AsEnumerable()
+            var dbCustomers = _context.Customers
+                                   .Include(cus => cus.Orders).ThenInclude(order => order.OrderDetails)
+                                   .AsEnumerable()
                                    .Where(m => _Convert.ConvertToUnSign(m.Fullname).Contains(_Convert.ConvertToUnSign(CustomerName)))
+                                   .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
                                    .ToList();
+            var count = _context.Customers
+                                   .AsEnumerable()
+                                   .Where(m => _Convert.ConvertToUnSign(m.Fullname).Contains(_Convert.ConvertToUnSign(CustomerName)))
+                                   .ToList().Count();
             response.Data = dbCustomers;
+            response.TotalPage = count;
           
             return response;
         }

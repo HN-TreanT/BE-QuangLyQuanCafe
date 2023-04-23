@@ -28,12 +28,12 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getAllCustomer")]
-      /*  [Authorize]*/
-        public async Task<IActionResult> GetAllCustomer(int page)
+        [Authorize]
+        public async Task<IActionResult> GetAllCustomer(int page,string? name)
         {
             try
             {
-                var response = await _customerServices.GetAllCustomer(page);
+                var response = await _customerServices.GetAllCustomer(page, name);
                 return Ok(response);
 
             } catch (Exception ex)
@@ -111,22 +111,22 @@ namespace QuanLyQuanCafe.Controllers
         }
 
         [HttpGet]
-        [Route("searchByName/{CustomerName}")]
+        [Route("searchByName")]
         [Authorize]
-        public async Task<IActionResult> SearchByName( string CustomerName)
+        public async Task<IActionResult> SearchByName( string CustomerName,int page)
         {
             try
             {
-              var response = await _customerServices.SearchCustomerByName(CustomerName);
+              var response = await _customerServices.SearchCustomerByName(page,CustomerName);
                if(response.Data.Count <= 0)
                 {
                     return Ok(new ApiResponse<AnyType> { Status = false, Message = "Not found" });
                 }
               return Ok(response);
             }
-            catch
+            catch(Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
 
