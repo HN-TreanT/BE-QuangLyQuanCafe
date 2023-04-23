@@ -28,12 +28,12 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getAllCustomer")]
-        [Authorize]
-        public async Task<IActionResult> GetAllCustomer()
+      /*  [Authorize]*/
+        public async Task<IActionResult> GetAllCustomer(int page)
         {
             try
             {
-                var response = await _customerServices.GetAllCustomer();
+                var response = await _customerServices.GetAllCustomer(page);
                 return Ok(response);
 
             } catch (Exception ex)

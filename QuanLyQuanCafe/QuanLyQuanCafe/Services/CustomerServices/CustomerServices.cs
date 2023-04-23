@@ -12,22 +12,27 @@ namespace QuanLyQuanCafe.Services.CustomerServices
     {
         private readonly CafeContext _context;
         private readonly IMapper _mapper;
+        public static int PAGE_SIZE { get; set; } = 5;
         public CustomerServices(CafeContext context, IMapper mapper)
         {
             this._context = context;
             this._mapper = mapper;
         }
+        
 
-        public async Task<ApiResponse<List<Customer>>> GetAllCustomer()
+        public async Task<ApiResponse<List<Customer>>> GetAllCustomer(int page)
         {
             var response = new ApiResponse<List<Customer>>();
-                var dbCustomers = await _context.Customers.ToListAsync();
+                var dbCustomers = await _context.Customers.Skip((page - 1)* PAGE_SIZE).Take(PAGE_SIZE).ToListAsync();
+               int count =await  _context.Customers.CountAsync();
                 if (dbCustomers.Count <= 0)
                 {
                     response.Message = "Not found";
                     return response;
                  }
-                response.Data = dbCustomers;          
+                response.Data = dbCustomers;
+                response.TotalPage = count/PAGE_SIZE +1;
+            
             return response;
         }
 

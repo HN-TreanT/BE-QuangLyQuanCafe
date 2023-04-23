@@ -7,7 +7,7 @@ namespace QuanLyQuanCafe.Services.CustomerServices
 {
     public interface ICustomerServices
     {
-        Task<ApiResponse<List<Customer>>> GetAllCustomer();
+        Task<ApiResponse<List<Customer>>> GetAllCustomer(int page);
         Task<ApiResponse<Customer>> GetCustomerById(string Id);
         Task<ApiResponse<Customer>> CreateCustomer(CustomerDto CustomerDto);
 
