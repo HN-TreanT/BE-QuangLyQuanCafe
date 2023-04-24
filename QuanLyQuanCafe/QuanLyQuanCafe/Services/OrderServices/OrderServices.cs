@@ -7,10 +7,11 @@ using QuanLyQuanCafe.Tools;
 
 namespace QuanLyQuanCafe.Services.OrderServices
 {
-    public class OrderServices:IOrderService
+    public class OrderServices : IOrderService
     {
         private readonly IMapper _mapper;
         private readonly CafeContext _context;
+        public static int PAGE_SIZE {get;set;} = 5;
         public OrderServices(IMapper mapper, CafeContext context)
         {
             _mapper = mapper;
@@ -30,17 +31,23 @@ namespace QuanLyQuanCafe.Services.OrderServices
             return response;
         }
 
-        public async Task<ApiResponse<List<Order>>> GetAllOrder()
+        public async Task<ApiResponse<List<Order>>> GetAllOrder(int page)
         {
             var response = new ApiResponse<List<Order>>();
             var dbOrder = await _context.Orders.Include(o => o.IdCustomerNavigation)
-                                .Include(o => o.IdTableNavigation).ToListAsync();
+                                .Include(o => o.IdTableNavigation) 
+                                .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                                        
+                                .ToListAsync();
+           var count = await _context.Orders.CountAsync();  
             if (dbOrder.Count <= 0) {
                 response.Status = false;
                 response.Message = "Not found order";
+               
                 return response;
             }
             response.Data = dbOrder;
+            response.TotalPage = count;
             return response;
         }
 
@@ -108,33 +115,39 @@ namespace QuanLyQuanCafe.Services.OrderServices
         }
 
 
-        public async Task<ApiResponse<List<Order>>> GetOrderPaid()
+        public async Task<ApiResponse<List<Order>>> GetOrderPaid(int page)
         {
             var response = new ApiResponse<List<Order>>();
             var dbOrder = await _context.Orders.Where(o=> o.Status ==1).Include(o => o.IdCustomerNavigation)
                                 .Include(o => o.IdTableNavigation).ToListAsync();
+            var count = await _context.Orders.Where(o => o.Status == 1).CountAsync();
             if (dbOrder.Count <= 0)
             {
                 response.Status = false;
                 response.Message = "Not found order";
                 return response;
             }
+            response.TotalPage = count;
             response.Data = dbOrder;
             return response;
         }
 
 
-        public async Task<ApiResponse<List<Order>>> GetOrderUnpaid()
+        public async Task<ApiResponse<List<Order>>> GetOrderUnpaid(int page)
         {
             var response = new ApiResponse<List<Order>>();
             var dbOrder = await _context.Orders.Where(o => o.Status == 0).Include(o => o.IdCustomerNavigation)
-                                .Include(o => o.IdTableNavigation).ToListAsync();
+                                .Include(o => o.IdTableNavigation)
+                                 .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                .ToListAsync();
+            var count = await _context.Orders.Where(o => o.Status == 0).CountAsync();
             if (dbOrder.Count <= 0)
             {
                 response.Status = false;
                 response.Message = "Not found order";
                 return response;
             }
+           response.TotalPage = count; 
             response.Data = dbOrder;
             return response;
         }
