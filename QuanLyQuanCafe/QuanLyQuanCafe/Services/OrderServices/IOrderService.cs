@@ -8,11 +8,11 @@ namespace QuanLyQuanCafe.Services.OrderServices
     public interface IOrderService
     {
         Task<ApiResponse<Order>> GetOrderById(string Id);
-        Task<ApiResponse<List<Order>>> GetAllOrder(int page);
+        Task<ApiResponse<List<OrderGet>>> GetAllOrder(int page,string? typeSearch, string? searchValue);
         Task<ApiResponse<Order>> CreateOrder(OrderDto orderDto);
         Task<ApiResponse<Order>> UpdateOrder(string Id, OrderDto orderDto);
         Task<ApiResponse<AnyType>> DeleteOrder(string Id);
-        Task<ApiResponse<List<Order>>> GetOrderPaid(int page);
-        Task<ApiResponse<List<Order>>> GetOrderUnpaid(int page);
+        Task<ApiResponse<List<OrderGet>>> GetOrderPaid(int page, string? typeSearch, string? searchValue);
+        Task<ApiResponse<List<OrderGet>>> GetOrderUnpaid(int page, string? typeSearch, string? searchValue);
     }
 }

@@ -40,12 +40,12 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllOrder")]
-        [Authorize]
-        public async Task<IActionResult> GetAllOrder(int page)
+       /* [Authorize]*/
+        public async Task<IActionResult> GetAllOrder(int page,string? typeSearch, string? searchValue)
         {
             try
             {
-                var response = await _orderService.GetAllOrder(page);
+                var response = await _orderService.GetAllOrder(page,typeSearch,searchValue);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -105,11 +105,11 @@ namespace QuanLyQuanCafe.Controllers
         [HttpGet]
         [Route("getOrderPaid")]
         [Authorize]
-        public async Task<IActionResult> GetOrderPaid(int page)
+        public async Task<IActionResult> GetOrderPaid(int page, string? typeSearch, string? searchValue)
         {
             try
             {
-                var response = await _orderService.GetOrderPaid(page);
+                var response = await _orderService.GetOrderPaid(page,typeSearch,searchValue);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -120,11 +120,11 @@ namespace QuanLyQuanCafe.Controllers
         [HttpGet]
         [Route("getOrderUnpaid")]
         [Authorize]
-        public async Task<IActionResult> GetOrderUnpaid(int page)
+        public async Task<IActionResult> GetOrderUnpaid(int page, string? typeSearch, string? searchValue)
         {
             try
             {
-                var response = await _orderService.GetOrderUnpaid(page);
+                var response = await _orderService.GetOrderUnpaid(page, typeSearch, searchValue);
                 return Ok(response);
             }
             catch (Exception ex)

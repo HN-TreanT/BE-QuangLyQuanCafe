@@ -4,7 +4,9 @@ using QuanLyQuanCafe.Tools;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Dto.Customer;
-using System.Xml.Linq;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Text;
 
 namespace QuanLyQuanCafe.Services.CustomerServices
 {
@@ -12,6 +14,22 @@ namespace QuanLyQuanCafe.Services.CustomerServices
     {
         private readonly CafeContext _context;
         private readonly IMapper _mapper;
+        private string ConvertToUnSign(string input)
+        {
+            input = input.Trim();
+            for (int i = 0x20; i < 0x30; i++)
+            {
+                input = input.Replace(((char)i).ToString(), " ");
+            }
+            Regex regex = new Regex(@"\p{IsCombiningDiacriticalMarks}+");
+            string str = input.Normalize(NormalizationForm.FormD);
+            string str2 = regex.Replace(str, string.Empty).Replace('đ', 'd').Replace('Đ', 'D');
+            while (str2.IndexOf("?") >= 0)
+            {
+                str2 = str2.Remove(str2.IndexOf("?"), 1);
+            }
+            return str2;
+        }
         public static int PAGE_SIZE { get; set; } = 5;
         public CustomerServices(CafeContext context, IMapper mapper)
         {
@@ -25,12 +43,15 @@ namespace QuanLyQuanCafe.Services.CustomerServices
             var response = new ApiResponse<List<Customer>>();
             if (!string.IsNullOrEmpty(name)  )
             {
-                var dbCustomers = _context.Customers
-                                   .Include(cus => cus.Orders).ThenInclude(order => order.OrderDetails)
-                                   .AsEnumerable()
-                                   .Where(m => _Convert.ConvertToUnSign(m.Fullname).Contains(_Convert.ConvertToUnSign(name)))
-                                   .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
-                                   .ToList();
+
+                    var dbCustomers =  _context.Customers.Include(cus => cus.Orders).ThenInclude(order => order.OrderDetails)
+                                       .Where(delegate (Customer c)
+                                       {
+                                           if (ConvertToUnSign(c.Fullname).IndexOf(name, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                                               return true;
+                                           else
+                                               return false;
+                                       }).AsQueryable().ToList();
                 var count = _context.Customers
                                        .AsEnumerable()
                                        .Where(m => _Convert.ConvertToUnSign(m.Fullname).Contains(_Convert.ConvertToUnSign(name)))

@@ -4,25 +4,66 @@ using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Dto.Order;
 using QuanLyQuanCafe.Models;
 using QuanLyQuanCafe.Tools;
+using System.Text;
+using System.Globalization;
+using FuzzySharp;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
+using System.Text.RegularExpressions;
+using System.Xml;
+using QuanLyQuanCafe.Dto.TokenAuth;
+using System.Reflection;
 
 namespace QuanLyQuanCafe.Services.OrderServices
 {
+
     public class OrderServices : IOrderService
     {
         private readonly IMapper _mapper;
         private readonly CafeContext _context;
-        public static int PAGE_SIZE {get;set;} = 5;
+        public static int PAGE_SIZE { get; set; } = 5;
+        public static string ConvertToUnSign(string text)
+        {
+            for (int i = 33; i < 48; i++)
+            {
+                text = text.Replace(((char)i).ToString(), "");
+            }
+
+            for (int i = 58; i < 65; i++)
+            {
+                text = text.Replace(((char)i).ToString(), "");
+            }
+
+            for (int i = 91; i < 97; i++)
+            {
+                text = text.Replace(((char)i).ToString(), "");
+            }
+
+            for (int i = 123; i < 127; i++)
+            {
+                text = text.Replace(((char)i).ToString(), "");
+            }
+
+            //text = text.Replace(" ", "-"); //Comment lại để không đưa khoảng trắng thành ký tự -
+
+            Regex regex = new Regex(@"\p{IsCombiningDiacriticalMarks}+");
+
+            string strFormD = text.Normalize(System.Text.NormalizationForm.FormD);
+
+            return regex.Replace(strFormD, String.Empty).Replace('\u0111', 'd').Replace('\u0110', 'D');
+        }
+
         public OrderServices(IMapper mapper, CafeContext context)
         {
             _mapper = mapper;
             _context = context;
-        }   
+        }
         public async Task<ApiResponse<Order>> GetOrderById(string Id)
         {
             var response = new ApiResponse<Order>();
             var dbOrder = await _context.Orders.Include(o => o.IdCustomerNavigation)
                                 .Include(o => o.IdTableNavigation).SingleOrDefaultAsync(o => o.IdOrder == Id);
-            if (dbOrder == null) {
+            if (dbOrder == null)
+            {
                 response.Status = false;
                 response.Message = "Not found order";
                 return response;
@@ -31,22 +72,153 @@ namespace QuanLyQuanCafe.Services.OrderServices
             return response;
         }
 
-        public async Task<ApiResponse<List<Order>>> GetAllOrder(int page)
+        public async Task<ApiResponse<List<OrderGet>>> GetAllOrder(int page, string? typeSearch, string? searchValue)
         {
-            var response = new ApiResponse<List<Order>>();
-            var dbOrder = await _context.Orders.Include(o => o.IdCustomerNavigation)
-                                .Include(o => o.IdTableNavigation) 
-                                .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
-                                                        
-                                .ToListAsync();
-           var count = await _context.Orders.CountAsync();  
-            if (dbOrder.Count <= 0) {
-                response.Status = false;
-                response.Message = "Not found order";
-               
+            var response = new ApiResponse<List<OrderGet>>();
+            if (typeSearch == "nameCustomer")
+            {
+                var data = new List<OrderGet>();
+                var dbOrders1 = await _context.Orders.Include((o) => o.IdCustomerNavigation)
+                                                 .Include(o => o.IdTableNavigation)
+                                                 .ToListAsync();
+                foreach (var dbOrder in dbOrders1)
+                {
+                    OrderGet order = new OrderGet()
+                    {
+                        IdOrder = dbOrder.IdOrder.ToString(),
+                        Status = dbOrder.Status,
+                        Amount = dbOrder.Amount,
+                        TimePay = dbOrder.TimePay,
+                        CreatedAt = dbOrder.CreatedAt,
+                        UpdatedAt = dbOrder.UpdatedAt,
+                        IdCustomer = dbOrder.IdCustomerNavigation.IdCustomer,
+                        Fullname = dbOrder.IdCustomerNavigation.Fullname,
+                        PhoneNumber = dbOrder.IdCustomerNavigation.PhoneNumber,
+                        Gender = dbOrder.IdTableNavigation.IdTable,
+                        IdTable = dbOrder.IdTableNavigation.IdTable,
+                        NameTable = dbOrder.IdTableNavigation.Name,
+                        StatusTable = dbOrder.IdTableNavigation.Status
+                    };
+                    if (_Convert.ConvertToUnSign(dbOrder.IdCustomerNavigation.Fullname).Contains(_Convert.ConvertToUnSign(searchValue)))
+                    {
+                        data.Add(order);
+                    }
+                }
+                var db = data.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+                if (dbOrders1.Count <= 0)
+                {
+                    response.Status = false;
+                    response.Message = "Not found order";
+                    return response;
+                }
+                response.TotalPage = data.Count();
+                response.Data = db;
                 return response;
             }
-            response.Data = dbOrder;
+            if (typeSearch == "phonenumber")
+            {
+
+                var dbOrders2 = await _context.Orders.Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
+                                .Where(o => o.IdCustomerNavigation.PhoneNumber == searchValue)
+                                .Select(o =>
+                                 new OrderGet
+                                 {
+                                     IdOrder = o.IdOrder.ToString(),
+                                     Status = o.Status,
+                                     Amount = o.Amount,
+                                     TimePay = o.TimePay,
+                                     CreatedAt = o.CreatedAt,
+                                     UpdatedAt = o.UpdatedAt,
+                                     IdCustomer = o.IdCustomerNavigation.IdCustomer,
+                                     Fullname = o.IdCustomerNavigation.Fullname,
+                                     PhoneNumber = o.IdCustomerNavigation.PhoneNumber,
+                                     Gender = o.IdTableNavigation.IdTable,
+                                     IdTable = o.IdTableNavigation.IdTable,
+                                     NameTable = o.IdTableNavigation.Name,
+                                     StatusTable = o.IdTableNavigation.Status
+                                 })
+                                 .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                 .ToListAsync();
+                var count2 = await _context.Orders.Include(o => o.IdCustomerNavigation)
+                                 .Where(o => o.IdCustomerNavigation.PhoneNumber == searchValue)
+                                 .CountAsync();
+                if (dbOrders2.Count <= 0)
+                {
+                    response.Status = false;
+                    response.Message = "Not found order";
+
+                    return response;
+                }
+                response.TotalPage = count2;
+                response.Data = dbOrders2;
+                return response;
+            }
+            if (typeSearch == "tableFood")
+            {
+                var dbOrders3 = await _context.Orders.Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
+                               .Where(o => o.IdTableNavigation.Name.ToString() == searchValue)
+                               .Select(o =>
+                                 new OrderGet
+                                 {
+                                     IdOrder = o.IdOrder.ToString(),
+                                     Status = o.Status,
+                                     Amount = o.Amount,
+                                     TimePay = o.TimePay,
+                                     CreatedAt = o.CreatedAt,
+                                     UpdatedAt = o.UpdatedAt,
+                                     IdCustomer = o.IdCustomerNavigation.IdCustomer,
+                                     Fullname = o.IdCustomerNavigation.Fullname,
+                                     PhoneNumber = o.IdCustomerNavigation.PhoneNumber,
+                                     Gender = o.IdTableNavigation.IdTable,
+                                     IdTable = o.IdTableNavigation.IdTable,
+                                     NameTable = o.IdTableNavigation.Name,
+                                     StatusTable = o.IdTableNavigation.Status
+                                 })
+                              .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                              .ToListAsync();
+                var count3 = await _context.Orders.Include(o => o.IdTableNavigation)
+                              .Where(o => o.IdTableNavigation.Name.ToString() == searchValue).CountAsync();
+                if (dbOrders3.Count <= 0)
+                {
+                    response.Status = false;
+                    response.Message = "Not found order";
+
+                    return response;
+                }
+                response.TotalPage = count3;
+                response.Data = dbOrders3;
+                return response;
+            }
+            var dbOrders = await _context.Orders.Include(o => o.IdCustomerNavigation)
+                                 .Include(o => o.IdTableNavigation)
+                                 .Select(o =>
+                                 new OrderGet
+                                 {
+                                     IdOrder = o.IdOrder.ToString(),
+                                     Status = o.Status,
+                                     Amount = o.Amount,
+                                     TimePay = o.TimePay,
+                                     CreatedAt = o.CreatedAt,
+                                     UpdatedAt = o.UpdatedAt,
+                                     IdCustomer = o.IdCustomerNavigation.IdCustomer,
+                                     Fullname = o.IdCustomerNavigation.Fullname,
+                                     PhoneNumber = o.IdCustomerNavigation.PhoneNumber,
+                                     Gender = o.IdTableNavigation.IdTable,
+                                     IdTable = o.IdTableNavigation.IdTable,
+                                     NameTable = o.IdTableNavigation.Name,
+                                     StatusTable = o.IdTableNavigation.Status
+                                 })
+                                 .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                 .ToListAsync();
+            var count = await _context.Orders.CountAsync();
+            if (dbOrders.Count <= 0)
+            {
+                response.Status = false;
+                response.Message = "Not found order";
+
+                return response;
+            }
+            response.Data = dbOrders;
             response.TotalPage = count;
             return response;
         }
@@ -61,12 +233,12 @@ namespace QuanLyQuanCafe.Services.OrderServices
             {
                 IdOrder = Guid.NewGuid().ToString().Substring(0, 10),
                 IdCustomer = orderDto.IdCustomer,
-                IdTable = orderDto.IdTable, 
-                Amount = orderDto.Amount, 
+                IdTable = orderDto.IdTable,
+                Amount = orderDto.Amount,
             };
-            _context.Orders.Add(newOrder);  
-            await _context.SaveChangesAsync();  
-            response.Data = newOrder;   
+            _context.Orders.Add(newOrder);
+            await _context.SaveChangesAsync();
+            response.Data = newOrder;
             return response;
         }
 
@@ -75,17 +247,17 @@ namespace QuanLyQuanCafe.Services.OrderServices
             var response = new ApiResponse<Order>();
             var dbOrder = await _context.Orders.Include(o => o.IdCustomerNavigation)
                             .Include(o => o.IdTableNavigation).SingleOrDefaultAsync(o => o.IdOrder == Id);
-            if(dbOrder == null)
+            if (dbOrder == null)
             {
                 response.Status = false;
                 response.Message = "Not found";
                 return response;
             }
-            if(orderDto.Status == 1)
+            if (orderDto.Status == 1)
             {
                 dbOrder.TimePay = DateTime.Now;
             }
-            if(orderDto.Status == 0)
+            if (orderDto.Status == 0)
             {
                 dbOrder.TimePay = null;
             }
@@ -100,26 +272,160 @@ namespace QuanLyQuanCafe.Services.OrderServices
             var response = new ApiResponse<AnyType>();
             var dbOrder = await _context.Orders.Include(o => o.OrderDetails).SingleOrDefaultAsync(o => o.IdOrder == Id);
 
-            if (dbOrder == null) {
+            if (dbOrder == null)
+            {
                 response.Status = false;
                 response.Message = "Not found order";
                 return response;
             }
-            foreach(var item in dbOrder.OrderDetails)
+            foreach (var item in dbOrder.OrderDetails)
             {
-                _context.OrderDetails.Remove(item); 
+                _context.OrderDetails.Remove(item);
             }
             _context.Orders.Remove(dbOrder);
-            await _context.SaveChangesAsync();  
+            await _context.SaveChangesAsync();
             return response;
         }
 
 
-        public async Task<ApiResponse<List<Order>>> GetOrderPaid(int page)
+        public async Task<ApiResponse<List<OrderGet>>> GetOrderPaid(int page, string? typeSearch, string? searchValue)
         {
-            var response = new ApiResponse<List<Order>>();
-            var dbOrder = await _context.Orders.Where(o=> o.Status ==1).Include(o => o.IdCustomerNavigation)
-                                .Include(o => o.IdTableNavigation).ToListAsync();
+            var response = new ApiResponse<List<OrderGet>>();
+            if (typeSearch == "nameCustomer")
+            {
+                var data = new List<OrderGet>();
+                var dbOrders1 = await _context.Orders.Where(o => o.Status == 1).Include((o) => o.IdCustomerNavigation)
+                                                 .Include(o => o.IdTableNavigation)
+                                                 .ToListAsync();
+                foreach (var dbO in dbOrders1)
+                {
+                    OrderGet order = new OrderGet()
+                    {
+                        IdOrder = dbO.IdOrder.ToString(),
+                        Status = dbO.Status,
+                        Amount = dbO.Amount,
+                        TimePay = dbO.TimePay,
+                        CreatedAt = dbO.CreatedAt,
+                        UpdatedAt = dbO.UpdatedAt,
+                        IdCustomer = dbO.IdCustomerNavigation.IdCustomer,
+                        Fullname = dbO.IdCustomerNavigation.Fullname,
+                        PhoneNumber = dbO.IdCustomerNavigation.PhoneNumber,
+                        Gender = dbO.IdTableNavigation.IdTable,
+                        IdTable = dbO.IdTableNavigation.IdTable,
+                        NameTable = dbO.IdTableNavigation.Name,
+                        StatusTable = dbO.IdTableNavigation.Status
+                    };
+                    if (_Convert.ConvertToUnSign(dbO.IdCustomerNavigation.Fullname).Contains(_Convert.ConvertToUnSign(searchValue)))
+                    {
+                        data.Add(order);
+                    }
+                }
+                var db = data.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+                if (dbOrders1.Count <= 0)
+                {
+                    response.Status = false;
+                    response.Message = "Not found order";
+                    return response;
+                }
+                response.TotalPage = data.Count();
+                response.Data = db;
+                return response;
+            }
+            if (typeSearch == "phonenumber")
+            {
+
+                var dbOrders2 = await _context.Orders.Where(o => o.Status == 1).Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
+                                .Where(o => o.IdCustomerNavigation.PhoneNumber == searchValue)
+                                .Select(o =>
+                                 new OrderGet
+                                 {
+                                     IdOrder = o.IdOrder.ToString(),
+                                     Status = o.Status,
+                                     Amount = o.Amount,
+                                     TimePay = o.TimePay,
+                                     CreatedAt = o.CreatedAt,
+                                     UpdatedAt = o.UpdatedAt,
+                                     IdCustomer = o.IdCustomerNavigation.IdCustomer,
+                                     Fullname = o.IdCustomerNavigation.Fullname,
+                                     PhoneNumber = o.IdCustomerNavigation.PhoneNumber,
+                                     Gender = o.IdTableNavigation.IdTable,
+                                     IdTable = o.IdTableNavigation.IdTable,
+                                     NameTable = o.IdTableNavigation.Name,
+                                     StatusTable = o.IdTableNavigation.Status
+                                 })
+                                 .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                 .ToListAsync();
+                var count2 = await _context.Orders.Where(o => o.Status == 1).Include(o => o.IdCustomerNavigation)
+                                 .Where(o => o.IdCustomerNavigation.PhoneNumber == searchValue)
+                                 .CountAsync();
+                if (dbOrders2.Count <= 0)
+                {
+                    response.Status = false;
+                    response.Message = "Not found order";
+
+                    return response;
+                }
+                response.TotalPage = count2;
+                response.Data = dbOrders2;
+                return response;
+            }
+            if (typeSearch == "tableFood")
+            {
+                var dbOrders3 = await _context.Orders.Where(o => o.Status == 1).Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
+                               .Where(o => o.IdTableNavigation.Name.ToString() == searchValue)
+                               .Select(o =>
+                                 new OrderGet
+                                 {
+                                     IdOrder = o.IdOrder.ToString(),
+                                     Status = o.Status,
+                                     Amount = o.Amount,
+                                     TimePay = o.TimePay,
+                                     CreatedAt = o.CreatedAt,
+                                     UpdatedAt = o.UpdatedAt,
+                                     IdCustomer = o.IdCustomerNavigation.IdCustomer,
+                                     Fullname = o.IdCustomerNavigation.Fullname,
+                                     PhoneNumber = o.IdCustomerNavigation.PhoneNumber,
+                                     Gender = o.IdTableNavigation.IdTable,
+                                     IdTable = o.IdTableNavigation.IdTable,
+                                     NameTable = o.IdTableNavigation.Name,
+                                     StatusTable = o.IdTableNavigation.Status
+                                 })
+                              .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                              .ToListAsync();
+                var count3 = await _context.Orders.Where(o => o.Status == 1).Include(o => o.IdTableNavigation)
+                              .Where(o => o.IdTableNavigation.Name.ToString() == searchValue).CountAsync();
+                if (dbOrders3.Count <= 0)
+                {
+                    response.Status = false;
+                    response.Message = "Not found order";
+
+                    return response;
+                }
+                response.TotalPage = count3;
+                response.Data = dbOrders3;
+                return response;
+            }
+            var dbOrder = await _context.Orders.Where(o => o.Status == 1).Include(o => o.IdCustomerNavigation)
+                                .Include(o => o.IdTableNavigation)
+                                .Select(o =>
+                                 new OrderGet
+                                 {
+                                     IdOrder = o.IdOrder.ToString(),
+                                     Status = o.Status,
+                                     Amount = o.Amount,
+                                     TimePay = o.TimePay,
+                                     CreatedAt = o.CreatedAt,
+                                     UpdatedAt = o.UpdatedAt,
+                                     IdCustomer = o.IdCustomerNavigation.IdCustomer,
+                                     Fullname = o.IdCustomerNavigation.Fullname,
+                                     PhoneNumber = o.IdCustomerNavigation.PhoneNumber,
+                                     Gender = o.IdTableNavigation.IdTable,
+                                     IdTable = o.IdTableNavigation.IdTable,
+                                     NameTable = o.IdTableNavigation.Name,
+                                     StatusTable = o.IdTableNavigation.Status
+                                 }).
+                                ToListAsync();
+
             var count = await _context.Orders.Where(o => o.Status == 1).CountAsync();
             if (dbOrder.Count <= 0)
             {
@@ -133,13 +439,144 @@ namespace QuanLyQuanCafe.Services.OrderServices
         }
 
 
-        public async Task<ApiResponse<List<Order>>> GetOrderUnpaid(int page)
+        public async Task<ApiResponse<List<OrderGet>>> GetOrderUnpaid(int page, string? typeSearch, string? searchValue)
         {
-            var response = new ApiResponse<List<Order>>();
+            var response = new ApiResponse<List<OrderGet>>();
+            if (typeSearch == "nameCustomer")
+            {
+                var data = new List<OrderGet>();
+                var dbOrders1 = await _context.Orders.Where(o => o.Status == 0).Include((o) => o.IdCustomerNavigation)
+                                                 .Include(o => o.IdTableNavigation)
+                                                 .ToListAsync();
+                foreach (var dbO in dbOrders1)
+                {
+                    OrderGet order = new OrderGet()
+                    {
+                        IdOrder = dbO.IdOrder.ToString(),
+                        Status = dbO.Status,
+                        Amount = dbO.Amount,
+                        TimePay = dbO.TimePay,
+                        CreatedAt = dbO.CreatedAt,
+                        UpdatedAt = dbO.UpdatedAt,
+                        IdCustomer = dbO.IdCustomerNavigation.IdCustomer,
+                        Fullname = dbO.IdCustomerNavigation.Fullname,
+                        PhoneNumber = dbO.IdCustomerNavigation.PhoneNumber,
+                        Gender = dbO.IdTableNavigation.IdTable,
+                        IdTable = dbO.IdTableNavigation.IdTable,
+                        NameTable = dbO.IdTableNavigation.Name,
+                        StatusTable = dbO.IdTableNavigation.Status
+                    };
+                    if (_Convert.ConvertToUnSign(dbO.IdCustomerNavigation.Fullname).Contains(_Convert.ConvertToUnSign(searchValue)))
+                    {
+                        data.Add(order);
+                    }
+                }
+                var db = data.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+                if (dbOrders1.Count <= 0)
+                {
+                    response.Status = false;
+                    response.Message = "Not found order";
+                    return response;
+                }
+                response.TotalPage = data.Count();
+                response.Data = db;
+                return response;
+            }
+            if (typeSearch == "phonenumber")
+            {
+
+                var dbOrders2 = await _context.Orders.Where(o => o.Status == 0).Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
+                                .Where(o => o.IdCustomerNavigation.PhoneNumber == searchValue)
+                                .Select(o =>
+                                 new OrderGet
+                                 {
+                                     IdOrder = o.IdOrder.ToString(),
+                                     Status = o.Status,
+                                     Amount = o.Amount,
+                                     TimePay = o.TimePay,
+                                     CreatedAt = o.CreatedAt,
+                                     UpdatedAt = o.UpdatedAt,
+                                     IdCustomer = o.IdCustomerNavigation.IdCustomer,
+                                     Fullname = o.IdCustomerNavigation.Fullname,
+                                     PhoneNumber = o.IdCustomerNavigation.PhoneNumber,
+                                     Gender = o.IdTableNavigation.IdTable,
+                                     IdTable = o.IdTableNavigation.IdTable,
+                                     NameTable = o.IdTableNavigation.Name,
+                                     StatusTable = o.IdTableNavigation.Status
+                                 })
+                                 .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                 .ToListAsync();
+                var count2 = await _context.Orders.Where(o => o.Status == 0).Include(o => o.IdCustomerNavigation)
+                                 .Where(o => o.IdCustomerNavigation.PhoneNumber == searchValue)
+                                 .CountAsync();
+                if (dbOrders2.Count <= 0)
+                {
+                    response.Status = false;
+                    response.Message = "Not found order";
+
+                    return response;
+                }
+                response.TotalPage = count2;
+                response.Data = dbOrders2;
+                return response;
+            }
+            if (typeSearch == "tableFood")
+            {
+                var dbOrders3 = await _context.Orders.Where(o => o.Status == 0).Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
+                               .Where(o => o.IdTableNavigation.Name.ToString() == searchValue)
+                               .Select(o =>
+                                 new OrderGet
+                                 {
+                                     IdOrder = o.IdOrder.ToString(),
+                                     Status = o.Status,
+                                     Amount = o.Amount,
+                                     TimePay = o.TimePay,
+                                     CreatedAt = o.CreatedAt,
+                                     UpdatedAt = o.UpdatedAt,
+                                     IdCustomer = o.IdCustomerNavigation.IdCustomer,
+                                     Fullname = o.IdCustomerNavigation.Fullname,
+                                     PhoneNumber = o.IdCustomerNavigation.PhoneNumber,
+                                     Gender = o.IdTableNavigation.IdTable,
+                                     IdTable = o.IdTableNavigation.IdTable,
+                                     NameTable = o.IdTableNavigation.Name,
+                                     StatusTable = o.IdTableNavigation.Status
+                                 })
+                              .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                              .ToListAsync();
+                var count3 = await _context.Orders.Where(o => o.Status == 0).Include(o => o.IdTableNavigation)
+                              .Where(o => o.IdTableNavigation.Name.ToString() == searchValue).CountAsync();
+                if (dbOrders3.Count <= 0)
+                {
+                    response.Status = false;
+                    response.Message = "Not found order";
+
+                    return response;
+                }
+                response.TotalPage = count3;
+                response.Data = dbOrders3;
+                return response;
+            }
             var dbOrder = await _context.Orders.Where(o => o.Status == 0).Include(o => o.IdCustomerNavigation)
                                 .Include(o => o.IdTableNavigation)
-                                 .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
-                                .ToListAsync();
+                                .Select(o =>
+                                 new OrderGet
+                                 {
+                                     IdOrder = o.IdOrder.ToString(),
+                                     Status = o.Status,
+                                     Amount = o.Amount,
+                                     TimePay = o.TimePay,
+                                     CreatedAt = o.CreatedAt,
+                                     UpdatedAt = o.UpdatedAt,
+                                     IdCustomer = o.IdCustomerNavigation.IdCustomer,
+                                     Fullname = o.IdCustomerNavigation.Fullname,
+                                     PhoneNumber = o.IdCustomerNavigation.PhoneNumber,
+                                     Gender = o.IdTableNavigation.IdTable,
+                                     IdTable = o.IdTableNavigation.IdTable,
+                                     NameTable = o.IdTableNavigation.Name,
+                                     StatusTable = o.IdTableNavigation.Status
+                                 }).
+                                ToListAsync();
+
             var count = await _context.Orders.Where(o => o.Status == 0).CountAsync();
             if (dbOrder.Count <= 0)
             {
@@ -147,7 +584,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                 response.Message = "Not found order";
                 return response;
             }
-           response.TotalPage = count; 
+            response.TotalPage = count;
             response.Data = dbOrder;
             return response;
         }
