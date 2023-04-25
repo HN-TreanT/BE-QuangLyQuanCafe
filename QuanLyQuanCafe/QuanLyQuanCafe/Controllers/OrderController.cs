@@ -40,7 +40,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllOrder")]
-       /* [Authorize]*/
+        [Authorize]
         public async Task<IActionResult> GetAllOrder(int page,string? typeSearch, string? searchValue)
         {
             try

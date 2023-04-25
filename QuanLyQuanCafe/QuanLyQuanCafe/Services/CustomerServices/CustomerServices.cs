@@ -45,13 +45,10 @@ namespace QuanLyQuanCafe.Services.CustomerServices
             {
 
                     var dbCustomers =  _context.Customers.Include(cus => cus.Orders).ThenInclude(order => order.OrderDetails)
-                                       .Where(delegate (Customer c)
-                                       {
-                                           if (ConvertToUnSign(c.Fullname).IndexOf(name, StringComparison.CurrentCultureIgnoreCase) >= 0)
-                                               return true;
-                                           else
-                                               return false;
-                                       }).AsQueryable().ToList();
+                                        .AsEnumerable()
+                                       .Where(m => _Convert.ConvertToUnSign(m.Fullname).Contains(_Convert.ConvertToUnSign(name)))
+                                       .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                       .ToList();
                 var count = _context.Customers
                                        .AsEnumerable()
                                        .Where(m => _Convert.ConvertToUnSign(m.Fullname).Contains(_Convert.ConvertToUnSign(name)))
@@ -97,7 +94,12 @@ namespace QuanLyQuanCafe.Services.CustomerServices
 
         public async Task<ApiResponse<Customer>> CreateCustomer(CustomerDto CustomerDto)
         {
-            var response = new ApiResponse<Customer>();          
+            var response = new ApiResponse<Customer>();       
+            var dbCustomer = await _context.Customers
+                                   .Where(cus=> cus.PhoneNumber == CustomerDto.PhoneNumber)
+                                   .SingleOrDefaultAsync();
+            if (dbCustomer == null)
+            {
                 string Id = Guid.NewGuid().ToString().Substring(0, 10);
                 var customer = new Customer
                 {
@@ -108,8 +110,16 @@ namespace QuanLyQuanCafe.Services.CustomerServices
                 };
                 _context.Customers.Add(customer);
                 await _context.SaveChangesAsync();
-                response.Data = customer;                
-            return response;
+                response.Data = customer;
+                return response;
+            }
+            else
+            {
+                response.Status = false;
+                response.Message = "customer already exist";
+                return response;
+            }
+               
         }
 
         public async Task<ApiResponse<Customer>> UpdateCustomerDto(string Id, CustomerDto CustomerDto)

@@ -28,7 +28,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getAllCustomer")]
-        /*[Authorize]*/
+        [Authorize]
         public async Task<IActionResult> GetAllCustomer(int page,string? name)
         {
             try
