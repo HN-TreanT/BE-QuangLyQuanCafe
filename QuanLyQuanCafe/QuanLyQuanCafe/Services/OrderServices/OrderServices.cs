@@ -86,22 +86,25 @@ namespace QuanLyQuanCafe.Services.OrderServices
                     OrderGet order = new OrderGet()
                     {
                         IdOrder = dbOrder.IdOrder.ToString(),
-                        Status = dbOrder.Status,
-                        Amount = dbOrder.Amount,
-                        TimePay = dbOrder.TimePay,
-                        CreatedAt = dbOrder.CreatedAt,
-                        UpdatedAt = dbOrder.UpdatedAt,
-                        IdCustomer = dbOrder.IdCustomerNavigation.IdCustomer,
-                        Fullname = dbOrder.IdCustomerNavigation.Fullname,
-                        PhoneNumber = dbOrder.IdCustomerNavigation.PhoneNumber,
-                        Gender = dbOrder.IdTableNavigation.IdTable,
-                        IdTable = dbOrder.IdTableNavigation.IdTable,
-                        NameTable = dbOrder.IdTableNavigation.Name,
-                        StatusTable = dbOrder.IdTableNavigation.Status
+                        Status = dbOrder?.Status,
+                        Amount = dbOrder?.Amount,
+                        TimePay = dbOrder?.TimePay,
+                        CreatedAt = dbOrder?.CreatedAt,
+                        UpdatedAt = dbOrder?.UpdatedAt,
+                        IdCustomer = dbOrder.IdCustomerNavigation?.IdCustomer ,
+                        Fullname = dbOrder.IdCustomerNavigation?.Fullname,
+                        PhoneNumber = dbOrder.IdCustomerNavigation?.PhoneNumber,
+                        Gender = dbOrder.IdTableNavigation?.IdTable,
+                        IdTable = dbOrder.IdTableNavigation?.IdTable,
+                        NameTable = dbOrder.IdTableNavigation?.Name,
+                        StatusTable = dbOrder.IdTableNavigation?.Status
                     };
-                    if (_Convert.ConvertToUnSign(dbOrder.IdCustomerNavigation.Fullname).Contains(_Convert.ConvertToUnSign(searchValue)))
+                    if(dbOrder.IdCustomerNavigation?.Fullname != null && searchValue !=null)
                     {
-                        data.Add(order);
+                        if (_Convert.ConvertToUnSign(dbOrder.IdCustomerNavigation.Fullname).Contains(_Convert.ConvertToUnSign(searchValue)))
+                        {
+                            data.Add(order);
+                        }
                     }
                 }
                 var db = data.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();

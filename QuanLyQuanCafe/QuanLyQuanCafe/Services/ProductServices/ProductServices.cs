@@ -188,7 +188,7 @@ namespace QuanLyQuanCafe.Services.ProductServices
                  Price = g.Sum(od => od.Price),   
               })
             .OrderByDescending(s => s.TotalAmount)
-            .Take(5)
+            .Take(5)    
            .ToList();
             response.Data = top5ProductsOrdered;
             return response;
