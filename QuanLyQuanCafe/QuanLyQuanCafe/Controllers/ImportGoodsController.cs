@@ -55,7 +55,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createImportGoods")]
-        [Authorize(Roles = "Admin")]
+        /*[Authorize(Roles = "Admin")]*/
         public async Task<IActionResult> CreateImportGoods([FromBody] ImportGoodsDto ImportGoodsDto)
         {
             try

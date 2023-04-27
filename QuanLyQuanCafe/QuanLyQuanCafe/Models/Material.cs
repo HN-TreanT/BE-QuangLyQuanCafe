@@ -14,6 +14,7 @@ namespace QuanLyQuanCafe.Models
         public string IdMaterial { get; set; } = null!;
         public string NameMaterial { get; set; } = null!;
         public string? Description { get; set; }
+        public double? Amount { get; set; }
         public string? Unit { get; set; }
         public int? Expiry { get; set; }
         public DateTime? CreatedAt { get; set; }

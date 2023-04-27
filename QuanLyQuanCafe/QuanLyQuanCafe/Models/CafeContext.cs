@@ -31,8 +31,9 @@ namespace QuanLyQuanCafe.Models
         public virtual DbSet<Provider> Providers { get; set; } = null!;
         public virtual DbSet<SelectedWorkShift> SelectedWorkShifts { get; set; } = null!;
         public virtual DbSet<TableFood> TableFoods { get; set; } = null!;
-        public virtual DbSet<TokenInfo> TokenInfo { get; set; } 
+        public virtual DbSet<TokenInfo> TokenInfo { get; set; } = null!;
         public virtual DbSet<UseMaterial> UseMaterials { get; set; } = null!;
+      
         public virtual DbSet<WorkShift> WorkShifts { get; set; } = null!;
         public virtual DbSet<staff> staff { get; set; } = null!;
 
@@ -213,6 +214,10 @@ namespace QuanLyQuanCafe.Models
                     .HasMaxLength(10)
                     .IsUnicode(false)
                     .IsFixedLength();
+
+                entity.Property(e => e.Amount)
+                    .HasColumnName("amount")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("datetime")

@@ -73,7 +73,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createOrderDetail")]
-        [Authorize]
+        /*[Authorize]*/
 
         public async Task<IActionResult> CreateOrderDetail([FromBody] OrderDetailDto orderDetailDto)
         {

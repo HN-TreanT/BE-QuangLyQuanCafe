@@ -10,6 +10,7 @@ namespace QuanLyQuanCafe.Services.MaterialServices
     {
         private readonly IMapper _mapper;
         private readonly CafeContext _context;
+        
         public MaterialServices(IMapper mapper, CafeContext context)
         {
             _mapper = mapper;

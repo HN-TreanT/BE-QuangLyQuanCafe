@@ -73,6 +73,12 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
         public async Task<ApiResponse<DetailImportGood>> CreateDtIGoods(ImportGoodsDto DtIGoods)
         {
             var response = new ApiResponse<DetailImportGood>();
+            var dbMaterial  = await _context.Materials.FindAsync(DtIGoods.IdMaterial);
+            if(dbMaterial == null) {
+              response.Status=false;
+                response.Message = "Not found";
+                return response;
+            }
             string Id = Guid.NewGuid().ToString().Substring(0,10);
             var ImportGoods = new DetailImportGood {
                 IdDetailImportGoods = Id,
@@ -81,9 +87,11 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
                 Amount = DtIGoods.Amount,
                 Price = DtIGoods.Price,            
             };
-                _context.DetailImportGoods.Add(ImportGoods);
-                await _context.SaveChangesAsync();
-                response.Data = ImportGoods;
+            var total  = dbMaterial.Amount + DtIGoods?.Amount;
+            dbMaterial.Amount = total;
+            _context.DetailImportGoods.Add(ImportGoods);
+            await _context.SaveChangesAsync();
+            response.Data = ImportGoods;
             return response;
         }
 

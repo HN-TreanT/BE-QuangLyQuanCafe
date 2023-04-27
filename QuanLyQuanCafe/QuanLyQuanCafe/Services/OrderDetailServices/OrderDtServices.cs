@@ -52,11 +52,11 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
         public async Task<ApiResponse<OrderDetail>> CreateOrderDt(OrderDetailDto orderDetailDto)
         {
             var response = new ApiResponse<OrderDetail>();
-            var dbProdcut = await _context.Products.Include(p=>p.PromotionProducts).SingleOrDefaultAsync(p=>p.IdProduct==orderDetailDto.IdProduct);
+            var dbProdcut = await _context.Products.Include(p=>p.PromotionProducts).Include(p=>p.UseMaterials).SingleOrDefaultAsync(p=>p.IdProduct==orderDetailDto.IdProduct);
             if (dbProdcut == null) {
                 response.Status =false;
                 response.Message = "Not found product";
-                return response;
+                return response;    
             }
             var newPrice = orderDetailDto.Amount * dbProdcut.Price;
             foreach (var item in dbProdcut.PromotionProducts)
@@ -66,7 +66,17 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
                     newPrice -= newPrice * item.Sale;
                 }
             }
-            orderDetailDto.Price = newPrice;    
+            orderDetailDto.Price = newPrice; 
+            // trừ đi nguyên liệu trong kho
+            foreach (var item in dbProdcut.UseMaterials)
+            {
+                var materail = await _context.Materials.FindAsync(item.IdMaterial);
+                if(materail != null)
+                {
+                    var total = materail.Amount - item.Amount * orderDetailDto.Amount;
+                    materail.Amount = total;    
+                }
+            }
             var newOrderDetail = new OrderDetail
             {
                 IdOrderDetail = Guid.NewGuid().ToString().Substring(0, 10),
@@ -75,6 +85,7 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
                 Price = orderDetailDto.Price ,   
                 Amout = orderDetailDto.Amount
             };
+            
             _context.OrderDetails.Add(newOrderDetail);
             await _context.SaveChangesAsync();  
             response.Data = newOrderDetail; 

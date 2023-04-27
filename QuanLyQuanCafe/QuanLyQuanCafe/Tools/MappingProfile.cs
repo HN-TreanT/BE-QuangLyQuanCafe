@@ -64,12 +64,14 @@ namespace QuanLyQuanCafe.Tools
                .ForMember(dest => dest.IdProvider, opt => opt.Condition(src => src.IdProvider != null))
                .ForMember(dest => dest.Amount, opt => opt.Condition(src => src.Amount != null))
                .ForMember(dest => dest.Price, opt => opt.Condition(src => src.Price != null));
-            CreateMap<MaterialDto,Material>()
+            CreateMap<MaterialDto, Material>()
                .ForMember(dest => dest.NameMaterial, opt => opt.Condition(src => src.NameMaterial != null))
                .ForMember(dest => dest.Description, opt => opt.Condition(src => src.Description != null))
                .ForMember(dest => dest.Unit, opt => opt.Condition(src => src.Unit != null))
-               .ForMember(dest => dest.Expiry, opt => opt.Condition(src => src.Expiry != null));
+               .ForMember(dest => dest.Expiry, opt => opt.Condition(src => src.Expiry != null))
+               .ForMember(dest => dest.Amount, opt => opt.Condition(src => src.Amount != null));
             CreateMap<MaterialUpdateDto, Material>()
+                 .ForMember(dest => dest.NameMaterial, opt => opt.Condition(src => src.NameMaterial != null))
                 .ForMember(dest => dest.Description, opt => opt.Condition(src => src.Description != null))
                .ForMember(dest => dest.Unit, opt => opt.Condition(src => src.Unit != null))
                .ForMember(dest => dest.Expiry, opt => opt.Condition(src => src.Expiry != null));
