@@ -7,7 +7,7 @@ namespace QuanLyQuanCafe.Services.TableFoodServices
 {
     public interface ITableFoodService
     {
-        Task<ApiResponse<List<TableFood>>> GetAllTableFood();
+        Task<ApiResponse<List<TableFood>>> GetAllTableFood(int page);
         Task<ApiResponse<TableFood>> GetTableFoodById(string Id);
         Task<ApiResponse<TableFood>> CreateTableFood(TableFoodDto TableFoodDto);
 

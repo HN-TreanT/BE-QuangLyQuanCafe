@@ -4,6 +4,7 @@ using QuanLyQuanCafe.Tools;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Dto.TableFood;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace QuanLyQuanCafe.Services.TableFoodServices
 {
@@ -12,23 +13,27 @@ namespace QuanLyQuanCafe.Services.TableFoodServices
 
         private readonly CafeContext _context;
         private readonly IMapper _mapper;
+        public static int PAGE_SIZE { get; set; } = 18;
         public TableFoodServices(CafeContext context, IMapper mapper)
         {
             this._context = context;
             this._mapper = mapper;
         }
 
-        public async Task<ApiResponse<List<TableFood>>> GetAllTableFood()
+        public async Task<ApiResponse<List<TableFood>>> GetAllTableFood(int page)
         {
             var response = new ApiResponse<List<TableFood>>(); 
-                var dbTableFoods = await _context.TableFoods.ToListAsync();
+                var dbTableFoods = await _context.TableFoods.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToListAsync();
+                var count = await _context.TableFoods.CountAsync();
                 if (dbTableFoods.Count <= 0)
                 {
                     response.Status = false;
                     response.Message = "Not found";
                     return response;
                 }
-                response.Data = dbTableFoods;          
+                response.Data = dbTableFoods;
+            Console.WriteLine(count);
+               response.TotalPage = count; 
             return response;
         }
 

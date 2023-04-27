@@ -29,12 +29,12 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllTableFood")]
-        [Authorize]
-        public async Task<IActionResult> GetAllTableFood()
+       /* [Authorize]*/
+        public async Task<IActionResult> GetAllTableFood(int page)
         {
             try
             {
-                var response = await _tableFoodService.GetAllTableFood();   
+                var response = await _tableFoodService.GetAllTableFood(page);   
                 return Ok(response);
                 
             }catch (Exception ex) {
