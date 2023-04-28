@@ -23,7 +23,9 @@ namespace QuanLyQuanCafe.Services.TableFoodServices
         public async Task<ApiResponse<List<TableFood>>> GetAllTableFood(int page)
         {
             var response = new ApiResponse<List<TableFood>>(); 
-                var dbTableFoods = await _context.TableFoods.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToListAsync();
+                var dbTableFoods = await _context.TableFoods.OrderBy(tb => tb.Name)
+                                                           .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)                                           
+                                                           .ToListAsync();
                 var count = await _context.TableFoods.CountAsync();
                 if (dbTableFoods.Count <= 0)
                 {

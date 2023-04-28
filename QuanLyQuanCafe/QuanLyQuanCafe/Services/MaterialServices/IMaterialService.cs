@@ -13,6 +13,7 @@ namespace QuanLyQuanCafe.Services.MaterialServices
         Task<ApiResponse<Material>> CreateMaterial(MaterialDto materialDto);
         Task<ApiResponse<Material>> UpdateMaterial(string Id, MaterialUpdateDto materialUpdateDto);
         Task<ApiResponse<AnyType>> DeleteMaterial(string Id);
-        Task<ApiResponse<List<Material>>> searchMaterialByName(string Name);  
+        Task<ApiResponse<List<Material>>> searchMaterialByName(string Name);
+        Task<ApiResponse<List<HistoryWarehouse>>> getHistoryWarehouse(int page,string? timeStart,string? timeEnd);
     }
 }

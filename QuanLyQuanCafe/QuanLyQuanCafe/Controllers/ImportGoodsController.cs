@@ -40,11 +40,11 @@ namespace QuanLyQuanCafe.Controllers
         [HttpGet]
         [Route("getAllImportGood")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllImportGood()
+        public async Task<IActionResult> GetAllImportGood(int page)
         {
             try
             {
-                var response = await _importGoodsService.GetAllDTGoods();
+                var response = await _importGoodsService.GetAllDTGoods(page);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -55,7 +55,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createImportGoods")]
-        /*[Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateImportGoods([FromBody] ImportGoodsDto ImportGoodsDto)
         {
             try

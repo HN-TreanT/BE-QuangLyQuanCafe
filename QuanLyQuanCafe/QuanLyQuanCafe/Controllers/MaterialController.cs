@@ -8,6 +8,7 @@ using QuanLyQuanCafe.Models;
 using QuanLyQuanCafe.Services.MaterialServices;
 using QuanLyQuanCafe.Tools;
 using System.Data;
+using System.Xml.Linq;
 
 namespace QuanLyQuanCafe.Controllers
 {
@@ -119,6 +120,26 @@ namespace QuanLyQuanCafe.Controllers
                 if(response.Data.Count <= 0)
                 {
                     return Ok(new ApiResponse<AnyType> { Status = false , Message = "Not found"});
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("getHistoryWarehouse")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetHistoryWareHouse(int page,string? timeStart,string? timeEnd)
+        {
+            try
+            {
+                var response = await _materialService.getHistoryWarehouse(page,timeStart,timeEnd);
+                if (response.Data.Count <= 0)
+                {
+                    return Ok(new ApiResponse<AnyType> { Status = false, Message = "Not found" });
                 }
                 return Ok(response);
             }

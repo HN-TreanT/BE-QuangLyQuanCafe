@@ -11,6 +11,7 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
     {
         private readonly CafeContext _context;
         private readonly IMapper _mapper;
+        public static int PAGE_SIZE { get; set; } = 6;
         public ImportGoodsServices(CafeContext context, IMapper mapper)
         {
             _context = context;
@@ -41,7 +42,7 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
             return response;
         }
 
-        public async Task<ApiResponse<List<DetailImportGood>>> GetAllDTGoods()
+        public async Task<ApiResponse<List<DetailImportGood>>> GetAllDTGoods(int page)
         {
             var response = new ApiResponse<List<DetailImportGood>>();
             var ListDtIGoods = await _context.DetailImportGoods
@@ -56,8 +57,12 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
                   Price = d.Price,  
                   IdMaterialNavigation = d.IdMaterialNavigation,
                   IdProviderNavigation = d.IdProviderNavigation,
+                  CreatedAt = d.CreatedAt,
 
-              }).ToListAsync();
+              })
+              .OrderByDescending(d => d.CreatedAt)
+              .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToListAsync();
+            var count = await _context.DetailImportGoods.CountAsync();
             if (ListDtIGoods.Count <= 0)
             {
                 response.Status = false;
@@ -65,6 +70,7 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
                 return response;
             }
              response.Data = ListDtIGoods;
+            response.TotalPage = count;
 
 
             return response;
