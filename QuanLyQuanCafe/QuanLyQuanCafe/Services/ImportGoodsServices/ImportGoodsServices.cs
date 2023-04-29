@@ -21,24 +21,16 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
         public async Task<ApiResponse<DetailImportGood>> GetDTGoodsById(string Id)
         {
             var response = new ApiResponse<DetailImportGood>();
-          
-            var DtIGoods = await _context.DetailImportGoods.FindAsync(Id);
-            if(DtIGoods == null) {
-                response.Status = false;
-                response.Message = "Not found";
-                return response;
-            }
-            var dbProduct = await _context.Products.FindAsync(DtIGoods.IdMaterial);
-            var dbProvider = await _context.Providers.FindAsync(DtIGoods.IdProvider);
-            if(dbProduct == null && dbProvider == null)
+    
+             var DtIGoods = await _context.DetailImportGoods.Include(dt=> dt.IdMaterialNavigation)
+                                         .SingleOrDefaultAsync(dt=> dt.IdDetailImportGoods == Id);
+            if (DtIGoods == null)
             {
                 response.Status = false;
                 response.Message = "Not found";
                 return response;
             }
-           // DtIGoods.IdMaterialNavigation = dbProduct;
-            DtIGoods.IdProviderNavigation = dbProvider;
-            response.Data = DtIGoods;   
+            response.Data = DtIGoods;
             return response;
         }
 
@@ -46,22 +38,9 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
         {
             var response = new ApiResponse<List<DetailImportGood>>();
             var ListDtIGoods = await _context.DetailImportGoods
-              .Include(d => d.IdMaterialNavigation)
-              .Include(d => d.IdProviderNavigation)
-              .Select(d => new DetailImportGood
-              {
-                  IdDetailImportGoods = d.IdDetailImportGoods,
-                  IdMaterial = d.IdMaterial,
-                  IdProvider = d.IdProvider,
-                  Amount = d.Amount,
-                  Price = d.Price,  
-                  IdMaterialNavigation = d.IdMaterialNavigation,
-                  IdProviderNavigation = d.IdProviderNavigation,
-                  CreatedAt = d.CreatedAt,
-
-              })
-              .OrderByDescending(d => d.CreatedAt)
-              .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToListAsync();
+                                        .Include(dt => dt.IdMaterialNavigation)
+                                        .Skip((page-1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                        .ToListAsync();
             var count = await _context.DetailImportGoods.CountAsync();
             if (ListDtIGoods.Count <= 0)
             {
@@ -69,31 +48,32 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
                 response.Message = "Not found";
                 return response;
             }
-             response.Data = ListDtIGoods;
+            response.Data = ListDtIGoods;
             response.TotalPage = count;
-
-
             return response;
         }
 
         public async Task<ApiResponse<DetailImportGood>> CreateDtIGoods(ImportGoodsDto DtIGoods)
         {
             var response = new ApiResponse<DetailImportGood>();
-            var dbMaterial  = await _context.Materials.FindAsync(DtIGoods.IdMaterial);
-            if(dbMaterial == null) {
-              response.Status=false;
+            var dbMaterial = await _context.Materials.FindAsync(DtIGoods.IdMaterial);
+            if (dbMaterial == null)
+            {
+                response.Status = false;
                 response.Message = "Not found";
                 return response;
             }
-            string Id = Guid.NewGuid().ToString().Substring(0,10);
-            var ImportGoods = new DetailImportGood {
+            string Id = Guid.NewGuid().ToString().Substring(0, 10);
+            var ImportGoods = new DetailImportGood
+            {
                 IdDetailImportGoods = Id,
-                IdProvider = DtIGoods.IdProvider,
+                NameProvider = DtIGoods.NameProvider,
+                PhoneProvider = DtIGoods.PhoneProvider,
                 IdMaterial = DtIGoods.IdMaterial,
                 Amount = DtIGoods.Amount,
-                Price = DtIGoods.Price,            
+                Price = DtIGoods.Price,
             };
-            var total  = dbMaterial.Amount + DtIGoods?.Amount;
+            var total = dbMaterial.Amount + DtIGoods?.Amount;
             dbMaterial.Amount = total;
             _context.DetailImportGoods.Add(ImportGoods);
             await _context.SaveChangesAsync();
@@ -104,15 +84,15 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
         public async Task<ApiResponse<DetailImportGood>> UpdateDtIGoods(string Id, ImportGoodsDto DtIGoods)
         {
             var response = new ApiResponse<DetailImportGood>();
-                var dbImportGoods = await _context.DetailImportGoods.FindAsync(Id);
-                if(dbImportGoods == null)
-                {
-                    response.Status = false;
-                    response.Message = "Not found";
-                    return response;
-                }
-                _mapper.Map(DtIGoods, dbImportGoods);
-                await _context.SaveChangesAsync();
+            var dbImportGoods = await _context.DetailImportGoods.FindAsync(Id);
+            if (dbImportGoods == null)
+            {
+                response.Status = false;
+                response.Message = "Not found";
+                return response;
+            }
+            _mapper.Map(DtIGoods, dbImportGoods);
+            await _context.SaveChangesAsync();
             response.Data = dbImportGoods;
             return response;
         }
@@ -120,17 +100,17 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
         public async Task<ApiResponse<AnyType>> DeleteDtIGoods(string Id)
         {
             var response = new ApiResponse<AnyType>();
-           
-                var dbImportGoods = await _context.DetailImportGoods.FindAsync(Id);
-                if (dbImportGoods == null)
-                {
-                    response.Status = false;
-                    response.Message = "Not found";
-                    return response;
-                }
-                _context.DetailImportGoods.Remove(dbImportGoods);
-                await _context.SaveChangesAsync();  
-           
+
+            var dbImportGoods = await _context.DetailImportGoods.FindAsync(Id);
+            if (dbImportGoods == null)
+            {
+                response.Status = false;
+                response.Message = "Not found";
+                return response;
+            }
+            _context.DetailImportGoods.Remove(dbImportGoods);
+            await _context.SaveChangesAsync();
+
             return response;
         }
 

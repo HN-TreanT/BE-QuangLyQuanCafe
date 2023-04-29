@@ -19,7 +19,8 @@ namespace QuanLyQuanCafe.Services.CategoryServices
         public async Task<ApiResponse<List<Category>>> GetAllCategory()
         {
             var response = new ApiResponse<List<Category>>();
-            var DbCategories = await _context.Categories.Include(p => p.Products).ToListAsync();
+            var DbCategories = await _context.Categories.Include(p => p.Products)                                                 
+                                                       .ToListAsync();
             response.Data = DbCategories;
             return response;
         }

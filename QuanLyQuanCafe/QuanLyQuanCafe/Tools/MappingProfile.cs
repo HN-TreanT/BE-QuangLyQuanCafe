@@ -61,7 +61,8 @@ namespace QuanLyQuanCafe.Tools
               .ForMember(dest => dest.IdCategory, opt => opt.Condition(src => src.IdCategory != null));
             CreateMap<ImportGoodsDto, DetailImportGood>()
                .ForMember(dest => dest.IdMaterial, opt => opt.Condition(src => src.IdMaterial != null))
-               .ForMember(dest => dest.IdProvider, opt => opt.Condition(src => src.IdProvider != null))
+               .ForMember(dest => dest.NameProvider, opt => opt.Condition(src => src.NameProvider != null))
+               .ForMember(dest => dest.PhoneProvider, opt => opt.Condition(src => src.PhoneProvider != null))
                .ForMember(dest => dest.Amount, opt => opt.Condition(src => src.Amount != null))
                .ForMember(dest => dest.Price, opt => opt.Condition(src => src.Price != null));
             CreateMap<MaterialDto, Material>()

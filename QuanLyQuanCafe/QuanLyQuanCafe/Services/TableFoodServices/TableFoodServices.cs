@@ -79,6 +79,13 @@ namespace QuanLyQuanCafe.Services.TableFoodServices
         public async Task<ApiResponse<TableFood>> UpdateTableFood(string Id, TableFoodDto TableFoodDto)
         {
             var response = new ApiResponse<TableFood>();
+            var tableFood = await _context.TableFoods.SingleOrDefaultAsync(tb => tb.Name == TableFoodDto.Name);
+            if(tableFood != null)
+            {
+                response.Status = false;
+                response.Message = "table food already exists";
+                return response;
+            }
                 var dbTableFood = await _context.TableFoods.SingleOrDefaultAsync(tb => tb.IdTable == Id);
                 if (dbTableFood == null)
                 {

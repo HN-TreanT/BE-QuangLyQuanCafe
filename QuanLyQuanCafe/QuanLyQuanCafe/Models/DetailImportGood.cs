@@ -7,13 +7,13 @@ namespace QuanLyQuanCafe.Models
     {
         public string IdDetailImportGoods { get; set; } = null!;
         public string? IdMaterial { get; set; }
-        public string? IdProvider { get; set; }
+        public string? PhoneProvider { get; set; }
+        public string? NameProvider { get; set; }
         public int? Amount { get; set; }
         public double? Price { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
         public virtual Material? IdMaterialNavigation { get; set; }
-        public virtual Provider? IdProviderNavigation { get; set; }
     }
 }

@@ -33,7 +33,6 @@ namespace QuanLyQuanCafe.Models
         public virtual DbSet<TableFood> TableFoods { get; set; } = null!;
         public virtual DbSet<TokenInfo> TokenInfo { get; set; } = null!;
         public virtual DbSet<UseMaterial> UseMaterials { get; set; } = null!;
-      
         public virtual DbSet<WorkShift> WorkShifts { get; set; } = null!;
         public virtual DbSet<staff> staff { get; set; } = null!;
 
@@ -48,12 +47,14 @@ namespace QuanLyQuanCafe.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.Entity<IdentityUserLogin<string>>()
-            .HasKey(l => new { l.LoginProvider, l.ProviderKey });
+             .HasKey(l => new { l.LoginProvider, l.ProviderKey });
             modelBuilder.Entity<IdentityUserRole<string>>()
              .HasKey(ur => new { ur.UserId, ur.RoleId });
             modelBuilder.Entity<IdentityUserToken<string>>()
               .HasKey(t => new { t.UserId, t.LoginProvider, t.Name });
+
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.ToTable("account");
@@ -180,11 +181,7 @@ namespace QuanLyQuanCafe.Models
                     .HasColumnName("id_material")
                     .IsFixedLength();
 
-                entity.Property(e => e.IdProvider)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("id_provider")
-                    .IsFixedLength();
+                entity.Property(e => e.PhoneProvider).HasMaxLength(20);
 
                 entity.Property(e => e.Price).HasColumnName("price");
 
@@ -197,11 +194,6 @@ namespace QuanLyQuanCafe.Models
                     .WithMany(p => p.DetailImportGoods)
                     .HasForeignKey(d => d.IdMaterial)
                     .HasConstraintName("FK_detailImportGoods_Material");
-
-                entity.HasOne(d => d.IdProviderNavigation)
-                    .WithMany(p => p.DetailImportGoods)
-                    .HasForeignKey(d => d.IdProvider)
-                    .HasConstraintName("FK_detailImportGoods_provider");
             });
 
             modelBuilder.Entity<Material>(entity =>

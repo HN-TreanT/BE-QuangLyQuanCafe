@@ -131,7 +131,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getHistoryWarehouse")]
-        [Authorize(Roles = "Admin")]
+       /* [Authorize(Roles = "Admin")]*/
         public async Task<IActionResult> GetHistoryWareHouse(int page,string? timeStart,string? timeEnd)
         {
             try

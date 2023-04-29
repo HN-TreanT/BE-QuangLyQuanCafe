@@ -150,22 +150,28 @@ namespace QuanLyQuanCafe.Services.MaterialServices
             if (timeStart != null && timeEnd != null)
             {
                 DateTime startDateTime = DateTime.ParseExact(timeStart, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                DateTime endDateTime = DateTime.ParseExact(timeEnd, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);               
-                var filteredHistory = historyWarehouse.Where(h => DateTime.ParseExact(h.CreatedAt, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture) >= startDateTime &&
+                DateTime endDateTime = DateTime.ParseExact(timeEnd, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                var filteredHistory =  historyWarehouse.Where(h => DateTime.ParseExact(h.CreatedAt, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture) >= startDateTime &&
                                                         DateTime.ParseExact(h.CreatedAt, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture) <= endDateTime)
-                                           .ToList();
+                                                         .ToList();
+
                 // Thực hiện phân trang dữ liệu với các phần tử thỏa mãn điều kiện đã lọc
                 data = filteredHistory.OrderByDescending(h => h.CreatedAt)
                                          .Skip((page - 1) * PAGE_SIZE)
                                          .Take(PAGE_SIZE)
                                          .ToList();
+                response.TotalPage = filteredHistory.Count();    
             }
-            data = historyWarehouse.OrderByDescending(h => h.CreatedAt)
-                                         .Skip((page - 1) * PAGE_SIZE)
-                                         .Take(PAGE_SIZE)
-                                         .ToList();
-            response.Status = true;
-            response.TotalPage = historyWarehouse.Count();
+            else
+            {
+                data = historyWarehouse.OrderByDescending(h => h.CreatedAt)
+                                        .Skip((page - 1) * PAGE_SIZE)
+                                        .Take(PAGE_SIZE)
+                                        .ToList();
+                response.TotalPage = historyWarehouse.Count();
+            }
+            response.Status = true; 
+          
             response.Data = data;    
             
             return response;
