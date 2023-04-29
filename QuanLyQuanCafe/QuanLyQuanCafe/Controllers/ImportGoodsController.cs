@@ -100,5 +100,20 @@ namespace QuanLyQuanCafe.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPost]
+        [Route("createManyImportGoods")]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> CreateManyImportGoods([FromBody] List<ImportGoodsDto> listImportGoods)
+        {
+            try
+            {
+                var response = await _importGoodsService.CreateManyDtIGoods(listImportGoods);
+                return Ok(response);
+
+            }
+            catch (Exception ex) {
+                return BadRequest(ex.Message);
+             }
+        }
     }
 }

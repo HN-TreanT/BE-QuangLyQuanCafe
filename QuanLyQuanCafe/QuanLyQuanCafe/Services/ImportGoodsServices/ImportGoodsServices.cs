@@ -11,7 +11,7 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
     {
         private readonly CafeContext _context;
         private readonly IMapper _mapper;
-        public static int PAGE_SIZE { get; set; } = 6;
+        public static int PAGE_SIZE { get; set; } = 5;
         public ImportGoodsServices(CafeContext context, IMapper mapper)
         {
             _context = context;
@@ -39,7 +39,8 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
             var response = new ApiResponse<List<DetailImportGood>>();
             var ListDtIGoods = await _context.DetailImportGoods
                                         .Include(dt => dt.IdMaterialNavigation)
-                                        .Skip((page-1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                        .OrderByDescending(dt=> dt.CreatedAt)
+                                        .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
                                         .ToListAsync();
             var count = await _context.DetailImportGoods.CountAsync();
             if (ListDtIGoods.Count <= 0)
@@ -109,6 +110,38 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
                 return response;
             }
             _context.DetailImportGoods.Remove(dbImportGoods);
+            await _context.SaveChangesAsync();
+
+            return response;
+        }
+
+        public async Task<ApiResponse<List<DetailImportGood>>> CreateManyDtIGoods(List<ImportGoodsDto> ListDtIGoods)
+        {
+            var response = new ApiResponse<List<DetailImportGood>>();
+
+            foreach (var item in ListDtIGoods)
+            {
+                var dbMaterial = await _context.Materials.FindAsync(item.IdMaterial);
+                if (dbMaterial == null)
+                {
+                    response.Status = false;
+                    response.Message = "Not found";
+                    return response;
+                }
+                string Id = Guid.NewGuid().ToString().Substring(0, 10);
+                var ImportGoods = new DetailImportGood
+                {
+                    IdDetailImportGoods = Id,
+                    NameProvider = item.NameProvider,
+                    PhoneProvider = item.PhoneProvider,
+                    IdMaterial = item.IdMaterial,
+                    Amount = item.Amount,
+                    Price = item.Price,
+                };
+                var total = dbMaterial.Amount + item?.Amount;
+                dbMaterial.Amount = total;
+                _context.DetailImportGoods.Add(ImportGoods);
+            }
             await _context.SaveChangesAsync();
 
             return response;

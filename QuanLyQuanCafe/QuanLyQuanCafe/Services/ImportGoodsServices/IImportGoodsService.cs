@@ -12,5 +12,7 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
         Task<ApiResponse<DetailImportGood>> CreateDtIGoods(ImportGoodsDto DtIGoods);
         Task<ApiResponse<DetailImportGood>> UpdateDtIGoods(string Id, ImportGoodsDto DtIGoods);
         Task<ApiResponse<AnyType>> DeleteDtIGoods(string Id);
+
+        Task<ApiResponse<List<DetailImportGood>>> CreateManyDtIGoods(List<ImportGoodsDto> ListDtIGoods);
     }
 }
