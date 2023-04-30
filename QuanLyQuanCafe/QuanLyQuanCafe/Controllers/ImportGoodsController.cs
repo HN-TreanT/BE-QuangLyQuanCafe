@@ -39,12 +39,12 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllImportGood")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllImportGood(int page)
+       /* [Authorize(Roles = "Admin")]*/
+        public async Task<IActionResult> GetAllImportGood(int page,string? timeStart,string? timeEnd,string? nameMaterials)
         {
             try
             {
-                var response = await _importGoodsService.GetAllDTGoods(page);
+                var response = await _importGoodsService.GetAllDTGoods(page,timeStart,timeEnd,nameMaterials);
                 return Ok(response);
             }
             catch (Exception ex)

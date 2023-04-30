@@ -4,6 +4,8 @@ using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Dto.ImportGoods;
 using QuanLyQuanCafe.Models;
 using QuanLyQuanCafe.Tools;
+using System.Globalization;
+using System.Xml.Linq;
 
 namespace QuanLyQuanCafe.Services.ImportGoodsServices
 {
@@ -34,22 +36,48 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
             return response;
         }
 
-        public async Task<ApiResponse<List<DetailImportGood>>> GetAllDTGoods(int page)
+        public async Task<ApiResponse<List<DetailImportGood>>> GetAllDTGoods(int page, string? timeStart, string? timeEnd, string? nameMaterials)
         {
-            var response = new ApiResponse<List<DetailImportGood>>();
+            var response = new ApiResponse<List<DetailImportGood>>();        
+            string format = "ddd, dd MMM yyyy HH:mm:ss 'GMT'";
+            /*var convertTimeStart = new DateTime();
+            var convertTimeEnd = new DateTime();
+            if (timeEnd != null && timeStart != null)
+            {
+                 convertTimeStart = DateTime.ParseExact(timeStart, format, CultureInfo.InvariantCulture);
+                 convertTimeEnd = DateTime.ParseExact(timeEnd, format, CultureInfo.InvariantCulture);
+            } 
             var ListDtIGoods = await _context.DetailImportGoods
                                         .Include(dt => dt.IdMaterialNavigation)
+                                        .Where(dt=> dt.CreatedAt >= convertTimeStart && dt.CreatedAt <= convertTimeEnd)
                                         .OrderByDescending(dt=> dt.CreatedAt)
                                         .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
-                                        .ToListAsync();
-            var count = await _context.DetailImportGoods.CountAsync();
-            if (ListDtIGoods.Count <= 0)
+                                        .ToListAsync();*/
+            var ListDtIGoods = _context.DetailImportGoods
+                .Include(dt => dt.IdMaterialNavigation);
+
+            if (!string.IsNullOrEmpty(timeStart) && !string.IsNullOrEmpty(timeEnd))
             {
-                response.Status = false;
-                response.Message = "Not found";
-                return response;
+                var convertTimeStart = DateTime.ParseExact(timeStart, format, CultureInfo.InvariantCulture);
+                var convertTimeEnd = DateTime.ParseExact(timeEnd, format, CultureInfo.InvariantCulture);
+                ListDtIGoods = ListDtIGoods.Where(dt => dt.CreatedAt >= convertTimeStart && dt.CreatedAt <= convertTimeEnd)
+               .Include(dt => dt.IdMaterialNavigation);
+
             }
-            response.Data = ListDtIGoods;
+            var result = await ListDtIGoods
+                .OrderByDescending(dt => dt.CreatedAt)
+                .Skip((page - 1) * PAGE_SIZE)
+                .Take(PAGE_SIZE)
+                .ToListAsync();
+                /*var count = await _context.DetailImportGoods.Include(dt => dt.IdMaterialNavigation).CountAsync();*/
+                var count = ListDtIGoods.Count();
+                if (result.Count <= 0)
+                {
+                    response.Status = false;
+                    response.Message = "Not found";
+                    return response;
+                }
+            response.Data = result;
             response.TotalPage = count;
             return response;
         }

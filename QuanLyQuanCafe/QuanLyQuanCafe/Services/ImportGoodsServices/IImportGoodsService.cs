@@ -8,7 +8,7 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
     public interface IImportGoodsService
     {
         Task<ApiResponse<DetailImportGood>> GetDTGoodsById(string Id);
-        Task<ApiResponse<List<DetailImportGood>>> GetAllDTGoods(int page);
+        Task<ApiResponse<List<DetailImportGood>>> GetAllDTGoods(int page,string? timeStart, string? timeEnd, string? nameMaterials);
         Task<ApiResponse<DetailImportGood>> CreateDtIGoods(ImportGoodsDto DtIGoods);
         Task<ApiResponse<DetailImportGood>> UpdateDtIGoods(string Id, ImportGoodsDto DtIGoods);
         Task<ApiResponse<AnyType>> DeleteDtIGoods(string Id);
