@@ -9,7 +9,7 @@ namespace QuanLyQuanCafe.Services.StaffServices
     public interface IStaffService
     {
         Task<ApiResponse<staff>> getStaff(string Id);
-        Task<ApiResponse<List<staff>>> GetAllStaff();
+        Task<ApiResponse<List<staff>>> GetAllStaff(int page,string? name);
         Task<ApiResponse<staff>> CreateStaff(StaffCreateDto StaffDto);
 
         Task<ApiResponse<staff>> UpdateInfoStaff(string Id, StaffCreateDto staffDto);

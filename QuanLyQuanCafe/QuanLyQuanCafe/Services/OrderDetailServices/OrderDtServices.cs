@@ -52,21 +52,13 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
         public async Task<ApiResponse<OrderDetail>> CreateOrderDt(OrderDetailDto orderDetailDto)
         {
             var response = new ApiResponse<OrderDetail>();
-            var dbProdcut = await _context.Products.Include(p=>p.PromotionProducts).Include(p=>p.UseMaterials).SingleOrDefaultAsync(p=>p.IdProduct==orderDetailDto.IdProduct);
-            if (dbProdcut == null) {
+            var dbProdcut = await _context.Products.Include(p=>p.UseMaterials).SingleOrDefaultAsync(p=>p.IdProduct==orderDetailDto.IdProduct);
+            var dbOrder = await _context.Orders.SingleOrDefaultAsync(p=> p.IdOrder == orderDetailDto.IdOrder);
+            if (dbProdcut == null || dbOrder == null) {
                 response.Status =false;
-                response.Message = "Not found product";
+                response.Message = "Not found ";
                 return response;    
             }
-            var newPrice = orderDetailDto.Amount * dbProdcut.Price;
-            foreach (var item in dbProdcut.PromotionProducts)
-            {
-                if(item.MinCount <= orderDetailDto.Amount)
-                {
-                    newPrice -= newPrice * item.Sale;
-                }
-            }
-            orderDetailDto.Price = newPrice; 
             // trừ đi nguyên liệu trong kho
             foreach (var item in dbProdcut.UseMaterials)
             {
@@ -82,10 +74,15 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
                 IdOrderDetail = Guid.NewGuid().ToString().Substring(0, 10),
                 IdOrder = orderDetailDto.IdOrder,
                 IdProduct = orderDetailDto.IdProduct,
-                Price = orderDetailDto.Price ,   
+                Price = dbProdcut.Price * orderDetailDto.Amount,   
                 Amout = orderDetailDto.Amount
             };
             
+            if(dbOrder.Price != null)
+            {
+                var total = dbOrder.Price + newOrderDetail.Price;
+                dbOrder.Price = (long?)total;
+            }
             _context.OrderDetails.Add(newOrderDetail);
             await _context.SaveChangesAsync();  
             response.Data = newOrderDetail; 
@@ -156,32 +153,29 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
             var response = new ApiResponse<List<OrderDetail>> ();
             foreach(var item in ListOrderDt)
             {
-                var dbProdcut = await _context.Products.Include(p => p.PromotionProducts).SingleOrDefaultAsync(p => p.IdProduct == item.IdProduct);
-                if (dbProdcut == null)
+                var dbProdcut = await _context.Products.SingleOrDefaultAsync(p => p.IdProduct == item.IdProduct);
+                var dbOrder = await _context.Orders.SingleOrDefaultAsync(p => p.IdOrder == item.IdOrder);
+                if (dbProdcut == null || dbOrder == null)
                 {
                     response.Status = false;
                     response.Message = "Not found product";
                     return response;
                 }
-                var newPrice = item.Amount * dbProdcut.Price; 
-                foreach (var item1 in dbProdcut.PromotionProducts)
-                {
-                    Console.WriteLine($"item1.MinCount: {item1.MinCount}, item.Amount: {item.Amount}");
-                    if (item1.MinCount <= item.Amount)
-                    {
-                        newPrice -= newPrice * item1.Sale;
-                    }
-                }    
-                item.Price = newPrice;
+               
 
                 var newOrderDetail = new OrderDetail
                 {
                     IdOrderDetail = Guid.NewGuid().ToString().Substring(0, 10),
                     IdOrder = item.IdOrder,
                     IdProduct = item.IdProduct,
-                    Price =item.Price,
+                    Price = dbProdcut.Price * item.Amount,
                     Amout = item.Amount
                 };
+                if (dbOrder.Price != null)
+                {
+                    var total = dbOrder.Price + newOrderDetail.Price;
+                    dbOrder.Price = (long?)total;
+                }
                 _context.OrderDetails.Add(newOrderDetail);
             }           
             await _context.SaveChangesAsync();
@@ -197,7 +191,7 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
             var ProductCount = _context.OrderDetails.Where(c => c.CreatedAt >= DateTime.Now.AddDays(-time)).Count();
             
             //tiền bán thực tế:(doanh thu)
-            var ActualSaleMoney = _context.OrderDetails.Where(c => c.CreatedAt >= DateTime.Now.AddDays(-time))
+            var ActualSaleMoney = _context.Orders.Where(c => c.CreatedAt >= DateTime.Now.AddDays(-time))
                                        .Sum(od => od.Price);
             //tiền hàng = tổng giá trị Mặt hàng* số lượng
             var MoneyProduct = _context.OrderDetails.Where(c => c.CreatedAt >= DateTime.Now.AddDays(-time))
@@ -205,7 +199,6 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
             //tiền nhập :
             var MoneyMaterial = _context.DetailImportGoods.Where(c => c.CreatedAt >= DateTime.Now.AddDays(-time))
                                     .Sum(d=>d.Price);    
-            var sale = MoneyProduct - ActualSaleMoney;
             //doanh thu:
           ///  var Revenue = ActualSaleMoney - MoneyMaterial;
             var newOverview = new Overview
@@ -215,7 +208,6 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
                 ProductNumber = ProductCount,   
                 Revenue = ActualSaleMoney,
                 MoneyProduct = MoneyProduct,
-                Sale = sale ,
                 MoneyMaterial = MoneyMaterial   
             };
             response.Data = newOverview;

@@ -6,6 +6,8 @@ using Microsoft.OpenApi.Any;
 using QuanLyQuanCafe.Dto.Staff;
 using System.Linq;
 using System.Xml.Linq;
+using System.Text.RegularExpressions;
+using System.Text;
 
 namespace QuanLyQuanCafe.Services.StaffServices
 {
@@ -15,6 +17,23 @@ namespace QuanLyQuanCafe.Services.StaffServices
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _hostingEnvironment;
         readonly string coverImageFolderPath = string.Empty;
+        public static int PAGE_SIZE { get; set; } = 5;
+        private string ConvertToUnSign(string input)
+        {
+            input = input.Trim();
+            for (int i = 0x20; i < 0x30; i++)
+            {
+                input = input.Replace(((char)i).ToString(), " ");
+            }
+            Regex regex = new Regex(@"\p{IsCombiningDiacriticalMarks}+");
+            string str = input.Normalize(NormalizationForm.FormD);
+            string str2 = regex.Replace(str, string.Empty).Replace('đ', 'd').Replace('Đ', 'D');
+            while (str2.IndexOf("?") >= 0)
+            {
+                str2 = str2.Remove(str2.IndexOf("?"), 1);
+            }
+            return str2;
+        }
         public StaffServices(CafeContext context, IMapper mapper, IWebHostEnvironment hostingEnvironment)
         {
             this._context = context;
@@ -28,17 +47,36 @@ namespace QuanLyQuanCafe.Services.StaffServices
 
         }
 
-        public async Task<ApiResponse<List<staff>>> GetAllStaff()
+        public async Task<ApiResponse<List<staff>>> GetAllStaff(int page,string? name)
         {
             var response = new ApiResponse<List<staff>>();
-                var dbStaffs = await _context.staff.Include(s => s.SelectedWorkShifts).ToListAsync();
-                if(dbStaffs.Count <= 0)
+            if( string.IsNullOrEmpty(name))
+            {
+                var dbStaffs = await _context.staff.Include(s => s.SelectedWorkShifts)
+                    .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                    .ToListAsync();
+                if (dbStaffs.Count <= 0)
                 {
                     response.Status = false;
                     response.Message = "Not found";
                     return response;
                 }
-                response.Data = dbStaffs;             
+                response.TotalPage = _context.staff.Count();
+                response.Data = dbStaffs;  
+            }             
+            if(name != null)
+            {
+                var searchValue = ConvertToUnSign(name);
+                var query = _context.staff.Include(p => p.SelectedWorkShifts).Where(delegate (staff c)
+                    {
+                        if (ConvertToUnSign(c.Fullname).IndexOf(searchValue, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                            return true;
+                        else
+                            return false;
+                    }).AsQueryable();
+                response.TotalPage = query.ToList().Count();
+                response.Data = query.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+            }
             return response;
         }
 
@@ -61,11 +99,11 @@ namespace QuanLyQuanCafe.Services.StaffServices
         {
             var response = new ApiResponse<staff>();          
                 string IdStaff = Guid.NewGuid().ToString().Substring(0, 10);
-                var dbStaff = _context.staff.Where(u => u.IdStaff == IdStaff).FirstOrDefault();
+                var dbStaff = _context.staff.Where(u => u.Email == StaffDto.Email).FirstOrDefault();
                 if (dbStaff != null)
                 {
                     response.Status = false;
-                    response.Message = "staff already";
+                    response.Message = "email already";
                     return response;
                 }
 
@@ -159,7 +197,7 @@ namespace QuanLyQuanCafe.Services.StaffServices
         public async Task<ApiResponse<AnyType>> DeleteStaff(string Id)
         {
             var response = new ApiResponse<AnyType>();         
-                staff dbStaff = await _context.staff.FindAsync(Id);
+                var dbStaff = await _context.staff.FindAsync(Id);
                 if(dbStaff == null)
                 {
                     response.Status = false;
@@ -174,7 +212,7 @@ namespace QuanLyQuanCafe.Services.StaffServices
             return response;
         }
 
-        public async Task<ApiResponse<List<staff>>> SearchStaffByName(string staffName)
+            public async Task<ApiResponse<List<staff>>> SearchStaffByName(string staffName)
         {
             var response = new ApiResponse<List<staff>>();
             var dbStaffs = _context.staff.AsEnumerable()

@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Cors;
 using QuanLyQuanCafe.Services.CategoryServices;
 using QuanLyQuanCafe.Services.CustomerServices;
-using QuanLyQuanCafe.Services.ProvideServices;
 using QuanLyQuanCafe.Services.TableFoodServices;
 using QuanLyQuanCafe.Services.WorkShiftServices;
 using QuanLyQuanCafe.Services.StaffServices;
@@ -21,8 +20,6 @@ using QuanLyQuanCafe.Services.MaterialServices;
 using QuanLyQuanCafe.Services.UseMaterialServices;
 using QuanLyQuanCafe.Services.OrderServices;
 using QuanLyQuanCafe.Services.OrderDetailServices;
-using QuanLyQuanCafe.Services.PromotionServices;
-using QuanLyQuanCafe.Services.PProductServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,7 +72,6 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ICategoryService, CategoryServices>();
 builder.Services.AddScoped<ICustomerServices, CustomerServices>();
-builder.Services.AddScoped<IProviderService, ProviderServices>();
 builder.Services.AddScoped<ITableFoodService, TableFoodServices>();
 builder.Services.AddScoped<IWorkShiftService, WorkShiftService>();
 builder.Services.AddScoped<IStaffService, StaffServices>();
@@ -86,8 +82,6 @@ builder.Services.AddScoped<IMaterialService, MaterialServices>();
 builder.Services.AddScoped<IUseMaterialServices, UseMaterialServices>();
 builder.Services.AddScoped<IOrderService, OrderServices>();
 builder.Services.AddScoped<IOrderDtService, OrderDtServices>();
-builder.Services.AddScoped<IPromotionService, PromotionServices>();
-builder.Services.AddScoped<IPProductService, PProductServices>();
 
 var app = builder.Build();
 

@@ -40,19 +40,6 @@ namespace QuanLyQuanCafe.Services.ImportGoodsServices
         {
             var response = new ApiResponse<List<DetailImportGood>>();        
             string format = "ddd, dd MMM yyyy HH:mm:ss 'GMT'";
-            /*var convertTimeStart = new DateTime();
-            var convertTimeEnd = new DateTime();
-            if (timeEnd != null && timeStart != null)
-            {
-                 convertTimeStart = DateTime.ParseExact(timeStart, format, CultureInfo.InvariantCulture);
-                 convertTimeEnd = DateTime.ParseExact(timeEnd, format, CultureInfo.InvariantCulture);
-            } 
-            var ListDtIGoods = await _context.DetailImportGoods
-                                        .Include(dt => dt.IdMaterialNavigation)
-                                        .Where(dt=> dt.CreatedAt >= convertTimeStart && dt.CreatedAt <= convertTimeEnd)
-                                        .OrderByDescending(dt=> dt.CreatedAt)
-                                        .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
-                                        .ToListAsync();*/
             var ListDtIGoods = _context.DetailImportGoods
                 .Include(dt => dt.IdMaterialNavigation);
 

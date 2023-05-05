@@ -24,7 +24,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getOrderById/{Id}")]
-        [Authorize]
+      /*  [Authorize]*/
         public async Task<IActionResult> GetOrderById(string Id)
         {
             try
@@ -40,7 +40,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllOrder")]
-        [Authorize]
+      /*  [Authorize]*/
         public async Task<IActionResult> GetAllOrder(int page,string? typeSearch, string? searchValue)
         {
             try
@@ -56,7 +56,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("creatOrder")]
-        [Authorize]
+       /* [Authorize]*/
         public async Task<IActionResult> CreateOrder([FromBody] OrderDto orderDto)
         {
             try
@@ -72,7 +72,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateOrder/{Id}")]
-        [Authorize]
+      /*  [Authorize]*/
         public async Task<IActionResult> UpdateOrder(string Id,[FromBody] OrderDto orderDto)
         {
             try
@@ -88,7 +88,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteOrder/{Id}")]
-        [Authorize(Roles = "Admin")]
+       /* [Authorize(Roles = "Admin")]*/
         public async Task<IActionResult> DeleteOrder(string Id)
         {
             try
@@ -104,7 +104,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getOrderPaid")]
-        [Authorize]
+      /*  [Authorize]*/
         public async Task<IActionResult> GetOrderPaid(int page, string? typeSearch, string? searchValue)
         {
             try
@@ -119,7 +119,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getOrderUnpaid")]
-        [Authorize]
+      /*  [Authorize]*/
         public async Task<IActionResult> GetOrderUnpaid(int page, string? typeSearch, string? searchValue)
         {
             try

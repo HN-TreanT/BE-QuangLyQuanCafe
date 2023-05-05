@@ -7,6 +7,9 @@ using QuanLyQuanCafe.Dto.UseMaterial;
 using QuanLyQuanCafe.Models;
 using QuanLyQuanCafe.Services.UseMaterialServices;
 using QuanLyQuanCafe.Tools;
+using System.Text.RegularExpressions;
+using System.Text;
+using System.Xml.Linq;
 
 namespace QuanLyQuanCafe.Services.ProductServices
 {
@@ -21,7 +24,24 @@ namespace QuanLyQuanCafe.Services.ProductServices
     {
         private readonly CafeContext _context;
         private readonly IMapper _mapper;
-        private readonly IUseMaterialServices _useMaterialServices; 
+        private readonly IUseMaterialServices _useMaterialServices;
+        public static int PAGE_SIZE { get; set; } = 4;
+        private string ConvertToUnSign(string input)
+        {
+            input = input.Trim();
+            for (int i = 0x20; i < 0x30; i++)
+            {
+                input = input.Replace(((char)i).ToString(), " ");
+            }
+            Regex regex = new Regex(@"\p{IsCombiningDiacriticalMarks}+");
+            string str = input.Normalize(NormalizationForm.FormD);
+            string str2 = regex.Replace(str, string.Empty).Replace('đ', 'd').Replace('Đ', 'D');
+            while (str2.IndexOf("?") >= 0)
+            {
+                str2 = str2.Remove(str2.IndexOf("?"), 1);
+            }
+            return str2;
+        }
         public ProductServices(CafeContext context , IMapper mapper,IUseMaterialServices useMaterialServices) 
         { 
            _context = context;
@@ -44,28 +64,79 @@ namespace QuanLyQuanCafe.Services.ProductServices
             return response;
         }
 
-        public async Task<ApiResponse<List<Product>>> GetAllProduct()
+        public async Task<ApiResponse<List<Product>>> GetAllProduct(int page, string? typeSearch, string? searchValue)
         {
             var response = new ApiResponse<List<Product>>();
-
-                var products = await _context.Products.Include(p => p.UseMaterials).Include(p=>p.IdCategoryNavigation)
-                 .Where(p=> p.Status ==1).ToListAsync();
-                if(products.Count <= 0)
+            IQueryable<Product> query = Enumerable.Empty<Product>().AsQueryable();
+            if (string.IsNullOrEmpty(searchValue) || searchValue == null)
+            {
+                query = _context.Products.Include(p => p.UseMaterials).Include(p => p.IdCategoryNavigation);
+                response.Data = query.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+                response.TotalPage = query.ToList().Count();
+                return response;
+            }
+            if (typeSearch == "nameProduct")
+                {
+                var value = ConvertToUnSign(searchValue);
+                query = _context.Products.Include(p => p.UseMaterials).Include(p => p.IdCategoryNavigation).Where(delegate (Product c)
+                    {
+                        if (ConvertToUnSign(c.Title).IndexOf(value, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                            return true;
+                        else
+                            return false;
+                    }).AsQueryable();
+                }
+           if (typeSearch == "category")
+                {
+                var value = ConvertToUnSign(searchValue);
+                query = _context.Products.Include(p => p.UseMaterials).Include(p => p.IdCategoryNavigation).Where(delegate (Product c)
+                    {
+                        if (ConvertToUnSign(c.IdCategoryNavigation.Name).IndexOf(value, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                            return true;
+                        else
+                            return false;
+                    }).AsQueryable();
+                }
+            var products = query.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+            if (query.ToList().Count <= 0)
                 {
                     response.Status = false;
                     response.Message = "Not found product";
                     return response;
                 }
-                response.Data = products;
+            response.Data = products;
+            response.TotalPage = query.ToList().Count();
         
             return response;
         }
+        public async Task<ApiResponse<List<Product>>> GetAllProductByIdCategory(string IdCategory)
+        {
+            var response = new ApiResponse<List<Product>>();
 
+            var products = await _context.Products.Where(p => p.IdCategory == IdCategory).ToListAsync();
+            if (products.Count <= 0)
+            {
+                response.Status = false;
+                response.Message = "Not found product";
+                return response;
+            }
+            response.Data = products;
+
+            return response;
+        }
+       
         public async Task<ApiResponse<Product>> CreatePoduct(ProductDto productDto)
         {
             var response = new ApiResponse<Product>();
            
             string Id = Guid.NewGuid().ToString().Substring(0,10);
+            var dbProduct =await _context.Products.SingleOrDefaultAsync(p=> p.Title == productDto.Title );
+            if (dbProduct != null)
+            {
+                response.Status = false;
+                response.Message = "Mặt hàng đã tồn tại";
+                return response;
+            }
             var special = Guid.NewGuid().ToString();
             var newProduct = new Product
                 {
@@ -131,15 +202,24 @@ namespace QuanLyQuanCafe.Services.ProductServices
 
         public async Task<ApiResponse<AnyType>> DeletePoduct(string Id)
         {
+            Console.WriteLine(Id);  
             var response = new ApiResponse<AnyType>();         
-                var dbProduct = await _context.Products.Include(u => u.UseMaterials).Include(u=> u.PromotionProducts).SingleOrDefaultAsync(p => p.IdProduct == Id);
-               
+            var dbProduct = await _context.Products.Include(u => u.UseMaterials).Include(u=> u.OrderDetails).SingleOrDefaultAsync(p => p.IdProduct == Id);        
             if (dbProduct == null)
                 {
                     response.Status = false;
                     response.Message = "not found";
                     return response;    
                 }
+
+            foreach (var item in dbProduct.OrderDetails)
+            {
+                var dbOrderDetail = await _context.UseMaterials.FindAsync(item.IdOrderDetail);
+                if (dbOrderDetail != null)
+                {
+                    _context.UseMaterials.Remove(dbOrderDetail);
+                }
+            }
             foreach (var useMaterial in dbProduct.UseMaterials)
             {
                 var dbUseMaterial = await _context.UseMaterials.FindAsync(useMaterial.IdUseMaterial);
@@ -147,19 +227,7 @@ namespace QuanLyQuanCafe.Services.ProductServices
                 {
                     _context.UseMaterials.Remove(dbUseMaterial);
                 }
-            }
-            if (dbProduct.PromotionProducts.Count >= 0)
-            {
-                foreach (var pp in dbProduct.PromotionProducts)
-                {
-                    var dbPP = await _context.PromotionProducts.FindAsync(pp.IdPp);
-                    if (dbPP != null)
-                    {
-                        _context.PromotionProducts.Remove(dbPP);
-                    }
-                }
-            }
-
+            }   
             if (dbProduct.Thumbnail != null)
                 {
                     var path = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", dbProduct.Thumbnail);
@@ -168,10 +236,9 @@ namespace QuanLyQuanCafe.Services.ProductServices
                         File.Delete(path);
                     }
 
-                }
-            dbProduct.Status = 0;
-                _context.Products.Update(dbProduct);
-                await _context.SaveChangesAsync();         
+             }
+            _context.Products.Remove(dbProduct);
+            await _context.SaveChangesAsync();         
             return response;
         }
         public async Task<ApiResponse<List<ProductOrderStatistic>>> GetBestSellProduct(int time)

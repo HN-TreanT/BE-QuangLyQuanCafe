@@ -12,6 +12,7 @@ namespace QuanLyQuanCafe.Models
 
         public string IdOrder { get; set; } = null!;
         public string? IdCustomer { get; set; }
+        public long? Price { get; set; }
         public string? IdTable { get; set; }
         public DateTime? TimePay { get; set; }
         public byte? Status { get; set; }

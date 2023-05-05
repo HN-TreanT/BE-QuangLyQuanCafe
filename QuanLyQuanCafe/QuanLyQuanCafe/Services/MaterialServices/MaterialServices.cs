@@ -6,6 +6,8 @@ using QuanLyQuanCafe.Dto.Material;
 using QuanLyQuanCafe.Models;
 using QuanLyQuanCafe.Tools;
 using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Text;
 
 namespace QuanLyQuanCafe.Services.MaterialServices
 {
@@ -14,6 +16,23 @@ namespace QuanLyQuanCafe.Services.MaterialServices
         private readonly IMapper _mapper;
         private readonly CafeContext _context;
         public static int PAGE_SIZE { get; set; } = 6;
+        public static int PAGE_SIZE_MATERIAL { get; set; } = 6;
+        private string ConvertToUnSign(string input)
+        {
+            input = input.Trim();
+            for (int i = 0x20; i < 0x30; i++)
+            {
+                input = input.Replace(((char)i).ToString(), " ");
+            }
+            Regex regex = new Regex(@"\p{IsCombiningDiacriticalMarks}+");
+            string str = input.Normalize(NormalizationForm.FormD);
+            string str2 = regex.Replace(str, string.Empty).Replace('đ', 'd').Replace('Đ', 'D');
+            while (str2.IndexOf("?") >= 0)
+            {
+                str2 = str2.Remove(str2.IndexOf("?"), 1);
+            }
+            return str2;
+        }
         public MaterialServices(IMapper mapper, CafeContext context)
         {
             _mapper = mapper;
@@ -34,16 +53,36 @@ namespace QuanLyQuanCafe.Services.MaterialServices
             return response;
         }
 
-        public async Task<ApiResponse<List<Material>>> GetAllMaterial()
+        public async Task<ApiResponse<List<Material>>> GetAllMaterial(int page, string? name)
         {
             var response = new ApiResponse<List<Material>>();
-            var dbMaterials = await _context.Materials.ToListAsync();
-            if (dbMaterials.Count <= 0) {
-                response.Status = false;
-                response.Message = "Not found material";
-                return response;
+            if (string.IsNullOrEmpty(name))
+            {
+                var dbMaterials = await _context.Materials
+                     .Skip((page - 1) * PAGE_SIZE_MATERIAL).Take(PAGE_SIZE_MATERIAL)
+                    .ToListAsync();
+                if (dbMaterials.Count <= 0)
+                {
+                    response.Status = false;
+                    response.Message = "Not found material";
+                    return response;
+                }
+                response.Data = dbMaterials;
+                response.TotalPage = _context.Materials.Count();
             }
-            response.Data = dbMaterials;
+            if(name != null)
+            {
+                var searchValue = ConvertToUnSign(name);
+                var query = _context.Materials.Where(delegate (Material c)
+                {
+                    if (ConvertToUnSign(c.NameMaterial).IndexOf(searchValue, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                        return true;
+                    else
+                        return false;
+                }).AsQueryable();
+                response.TotalPage = query.ToList().Count();
+                response.Data = query.Skip((page - 1) * PAGE_SIZE_MATERIAL).Take(PAGE_SIZE_MATERIAL).ToList();
+            }
             return response;
         }
 
@@ -83,13 +122,17 @@ namespace QuanLyQuanCafe.Services.MaterialServices
         public async Task<ApiResponse<AnyType>> DeleteMaterial(string Id)
         {
             var response = new ApiResponse<AnyType>();
-            var dbMaterial = await _context.Materials.FindAsync(Id);
+            var dbMaterial = await _context.Materials.SingleOrDefaultAsync(m=> m.IdMaterial == Id);
+           var dbUseMaterials =  _context.UseMaterials.Where(u=> u.IdMaterial == Id);
+            var dbImportGood = _context.DetailImportGoods.Where(u => u.IdMaterial == Id);
             if (dbMaterial == null)
             {
                 response.Status = false;
                 response.Message = "Not found";
                 return response;
             }
+            _context.DetailImportGoods.RemoveRange(dbImportGood);
+            _context.UseMaterials.RemoveRange(dbUseMaterials);
             _context.Materials.Remove(dbMaterial);
             await _context.SaveChangesAsync();
             return response;

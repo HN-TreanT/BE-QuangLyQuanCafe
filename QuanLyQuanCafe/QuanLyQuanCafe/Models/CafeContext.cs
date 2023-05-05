@@ -26,35 +26,31 @@ namespace QuanLyQuanCafe.Models
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
-        public virtual DbSet<Promotion> Promotions { get; set; } = null!;
-        public virtual DbSet<PromotionProduct> PromotionProducts { get; set; } = null!;
-        public virtual DbSet<Provider> Providers { get; set; } = null!;
         public virtual DbSet<SelectedWorkShift> SelectedWorkShifts { get; set; } = null!;
         public virtual DbSet<TableFood> TableFoods { get; set; } = null!;
         public virtual DbSet<TokenInfo> TokenInfo { get; set; } = null!;
         public virtual DbSet<UseMaterial> UseMaterials { get; set; } = null!;
+      
         public virtual DbSet<WorkShift> WorkShifts { get; set; } = null!;
         public virtual DbSet<staff> staff { get; set; } = null!;
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Data Source=HN-TreanT;Initial Catalog=Cafe;User ID=sa;Password=hnam23012002");
             }
-        }
+        }*/
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
             modelBuilder.Entity<IdentityUserLogin<string>>()
-             .HasKey(l => new { l.LoginProvider, l.ProviderKey });
+              .HasKey(l => new { l.LoginProvider, l.ProviderKey });
             modelBuilder.Entity<IdentityUserRole<string>>()
              .HasKey(ur => new { ur.UserId, ur.RoleId });
             modelBuilder.Entity<IdentityUserToken<string>>()
               .HasKey(t => new { t.UserId, t.LoginProvider, t.Name });
-
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.ToTable("account");
@@ -264,6 +260,10 @@ namespace QuanLyQuanCafe.Models
                     .HasColumnName("id_table")
                     .IsFixedLength();
 
+                entity.Property(e => e.Price)
+                    .HasColumnName("price")
+                    .HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.Status)
                     .HasColumnName("status")
                     .HasDefaultValueSql("((0))");
@@ -393,96 +393,6 @@ namespace QuanLyQuanCafe.Models
                     .HasConstraintName("FK__product__id_cate__48CFD27E");
             });
 
-            modelBuilder.Entity<Promotion>(entity =>
-            {
-                entity.HasKey(e => e.IdPromotion);
-
-                entity.ToTable("Promotion");
-
-                entity.Property(e => e.IdPromotion)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .IsFixedLength();
-
-                entity.Property(e => e.TimeEnd).HasColumnType("date");
-
-                entity.Property(e => e.TimeStart).HasColumnType("date");
-            });
-
-            modelBuilder.Entity<PromotionProduct>(entity =>
-            {
-                entity.HasKey(e => e.IdPp);
-
-                entity.ToTable("PromotionProduct");
-
-                entity.Property(e => e.IdPp)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("IdPP")
-                    .IsFixedLength();
-
-                entity.Property(e => e.IdProduct)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .IsFixedLength();
-
-                entity.Property(e => e.IdPromotion)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .IsFixedLength();
-
-                entity.HasOne(d => d.IdProductNavigation)
-                    .WithMany(p => p.PromotionProducts)
-                    .HasForeignKey(d => d.IdProduct)
-                    .HasConstraintName("FK_PromotionProduct_product");
-
-                entity.HasOne(d => d.IdPromotionNavigation)
-                    .WithMany(p => p.PromotionProducts)
-                    .HasForeignKey(d => d.IdPromotion)
-                    .HasConstraintName("FK_PromotionProduct_Promotion");
-            });
-
-            modelBuilder.Entity<Provider>(entity =>
-            {
-                entity.HasKey(e => e.IdProvider)
-                    .HasName("PK__provider__CFAFC10F0E00A303");
-
-                entity.ToTable("provider");
-
-                entity.Property(e => e.IdProvider)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("idProvider")
-                    .IsFixedLength();
-
-                entity.Property(e => e.Address)
-                    .HasMaxLength(50)
-                    .HasColumnName("address");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Email)
-                    .HasMaxLength(50)
-                    .HasColumnName("email");
-
-                entity.Property(e => e.Name)
-                    .HasMaxLength(50)
-                    .HasColumnName("name");
-
-                entity.Property(e => e.PhoneNumber)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
-                    .HasColumnName("phone_number");
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updated_at")
-                    .HasDefaultValueSql("(getdate())");
-            });
-
             modelBuilder.Entity<SelectedWorkShift>(entity =>
             {
                 entity.HasKey(e => e.IdSeletedWorkShift);
@@ -584,7 +494,7 @@ namespace QuanLyQuanCafe.Models
                 entity.HasOne(d => d.IdMaterialNavigation)
                     .WithMany(p => p.UseMaterials)
                     .HasForeignKey(d => d.IdMaterial)
-                    .HasConstraintName("FK_UseMaterial_Material1");
+                    .HasConstraintName("FK_UseMaterial_Material");
 
                 entity.HasOne(d => d.IdProductNavigation)
                     .WithMany(p => p.UseMaterials)

@@ -28,7 +28,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getAllCategory")]
-        [Authorize]
+      /*  [Authorize]*/
         public async Task<IActionResult> getAllCategory()
         {
             try
@@ -48,7 +48,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getCategoryById/{Id}")]
-        [Authorize]
+       /* [Authorize]*/
         public async Task<IActionResult> getCategoryById(string Id)
         {
             try
@@ -69,7 +69,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createCategory")]
-        [Authorize(Roles ="Admin")]
+       /* [Authorize(Roles ="Admin")]*/
         public async Task<IActionResult> getCategoryById([FromBody] CategoryDto CategoryDto)
         {
             try
@@ -86,7 +86,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateCategory/{Id}")]
-        [Authorize(Roles ="Admin")]
+      /*  [Authorize(Roles ="Admin")]*/
         public async Task<IActionResult> UpdateCategory(string Id, [FromBody] CategoryDto CategoryDto)
         {
             try
@@ -102,7 +102,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteCategory/{Id}")]
-        [Authorize(Roles ="Admin")]
+       /* [Authorize(Roles ="Admin")]*/
         public async Task<IActionResult> DeleteCategory(string Id)
         {
             try

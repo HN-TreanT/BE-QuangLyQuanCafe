@@ -26,7 +26,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getProductById/{Id}")]
-        [Authorize]
+       /* [Authorize]*/
         public async Task<IActionResult> GetProductById(string Id) {
             try
             {
@@ -40,12 +40,28 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllProduct")]
-        [Authorize]
-        public async Task<IActionResult> GetAllProduct()
+      /*  [Authorize]*/
+        public async Task<IActionResult> GetAllProduct(int page , string? typeSearch,string? searchValue)
         {
             try
             {
-                var response = await _productService.GetAllProduct();   
+                var response = await _productService.GetAllProduct(page,typeSearch,searchValue);   
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("getAllProductByCategory/{Id}")]
+      /*  [Authorize]*/
+        public async Task<IActionResult> GetAllProductByCategory(string Id)
+        {
+            try
+            {
+                var response = await _productService.GetAllProductByIdCategory(Id);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -57,7 +73,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createProduct")]
-        [Authorize(Roles = "Admin")]
+      /*  [Authorize(Roles = "Admin")]*/
         public async Task<IActionResult> CreateProduct([FromForm] ProductDto productDto)
         {
             try
@@ -74,7 +90,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateProduct/{Id}")]
-        [Authorize(Roles = "Admin")]
+     /*   [Authorize(Roles = "Admin")]*/
         public async Task<IActionResult> UpdateProduct(string Id,[FromForm]ProductDto productDto)
         {
             try
@@ -90,7 +106,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteProduct/{Id}")]
-        [Authorize(Roles = "Admin")]
+      /*  [Authorize(Roles = "Admin")]*/
         public async Task<IActionResult> DeleteProduct(string Id)
         {
             try
@@ -106,7 +122,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getBestSellProduct/{time}")]
-        [Authorize(Roles = "Admin")]
+      /*  [Authorize(Roles = "Admin")]*/
         public async Task<IActionResult> GetBestSellProduct(int time)
         {
             try

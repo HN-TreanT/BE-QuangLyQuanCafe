@@ -8,27 +8,26 @@ using System.Net;
 using Microsoft.OpenApi.Any;
 using System.Security.Principal;
 using Microsoft.EntityFrameworkCore;
-using QuanLyQuanCafe.Tools;
 using Microsoft.AspNetCore.Authorization;
 
 namespace QuanLyQuanCafe.Controllers
 {
     public class LoginInfo
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public string? Username { get; set; }
+        public string? Password { get; set; }
     }
     public class RegisterInfo
     {
-        public string DisplayName { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public string? DisplayName { get; set; }
+        public string? Username { get; set; }
+        public string? Password { get; set; }
     }
     public class ChangePasswordRequest
     {
-        public string Username { get; set; }
-        public string OldPassword { get; set; }
-        public string NewPassword { get; set; }
+        public string? Username { get; set; }
+        public string? OldPassword { get; set; }
+        public string? NewPassword { get; set; }
     }
 
     [Route("api/[controller]")]

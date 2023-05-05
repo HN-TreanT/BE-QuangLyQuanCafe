@@ -203,7 +203,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                      TimePay = o.TimePay,
                                      CreatedAt = o.CreatedAt,
                                      UpdatedAt = o.UpdatedAt,
-                                     IdCustomer = o.IdCustomerNavigation.IdCustomer,
+                                     IdCustomer = o.IdCustomerNavigation.IdCustomer ,
                                      Fullname = o.IdCustomerNavigation.Fullname,
                                      PhoneNumber = o.IdCustomerNavigation.PhoneNumber,
                                      Gender = o.IdTableNavigation.IdTable,
@@ -310,17 +310,20 @@ namespace QuanLyQuanCafe.Services.OrderServices
                         TimePay = dbO.TimePay,
                         CreatedAt = dbO.CreatedAt,
                         UpdatedAt = dbO.UpdatedAt,
-                        IdCustomer = dbO.IdCustomerNavigation.IdCustomer,
-                        Fullname = dbO.IdCustomerNavigation.Fullname,
-                        PhoneNumber = dbO.IdCustomerNavigation.PhoneNumber,
-                        Gender = dbO.IdTableNavigation.IdTable,
+                        IdCustomer = dbO.IdCustomerNavigation?.IdCustomer,
+                        Fullname = dbO.IdCustomerNavigation?.Fullname,
+                        PhoneNumber = dbO.IdCustomerNavigation?.PhoneNumber,
+                        Gender = dbO.IdTableNavigation?.IdTable,
                         IdTable = dbO.IdTableNavigation.IdTable,
                         NameTable = dbO.IdTableNavigation.Name,
                         StatusTable = dbO.IdTableNavigation.Status
                     };
-                    if (_Convert.ConvertToUnSign(dbO.IdCustomerNavigation.Fullname).Contains(_Convert.ConvertToUnSign(searchValue)))
+                    if (dbO.IdCustomerNavigation?.Fullname != null && searchValue != null)
                     {
-                        data.Add(order);
+                        if (_Convert.ConvertToUnSign(dbO.IdCustomerNavigation.Fullname).Contains(_Convert.ConvertToUnSign(searchValue)))
+                        {
+                            data.Add(order);
+                        }
                     }
                 }
                 var db = data.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
@@ -444,6 +447,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
 
         public async Task<ApiResponse<List<OrderGet>>> GetOrderUnpaid(int page, string? typeSearch, string? searchValue)
         {
+            Console.WriteLine(searchValue);
             var response = new ApiResponse<List<OrderGet>>();
             if (typeSearch == "nameCustomer")
             {
@@ -453,6 +457,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                                  .ToListAsync();
                 foreach (var dbO in dbOrders1)
                 {
+
                     OrderGet order = new OrderGet()
                     {
                         IdOrder = dbO.IdOrder.ToString(),
@@ -461,17 +466,20 @@ namespace QuanLyQuanCafe.Services.OrderServices
                         TimePay = dbO.TimePay,
                         CreatedAt = dbO.CreatedAt,
                         UpdatedAt = dbO.UpdatedAt,
-                        IdCustomer = dbO.IdCustomerNavigation.IdCustomer,
-                        Fullname = dbO.IdCustomerNavigation.Fullname,
-                        PhoneNumber = dbO.IdCustomerNavigation.PhoneNumber,
-                        Gender = dbO.IdTableNavigation.IdTable,
-                        IdTable = dbO.IdTableNavigation.IdTable,
-                        NameTable = dbO.IdTableNavigation.Name,
-                        StatusTable = dbO.IdTableNavigation.Status
+                        IdCustomer = dbO.IdCustomerNavigation?.IdCustomer,
+                        Fullname = dbO.IdCustomerNavigation?.Fullname,
+                        PhoneNumber = dbO.IdCustomerNavigation?.PhoneNumber,
+                        Gender = dbO.IdTableNavigation?.IdTable,
+                        IdTable = dbO.IdTableNavigation?.IdTable,
+                        NameTable = dbO.IdTableNavigation?.Name,
+                        StatusTable = dbO.IdTableNavigation?.Status
                     };
-                    if (_Convert.ConvertToUnSign(dbO.IdCustomerNavigation.Fullname).Contains(_Convert.ConvertToUnSign(searchValue)))
+                    if (dbO.IdCustomerNavigation?.Fullname != null && searchValue != null)
                     {
-                        data.Add(order);
+                        if (_Convert.ConvertToUnSign(dbO.IdCustomerNavigation.Fullname).Contains(_Convert.ConvertToUnSign(searchValue)))
+                        {
+                            data.Add(order);
+                        }
                     }
                 }
                 var db = data.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();

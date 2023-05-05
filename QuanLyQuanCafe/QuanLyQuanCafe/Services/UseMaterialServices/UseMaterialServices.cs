@@ -39,7 +39,7 @@ namespace QuanLyQuanCafe.Services.UseMaterialServices
                 response.Message = "Not found";
                 return response;    
             }
-            response.Data = dbUseMaterial;  
+           response.Data = dbUseMaterial;  
             return response;
         }
 
@@ -63,7 +63,7 @@ namespace QuanLyQuanCafe.Services.UseMaterialServices
         public async Task<ApiResponse<UseMaterial>> UpdateUseMaterial(string Id, UseMaterialDto useMaterialDto)
         {
             var response = new ApiResponse<UseMaterial>();
-            var dbUseMaterial = await _context.UseMaterials.FindAsync(Id);
+           var dbUseMaterial = await _context.UseMaterials.FindAsync(Id);
             if (dbUseMaterial == null)
             {
                 response.Status = false;
@@ -79,7 +79,7 @@ namespace QuanLyQuanCafe.Services.UseMaterialServices
         public async Task<ApiResponse<AnyType>> DeleteUseMaterial(string Id)
         {
             var response = new ApiResponse<AnyType>();
-            var dbUseMaterial = await _context.UseMaterials.FindAsync(Id);
+           var dbUseMaterial = await _context.UseMaterials.FindAsync(Id);
             if (dbUseMaterial == null)
             {
                 response.Status = false;
@@ -104,7 +104,7 @@ namespace QuanLyQuanCafe.Services.UseMaterialServices
                     IdMaterial = useMaterial.IdMaterial,
                     Amount = useMaterial.Amount,    
                 };
-                _context.UseMaterials.Add(newUseMaterial);
+               _context.UseMaterials.Add(newUseMaterial);
             }
             await _context.SaveChangesAsync();
             return response;
@@ -121,7 +121,7 @@ namespace QuanLyQuanCafe.Services.UseMaterialServices
                 return response;
             }
             foreach( var item in dbProduct.UseMaterials) { 
-                _context.UseMaterials.Remove(item);
+              _context.UseMaterials.Remove(item);
             }    
             await _context.SaveChangesAsync();  
             return response;
