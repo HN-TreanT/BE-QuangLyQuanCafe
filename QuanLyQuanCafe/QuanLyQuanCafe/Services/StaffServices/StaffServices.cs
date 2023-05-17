@@ -212,7 +212,7 @@ namespace QuanLyQuanCafe.Services.StaffServices
             return response;
         }
 
-            public async Task<ApiResponse<List<staff>>> SearchStaffByName(string staffName)
+         public async Task<ApiResponse<List<staff>>> SearchStaffByName(string staffName)
         {
             var response = new ApiResponse<List<staff>>();
             var dbStaffs = _context.staff.AsEnumerable()
@@ -267,5 +267,19 @@ namespace QuanLyQuanCafe.Services.StaffServices
             return response;
         }
 
+
+        public async Task<ApiResponse<staff>> searchStaffbyEmail(string email)
+        {
+            var response = new ApiResponse<staff>();
+            var dbStaff = await _context.staff.SingleOrDefaultAsync(s=>s.Email == email);
+            if(dbStaff == null)
+            {
+                response.Status = false;
+                response.Message = "not found staff";
+                return response;
+            }
+            response.Data = dbStaff;    
+            return response;
+        }
     }
 }

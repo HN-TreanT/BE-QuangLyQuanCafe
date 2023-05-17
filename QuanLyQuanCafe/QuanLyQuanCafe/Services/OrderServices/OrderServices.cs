@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using QuanLyQuanCafe.Dto.TokenAuth;
 using System.Reflection;
+using QuanLyQuanCafe.Services.TableFoodServices;
 
 namespace QuanLyQuanCafe.Services.OrderServices
 {
@@ -20,7 +21,8 @@ namespace QuanLyQuanCafe.Services.OrderServices
     {
         private readonly IMapper _mapper;
         private readonly CafeContext _context;
-        public static int PAGE_SIZE { get; set; } = 5;
+        private readonly ITableFoodService _tableFoodService;
+        public static int PAGE_SIZE { get; set; } = 6;
         public static string ConvertToUnSign(string text)
         {
             for (int i = 33; i < 48; i++)
@@ -52,10 +54,11 @@ namespace QuanLyQuanCafe.Services.OrderServices
             return regex.Replace(strFormD, String.Empty).Replace('\u0111', 'd').Replace('\u0110', 'D');
         }
 
-        public OrderServices(IMapper mapper, CafeContext context)
+        public OrderServices(IMapper mapper, CafeContext context, ITableFoodService tableFoodService)
         {
             _mapper = mapper;
             _context = context;
+            _tableFoodService = tableFoodService;
         }
         public async Task<ApiResponse<Order>> GetOrderById(string Id)
         {
@@ -91,7 +94,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                         TimePay = dbOrder?.TimePay,
                         CreatedAt = dbOrder?.CreatedAt,
                         UpdatedAt = dbOrder?.UpdatedAt,
-                        IdCustomer = dbOrder.IdCustomerNavigation?.IdCustomer ,
+                        IdCustomer = dbOrder.IdCustomerNavigation?.IdCustomer,
                         Fullname = dbOrder.IdCustomerNavigation?.Fullname,
                         PhoneNumber = dbOrder.IdCustomerNavigation?.PhoneNumber,
                         Gender = dbOrder.IdTableNavigation?.IdTable,
@@ -99,7 +102,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                         NameTable = dbOrder.IdTableNavigation?.Name,
                         StatusTable = dbOrder.IdTableNavigation?.Status
                     };
-                    if(dbOrder.IdCustomerNavigation?.Fullname != null && searchValue !=null)
+                    if (dbOrder.IdCustomerNavigation?.Fullname != null && searchValue != null)
                     {
                         if (_Convert.ConvertToUnSign(dbOrder.IdCustomerNavigation.Fullname).Contains(_Convert.ConvertToUnSign(searchValue)))
                         {
@@ -107,7 +110,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                         }
                     }
                 }
-                var db = data.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+                var db = data.OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
                 if (dbOrders1.Count <= 0)
                 {
                     response.Status = false;
@@ -140,7 +143,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                      NameTable = o.IdTableNavigation.Name,
                                      StatusTable = o.IdTableNavigation.Status
                                  })
-                                 .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                 .OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
                                  .ToListAsync();
                 var count2 = await _context.Orders.Include(o => o.IdCustomerNavigation)
                                  .Where(o => o.IdCustomerNavigation.PhoneNumber == searchValue)
@@ -177,7 +180,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                      NameTable = o.IdTableNavigation.Name,
                                      StatusTable = o.IdTableNavigation.Status
                                  })
-                              .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                              .OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
                               .ToListAsync();
                 var count3 = await _context.Orders.Include(o => o.IdTableNavigation)
                               .Where(o => o.IdTableNavigation.Name.ToString() == searchValue).CountAsync();
@@ -203,7 +206,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                      TimePay = o.TimePay,
                                      CreatedAt = o.CreatedAt,
                                      UpdatedAt = o.UpdatedAt,
-                                     IdCustomer = o.IdCustomerNavigation.IdCustomer ,
+                                     IdCustomer = o.IdCustomerNavigation.IdCustomer,
                                      Fullname = o.IdCustomerNavigation.Fullname,
                                      PhoneNumber = o.IdCustomerNavigation.PhoneNumber,
                                      Gender = o.IdTableNavigation.IdTable,
@@ -211,7 +214,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                      NameTable = o.IdTableNavigation.Name,
                                      StatusTable = o.IdTableNavigation.Status
                                  })
-                                 .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                 .OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
                                  .ToListAsync();
             var count = await _context.Orders.CountAsync();
             if (dbOrders.Count <= 0)
@@ -239,6 +242,11 @@ namespace QuanLyQuanCafe.Services.OrderServices
                 IdTable = orderDto.IdTable,
                 Amount = orderDto.Amount,
             };
+            var dbTableFood = await _context.TableFoods.FindAsync(orderDto.IdTable);
+            if (dbTableFood != null)
+            {
+                dbTableFood.Status = 1;
+            }
             _context.Orders.Add(newOrder);
             await _context.SaveChangesAsync();
             response.Data = newOrder;
@@ -264,6 +272,19 @@ namespace QuanLyQuanCafe.Services.OrderServices
             {
                 dbOrder.TimePay = null;
             }
+            if (orderDto.IdTable != null)
+            {
+                var dbTable = await _context.TableFoods.SingleOrDefaultAsync(tb => tb.IdTable == dbOrder.IdTable);
+                var dbNewTable = await _context.TableFoods.SingleOrDefaultAsync(tb => tb.IdTable == orderDto.IdTable);
+                if (dbTable != null)
+                {
+                    dbTable.Status = 0;
+                }
+                if (dbNewTable != null)
+                {
+                    dbNewTable.Status = 1;
+                }
+            }
             _mapper.Map(orderDto, dbOrder);
             await _context.SaveChangesAsync();
             response.Data = dbOrder;
@@ -284,6 +305,11 @@ namespace QuanLyQuanCafe.Services.OrderServices
             foreach (var item in dbOrder.OrderDetails)
             {
                 _context.OrderDetails.Remove(item);
+            }
+            var dbTable = await _context.TableFoods.FindAsync(dbOrder.IdTable);
+            if (dbTable != null)
+            {
+                dbTable.Status = 0;
             }
             _context.Orders.Remove(dbOrder);
             await _context.SaveChangesAsync();
@@ -445,44 +471,56 @@ namespace QuanLyQuanCafe.Services.OrderServices
         }
 
 
-        public async Task<ApiResponse<List<OrderGet>>> GetOrderUnpaid(int page, string? typeSearch, string? searchValue)
+        public async Task<ApiResponse<List<OrderGet>>> GetOrderUnpaid(int page, string? typeSearch, string? searchValue, string? timeStart, string? timeEnd)
         {
-            Console.WriteLine(searchValue);
+
             var response = new ApiResponse<List<OrderGet>>();
+            DateTime? convertTimeStart = null;
+            DateTime? convertTimeEnd = null;
+            string format = "ddd, dd MMM yyyy HH:mm:ss 'GMT'";
+            //check time start and time end
+            if (!string.IsNullOrEmpty(timeStart) && !string.IsNullOrEmpty(timeEnd))
+            {
+                convertTimeStart = DateTime.ParseExact(timeStart, format, CultureInfo.InvariantCulture);
+                convertTimeEnd = DateTime.ParseExact(timeEnd, format, CultureInfo.InvariantCulture);
+            }
+            // Console.WriteLine("check time", +convertTimeStart);
             if (typeSearch == "nameCustomer")
             {
                 var data = new List<OrderGet>();
-                var dbOrders1 = await _context.Orders.Where(o => o.Status == 0).Include((o) => o.IdCustomerNavigation)
+                var dbOrders1 = await _context.Orders.Where(o => o.Status == 0)
+                                                  .Where(o => (!convertTimeStart.HasValue || o.CreatedAt >= convertTimeStart) &&
+                                                    (!convertTimeEnd.HasValue || o.CreatedAt <= convertTimeEnd))
+                                                 .Include((o) => o.IdCustomerNavigation)
                                                  .Include(o => o.IdTableNavigation)
                                                  .ToListAsync();
-                foreach (var dbO in dbOrders1)
+                foreach (var dbOrder in dbOrders1)
                 {
-
                     OrderGet order = new OrderGet()
                     {
-                        IdOrder = dbO.IdOrder.ToString(),
-                        Status = dbO.Status,
-                        Amount = dbO.Amount,
-                        TimePay = dbO.TimePay,
-                        CreatedAt = dbO.CreatedAt,
-                        UpdatedAt = dbO.UpdatedAt,
-                        IdCustomer = dbO.IdCustomerNavigation?.IdCustomer,
-                        Fullname = dbO.IdCustomerNavigation?.Fullname,
-                        PhoneNumber = dbO.IdCustomerNavigation?.PhoneNumber,
-                        Gender = dbO.IdTableNavigation?.IdTable,
-                        IdTable = dbO.IdTableNavigation?.IdTable,
-                        NameTable = dbO.IdTableNavigation?.Name,
-                        StatusTable = dbO.IdTableNavigation?.Status
+                        IdOrder = dbOrder.IdOrder.ToString(),
+                        Status = dbOrder?.Status,
+                        Amount = dbOrder?.Amount,
+                        TimePay = dbOrder?.TimePay,
+                        CreatedAt = dbOrder?.CreatedAt,
+                        UpdatedAt = dbOrder?.UpdatedAt,
+                        IdCustomer = dbOrder?.IdCustomerNavigation?.IdCustomer,
+                        Fullname = dbOrder?.IdCustomerNavigation?.Fullname,
+                        PhoneNumber = dbOrder?.IdCustomerNavigation?.PhoneNumber,
+                        Gender = dbOrder?.IdTableNavigation?.IdTable,
+                        IdTable = dbOrder?.IdTableNavigation?.IdTable,
+                        NameTable = dbOrder?.IdTableNavigation?.Name,
+                        StatusTable = dbOrder?.IdTableNavigation?.Status
                     };
-                    if (dbO.IdCustomerNavigation?.Fullname != null && searchValue != null)
+                    if (dbOrder?.IdCustomerNavigation?.Fullname != null && searchValue != null)
                     {
-                        if (_Convert.ConvertToUnSign(dbO.IdCustomerNavigation.Fullname).Contains(_Convert.ConvertToUnSign(searchValue)))
+                        if (_Convert.ConvertToUnSign(dbOrder.IdCustomerNavigation.Fullname).Contains(_Convert.ConvertToUnSign(searchValue)))
                         {
                             data.Add(order);
                         }
                     }
                 }
-                var db = data.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+                var db = data.OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
                 if (dbOrders1.Count <= 0)
                 {
                     response.Status = false;
@@ -497,6 +535,8 @@ namespace QuanLyQuanCafe.Services.OrderServices
             {
 
                 var dbOrders2 = await _context.Orders.Where(o => o.Status == 0).Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
+                                .Where(o => (!convertTimeStart.HasValue || o.CreatedAt >= convertTimeStart) &&
+                                    (!convertTimeEnd.HasValue || o.CreatedAt <= convertTimeEnd))
                                 .Where(o => o.IdCustomerNavigation.PhoneNumber == searchValue)
                                 .Select(o =>
                                  new OrderGet
@@ -515,9 +555,12 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                      NameTable = o.IdTableNavigation.Name,
                                      StatusTable = o.IdTableNavigation.Status
                                  })
-                                 .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                 .OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
                                  .ToListAsync();
-                var count2 = await _context.Orders.Where(o => o.Status == 0).Include(o => o.IdCustomerNavigation)
+                var count2 = await _context.Orders.Include(o => o.IdCustomerNavigation)
+                                  .Where(o => o.Status == 0)
+                                  .Where(o => (!convertTimeStart.HasValue || o.CreatedAt >= convertTimeStart) &&
+                                    (!convertTimeEnd.HasValue || o.CreatedAt <= convertTimeEnd))
                                  .Where(o => o.IdCustomerNavigation.PhoneNumber == searchValue)
                                  .CountAsync();
                 if (dbOrders2.Count <= 0)
@@ -533,7 +576,11 @@ namespace QuanLyQuanCafe.Services.OrderServices
             }
             if (typeSearch == "tableFood")
             {
-                var dbOrders3 = await _context.Orders.Where(o => o.Status == 0).Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
+                var dbOrders3 = await _context.Orders.Where(o => o.Status == 0)
+                    .Where(o => (!convertTimeStart.HasValue || o.CreatedAt >= convertTimeStart) &&
+                                    (!convertTimeEnd.HasValue || o.CreatedAt <= convertTimeEnd))
+                     .Include(o => o.IdTableNavigation)
+                               .Include(o => o.IdCustomerNavigation)
                                .Where(o => o.IdTableNavigation.Name.ToString() == searchValue)
                                .Select(o =>
                                  new OrderGet
@@ -552,9 +599,12 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                      NameTable = o.IdTableNavigation.Name,
                                      StatusTable = o.IdTableNavigation.Status
                                  })
-                              .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                              .OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
                               .ToListAsync();
-                var count3 = await _context.Orders.Where(o => o.Status == 0).Include(o => o.IdTableNavigation)
+                var count3 = await _context.Orders.Include(o => o.IdTableNavigation)
+                               .Where(o => o.Status == 0)
+                               .Where(o => (!convertTimeStart.HasValue || o.CreatedAt >= convertTimeStart) &&
+                                    (!convertTimeEnd.HasValue || o.CreatedAt <= convertTimeEnd))
                               .Where(o => o.IdTableNavigation.Name.ToString() == searchValue).CountAsync();
                 if (dbOrders3.Count <= 0)
                 {
@@ -567,9 +617,13 @@ namespace QuanLyQuanCafe.Services.OrderServices
                 response.Data = dbOrders3;
                 return response;
             }
-            var dbOrder = await _context.Orders.Where(o => o.Status == 0).Include(o => o.IdCustomerNavigation)
-                                .Include(o => o.IdTableNavigation)
-                                .Select(o =>
+
+            var dbOrders = await _context.Orders.Where(o => o.Status == 0)
+                                  .Where(o => (!convertTimeStart.HasValue || o.CreatedAt >= convertTimeStart) &&
+                                    (!convertTimeEnd.HasValue || o.CreatedAt <= convertTimeEnd))
+                                  .Include(o => o.IdCustomerNavigation)
+                                 .Include(o => o.IdTableNavigation)
+                                 .Select(o =>
                                  new OrderGet
                                  {
                                      IdOrder = o.IdOrder.ToString(),
@@ -585,19 +639,62 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                      IdTable = o.IdTableNavigation.IdTable,
                                      NameTable = o.IdTableNavigation.Name,
                                      StatusTable = o.IdTableNavigation.Status
-                                 }).
-                                ToListAsync();
-
-            var count = await _context.Orders.Where(o => o.Status == 0).CountAsync();
-            if (dbOrder.Count <= 0)
+                                 })
+                                 .OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                 .ToListAsync();
+            var count = await _context.Orders
+                 .Where(o => o.Status == 0)
+                 .Where(o => (!convertTimeStart.HasValue || o.CreatedAt >= convertTimeStart) &&
+                                    (!convertTimeEnd.HasValue || o.CreatedAt <= convertTimeEnd))
+                .CountAsync();
+            if (dbOrders.Count <= 0)
             {
                 response.Status = false;
                 response.Message = "Not found order";
+
                 return response;
             }
+            response.Data = dbOrders;
             response.TotalPage = count;
-            response.Data = dbOrder;
+            return response;
+        }
+        public async Task<ApiResponse<AnyType>> GraftOrder(string IdOldOrder, string IdNewOrder){
+            var response = new ApiResponse<AnyType>();
+            var oldOrder = await _context.Orders.FindAsync(IdOldOrder);
+            var newOrder = await _context.Orders.FindAsync(IdNewOrder);
+            if (oldOrder == null || newOrder == null) {
+                response.Status = false;
+                response.Message = "Not found order";
+                return response;    
+            }
+            var orderDetailNewOrders = await _context.OrderDetails.Where(od=> od.IdOrder == IdNewOrder).ToListAsync();
+            var orderDetailOldOrders = await _context.OrderDetails.Where(od=> od.IdOrder == IdOldOrder).ToListAsync();
+           foreach (var itemOldOrder in orderDetailOldOrders)
+            {
+               foreach(var itemNewOrder in orderDetailNewOrders)
+                {
+                    if(itemOldOrder.IdProduct  == itemNewOrder.IdProduct)
+                    {
+                        var amount = itemNewOrder.Amout + itemOldOrder.Amout;
+                        var price = itemNewOrder.Price + itemOldOrder.Price;
+                        itemNewOrder.Amout = amount;
+                        itemNewOrder.Price = price;
+                    }
+                    else
+                    {
+                        itemOldOrder.IdOrder = IdNewOrder;
+                    }
+                }
+            }
+            var priceNewOrder = await _context.OrderDetails.Where(od => od.IdOrder == IdNewOrder).SumAsync(od=> od.Price);
+            var amountCustomer = newOrder.Amount + oldOrder.Amount;
+            newOrder.Amount = amountCustomer;
+            newOrder.Price = (long?)priceNewOrder;
+            _context.Orders.Remove(oldOrder);
+            await _context.SaveChangesAsync();   
+
             return response;
         }
     }
+
 }

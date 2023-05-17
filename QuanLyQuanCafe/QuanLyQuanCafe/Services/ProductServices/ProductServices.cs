@@ -64,14 +64,14 @@ namespace QuanLyQuanCafe.Services.ProductServices
             return response;
         }
 
-        public async Task<ApiResponse<List<Product>>> GetAllProduct(int page, string? typeSearch, string? searchValue)
+        public async Task<ApiResponse<List<Product>>> GetAllProduct(int pageSize, int page, string? typeSearch, string? searchValue)
         {
             var response = new ApiResponse<List<Product>>();
             IQueryable<Product> query = Enumerable.Empty<Product>().AsQueryable();
             if (string.IsNullOrEmpty(searchValue) || searchValue == null)
             {
                 query = _context.Products.Include(p => p.UseMaterials).Include(p => p.IdCategoryNavigation);
-                response.Data = query.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+                response.Data = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
                 response.TotalPage = query.ToList().Count();
                 return response;
             }
@@ -97,31 +97,37 @@ namespace QuanLyQuanCafe.Services.ProductServices
                             return false;
                     }).AsQueryable();
                 }
-            var products = query.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
-            if (query.ToList().Count <= 0)
-                {
-                    response.Status = false;
-                    response.Message = "Not found product";
-                    return response;
-                }
+            var products = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             response.Data = products;
             response.TotalPage = query.ToList().Count();
         
             return response;
         }
-        public async Task<ApiResponse<List<Product>>> GetAllProductByIdCategory(string IdCategory)
+        public async Task<ApiResponse<List<Product>>> GetAllProductByIdCategory(int pageSize, int page, string Id, string? searchValue)
         {
             var response = new ApiResponse<List<Product>>();
 
-            var products = await _context.Products.Where(p => p.IdCategory == IdCategory).ToListAsync();
-            if (products.Count <= 0)
+            IQueryable<Product> query = Enumerable.Empty<Product>().AsQueryable();
+            if (string.IsNullOrEmpty(searchValue) || searchValue == null)
             {
-                response.Status = false;
-                response.Message = "Not found product";
+                query = _context.Products.Where(p=>p.IdCategory == Id);
+                response.Data =await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                response.TotalPage = query.ToList().Count();
                 return response;
             }
+            var value = ConvertToUnSign(searchValue);
+            query = _context.Products.Where(delegate (Product c)
+            {
+                if (ConvertToUnSign(c.Title).IndexOf(value, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                    return true;
+                else
+                    return false;
+            })
+            .Where(p=> p.IdCategory == Id)
+            .AsQueryable();
+            var products = query.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             response.Data = products;
-
+            response.TotalPage = query.ToList().Count();
             return response;
         }
        

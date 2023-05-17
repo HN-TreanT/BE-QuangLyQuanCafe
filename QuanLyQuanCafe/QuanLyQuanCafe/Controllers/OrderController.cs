@@ -120,14 +120,30 @@ namespace QuanLyQuanCafe.Controllers
         [HttpGet]
         [Route("getOrderUnpaid")]
       /*  [Authorize]*/
-        public async Task<IActionResult> GetOrderUnpaid(int page, string? typeSearch, string? searchValue)
+        public async Task<IActionResult> GetOrderUnpaid(int page, string? typeSearch, string? searchValue,string? timeStart,string? timeEnd)
         {
             try
             {
-                var response = await _orderService.GetOrderUnpaid(page, typeSearch, searchValue);
+                var response = await _orderService.GetOrderUnpaid(page, typeSearch, searchValue,timeStart,timeEnd);
                 return Ok(response);
             }
             catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("graftOrder")]
+        /*[Authorize]*/
+        public async Task<IActionResult> GraftOrder(string IdOldOrder,string IdNewOrder)
+        {
+            try
+            {
+                var response = await _orderService.GraftOrder(IdOldOrder,IdNewOrder);
+                return Ok(response);
+
+            }catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

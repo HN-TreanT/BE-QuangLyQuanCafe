@@ -16,7 +16,7 @@ namespace QuanLyQuanCafe.Services.MaterialServices
         private readonly IMapper _mapper;
         private readonly CafeContext _context;
         public static int PAGE_SIZE { get; set; } = 6;
-        public static int PAGE_SIZE_MATERIAL { get; set; } = 6;
+        public static int PAGE_SIZE_MATERIAL { get; set; } = 5;
         private string ConvertToUnSign(string input)
         {
             input = input.Trim();
@@ -61,12 +61,6 @@ namespace QuanLyQuanCafe.Services.MaterialServices
                 var dbMaterials = await _context.Materials
                      .Skip((page - 1) * PAGE_SIZE_MATERIAL).Take(PAGE_SIZE_MATERIAL)
                     .ToListAsync();
-                if (dbMaterials.Count <= 0)
-                {
-                    response.Status = false;
-                    response.Message = "Not found material";
-                    return response;
-                }
                 response.Data = dbMaterials;
                 response.TotalPage = _context.Materials.Count();
             }
@@ -199,7 +193,7 @@ namespace QuanLyQuanCafe.Services.MaterialServices
                                                          .ToList();
 
                 // Thực hiện phân trang dữ liệu với các phần tử thỏa mãn điều kiện đã lọc
-                data = filteredHistory.OrderByDescending(h => h.CreatedAt)
+                data = filteredHistory.OrderByDescending(h => DateTime.ParseExact(h.CreatedAt, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture))
                                          .Skip((page - 1) * PAGE_SIZE)
                                          .Take(PAGE_SIZE)
                                          .ToList();
@@ -207,7 +201,7 @@ namespace QuanLyQuanCafe.Services.MaterialServices
             }
             else
             {
-                data = historyWarehouse.OrderByDescending(h => h.CreatedAt)
+                data = historyWarehouse.OrderByDescending(h => DateTime.ParseExact(h.CreatedAt, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture))
                                         .Skip((page - 1) * PAGE_SIZE)
                                         .Take(PAGE_SIZE)
                                         .ToList();

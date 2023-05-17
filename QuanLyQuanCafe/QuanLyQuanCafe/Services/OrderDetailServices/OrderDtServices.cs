@@ -94,6 +94,7 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
             var response = new ApiResponse<OrderDetail>();
             var dbOrderDetail = await _context.OrderDetails.FindAsync(Id);
             
+            
             if (dbOrderDetail == null )
             {
                 response.Status = false;
@@ -108,9 +109,17 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
                 response.Message = "Not found product";
                 return response;
             }
-
+            var dbOrder = await _context.Orders.FindAsync(dbOrderDetail.IdOrder);
+            if (dbOrder == null)
+            {
+                response.Status = false;
+                response.Message = "Not found product";
+                return response;
+            }
+            var priceOrder = dbOrder.Price - dbOrderDetail.Price + updateOrderDetailDto.Amount * dbProduct.Price;
             dbOrderDetail.Amout = updateOrderDetailDto.Amount;
             dbOrderDetail.Price = updateOrderDetailDto.Amount * dbProduct.Price;
+            dbOrder.Price = (long?)priceOrder;
             _context.OrderDetails.Update(dbOrderDetail);    
             await _context.SaveChangesAsync();
             response.Data = dbOrderDetail;
@@ -128,6 +137,15 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
                 return response;
 
             }
+            var dbOrder = await _context.Orders.FindAsync(dbOrderDetail.IdOrder);
+            if(dbOrder == null)
+            {
+                response.Status = false;
+                response.Message = "Not found";
+                return response;
+            }
+            var price = dbOrder.Price - dbOrderDetail.Price;
+            dbOrder.Price =(long?)price;
             _context.OrderDetails.Remove(dbOrderDetail);
             await _context.SaveChangesAsync();
             return response;
@@ -161,8 +179,15 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
                     response.Message = "Not found product";
                     return response;
                 }
-               
-
+                foreach (var item2 in dbProdcut.UseMaterials)
+                {
+                    var materail = await _context.Materials.FindAsync(item2.IdMaterial);
+                    if (materail != null)
+                    {
+                        var total = materail.Amount - item.Amount * item.Amount;
+                        materail.Amount = total;
+                    }
+                }
                 var newOrderDetail = new OrderDetail
                 {
                     IdOrderDetail = Guid.NewGuid().ToString().Substring(0, 10),

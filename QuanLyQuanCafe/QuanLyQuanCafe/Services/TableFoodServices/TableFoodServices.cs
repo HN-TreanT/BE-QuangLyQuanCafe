@@ -20,22 +20,41 @@ namespace QuanLyQuanCafe.Services.TableFoodServices
             this._mapper = mapper;
         }
 
-        public async Task<ApiResponse<List<TableFood>>> GetAllTableFood(int page)
+        public async Task<ApiResponse<List<TableFood>>> GetAllTableFood(int page,string? stateTable,int? numberTable)
         {
-            var response = new ApiResponse<List<TableFood>>(); 
-                var dbTableFoods = await _context.TableFoods.OrderBy(tb => tb.Name)
-                                                           .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)                                           
-                                                           .ToListAsync();
-                var count = await _context.TableFoods.CountAsync();
-                if (dbTableFoods.Count <= 0)
-                {
-                    response.Status = false;
-                    response.Message = "Not found";
-                    return response;
-                }
-                response.Data = dbTableFoods;
-               response.TotalPage = count; 
+            var response = new ApiResponse<List<TableFood>>();
+            var dbTableFoods = new List<TableFood>();
+            var count = 0;
+            if(stateTable == "emptyTable")
+            {
+                dbTableFoods = await _context.TableFoods
+                    .OrderBy(tb => tb.Name).Where(tb => tb.Status == 0).Where(tb => !numberTable.HasValue || tb.Name == numberTable)
+                    .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                    .ToListAsync();
+                count = await _context.TableFoods.Where(tb => tb.Status == 0).Where(tb => !numberTable.HasValue || tb.Name == numberTable).CountAsync();
+
+            }
+             else if (stateTable == "activeTable")
+            {
+                dbTableFoods = await _context.TableFoods
+                    .OrderBy(tb => tb.Name).Where(tb => tb.Status == 1).Where(tb =>!numberTable.HasValue || tb.Name == numberTable)
+                    .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                    .ToListAsync();
+                count = await _context.TableFoods.Where(tb => tb.Status == 1).Where(tb => !numberTable.HasValue || tb.Name == numberTable).CountAsync();
+
+            }
+            else
+            {
+                dbTableFoods = await _context.TableFoods.Where(tb => !numberTable.HasValue || tb.Name == numberTable)
+                   .OrderBy(tb => tb.Name)
+                   .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                   .ToListAsync();
+                count = await _context.TableFoods.Where(tb => !numberTable.HasValue || tb.Name == numberTable).CountAsync();
+            }
+            response.Data = dbTableFoods;
+            response.TotalPage = count;
             return response;
+            
         }
 
         public async Task<ApiResponse<TableFood>> GetTableFoodById(string Id)

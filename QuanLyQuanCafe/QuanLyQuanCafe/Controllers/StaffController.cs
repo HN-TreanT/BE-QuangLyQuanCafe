@@ -162,7 +162,21 @@ namespace QuanLyQuanCafe.Controllers
             return File(imageStream, "image/jpeg");
 
         }
-       
+
+        [HttpGet]
+        [Route("searchStaffByEmail")]
+       /* [Authorize(Roles = "Admin")]*/
+        public async Task<IActionResult> SearchStaffByEmail(string email)
+        {
+            try
+            {
+                var response = await _staffService.searchStaffbyEmail(email);
+                return Ok(response);
+
+            }catch (Exception ex) {
+                return BadRequest(ex.Message);
+            }
+        }
 
     }
 }

@@ -41,11 +41,11 @@ namespace QuanLyQuanCafe.Controllers
         [HttpGet]
         [Route("getAllProduct")]
       /*  [Authorize]*/
-        public async Task<IActionResult> GetAllProduct(int page , string? typeSearch,string? searchValue)
+        public async Task<IActionResult> GetAllProduct(int pageSize,int page , string? typeSearch,string? searchValue)
         {
             try
             {
-                var response = await _productService.GetAllProduct(page,typeSearch,searchValue);   
+                var response = await _productService.GetAllProduct(pageSize,page,typeSearch,searchValue);   
                 return Ok(response);
             }
             catch (Exception ex)
@@ -55,13 +55,13 @@ namespace QuanLyQuanCafe.Controllers
         }
 
         [HttpGet]
-        [Route("getAllProductByCategory/{Id}")]
+        [Route("getAllProductByCategory")]
       /*  [Authorize]*/
-        public async Task<IActionResult> GetAllProductByCategory(string Id)
+        public async Task<IActionResult> GetAllProductByCategory(int pageSize,int page,string Id,string? searchValue)
         {
             try
             {
-                var response = await _productService.GetAllProductByIdCategory(Id);
+                var response = await _productService.GetAllProductByIdCategory(pageSize,page,Id,searchValue);
                 return Ok(response);
             }
             catch (Exception ex)

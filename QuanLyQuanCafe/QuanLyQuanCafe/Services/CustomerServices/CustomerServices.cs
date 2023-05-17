@@ -83,6 +83,17 @@ namespace QuanLyQuanCafe.Services.CustomerServices
             var dbCustomer = await _context.Customers
                                    .Where(cus=> cus.PhoneNumber == CustomerDto.PhoneNumber)
                                    .SingleOrDefaultAsync();
+            Console.WriteLine(CustomerDto.PhoneNumber);
+            if(CustomerDto.PhoneNumber  != null)
+            {
+                if(CustomerDto.PhoneNumber.Length < 10 || CustomerDto.PhoneNumber.Length >11)
+                {
+                    response.Status = false;
+                    response.Message = "Số điện thoại không hợp lệ!";
+                    return response;
+                }
+
+            }
             if (dbCustomer == null)
             {
                 string Id = Guid.NewGuid().ToString().Substring(0, 10);
@@ -94,7 +105,7 @@ namespace QuanLyQuanCafe.Services.CustomerServices
                     PhoneNumber = CustomerDto.PhoneNumber
                 };
                 _context.Customers.Add(customer);
-                await _context.SaveChangesAsync();
+              await _context.SaveChangesAsync();
                 response.Data = customer;
                 return response;
             }

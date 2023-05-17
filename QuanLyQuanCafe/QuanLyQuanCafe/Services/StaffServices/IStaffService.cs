@@ -9,6 +9,7 @@ namespace QuanLyQuanCafe.Services.StaffServices
     public interface IStaffService
     {
         Task<ApiResponse<staff>> getStaff(string Id);
+        Task<ApiResponse<staff>> searchStaffbyEmail(string email);
         Task<ApiResponse<List<staff>>> GetAllStaff(int page,string? name);
         Task<ApiResponse<staff>> CreateStaff(StaffCreateDto StaffDto);
 
