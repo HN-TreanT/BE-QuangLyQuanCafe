@@ -667,29 +667,35 @@ namespace QuanLyQuanCafe.Services.OrderServices
                 response.Message = "Not found order";
                 return response;    
             }
-            var orderDetailNewOrders = await _context.OrderDetails.Where(od=> od.IdOrder == IdNewOrder).ToListAsync();
-            var orderDetailOldOrders = await _context.OrderDetails.Where(od=> od.IdOrder == IdOldOrder).ToListAsync();
-           foreach (var itemOldOrder in orderDetailOldOrders)
+            if(oldOrder.IdTable != null)
             {
-               foreach(var itemNewOrder in orderDetailNewOrders)
+                var dbTable = await _context.TableFoods.FindAsync(oldOrder.IdTable);
+               if(dbTable != null)
                 {
-                    if(itemOldOrder.IdProduct  == itemNewOrder.IdProduct)
-                    {
-                        var amount = itemNewOrder.Amout + itemOldOrder.Amout;
-                        var price = itemNewOrder.Price + itemOldOrder.Price;
-                        itemNewOrder.Amout = amount;
-                        itemNewOrder.Price = price;
-                    }
-                    else
-                    {
-                        itemOldOrder.IdOrder = IdNewOrder;
-                    }
+                    dbTable.Status = 0;
                 }
             }
-            var priceNewOrder = await _context.OrderDetails.Where(od => od.IdOrder == IdNewOrder).SumAsync(od=> od.Price);
+           var orderDetailNewOrders = await _context.OrderDetails.Where(od=> od.IdOrder == IdNewOrder).ToListAsync();
+           var orderDetailOldOrders = await _context.OrderDetails.Where(od=> od.IdOrder == IdOldOrder).ToListAsync();
+            foreach (var itemNewOrder in orderDetailNewOrders)
+            {
+                var matchingItemOldOrder = orderDetailOldOrders.FirstOrDefault(itemOldOrder => itemOldOrder.IdProduct == itemNewOrder.IdProduct);
+                if (matchingItemOldOrder != null)
+                {
+                    var amount = itemNewOrder.Amout + matchingItemOldOrder.Amout;
+                    var price = itemNewOrder.Price + matchingItemOldOrder.Price;
+                    itemNewOrder.Amout = amount;
+                    itemNewOrder.Price = price;
+                }
+                else
+                {
+                    itemNewOrder.IdOrder = IdNewOrder;
+                }
+            }
+            var priceNewOrder = oldOrder.Price + newOrder.Price;
             var amountCustomer = newOrder.Amount + oldOrder.Amount;
             newOrder.Amount = amountCustomer;
-            newOrder.Price = (long?)priceNewOrder;
+            newOrder.Price = priceNewOrder;
             _context.Orders.Remove(oldOrder);
             await _context.SaveChangesAsync();   
 
