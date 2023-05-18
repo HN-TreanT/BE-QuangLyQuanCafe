@@ -13,6 +13,7 @@ using System.Xml;
 using QuanLyQuanCafe.Dto.TokenAuth;
 using System.Reflection;
 using QuanLyQuanCafe.Services.TableFoodServices;
+using QuanLyQuanCafe.Dto.OrderDetail;
 
 namespace QuanLyQuanCafe.Services.OrderServices
 {
@@ -699,6 +700,71 @@ namespace QuanLyQuanCafe.Services.OrderServices
             _context.Orders.Remove(oldOrder);
             await _context.SaveChangesAsync();   
 
+            return response;
+        }
+        public async Task<ApiResponse<AnyType>> SplitOrder(string IdOldOrder, string IdNewOrder, List<DataSplitOrder>? SplitOrders) {
+            var response = new ApiResponse<AnyType>();
+            var dbOldOrder = await _context.Orders.FindAsync(IdOldOrder);
+            var dbNewOrder = await _context.Orders.FindAsync(IdNewOrder);
+            if(dbOldOrder == null || dbNewOrder == null)
+            {
+                response.Status = false;
+                response.Message = "Không tìm thấy hóa đơn";
+                return response;
+            }
+            var orderDetailNewOrders = await _context.OrderDetails.Where(od => od.IdOrder == IdNewOrder).ToListAsync();
+            var orderDetailOldOrders = await _context.OrderDetails.Where(od => od.IdOrder == IdOldOrder).ToListAsync();
+            if (SplitOrders == null )
+            {
+                response.Status = false;
+                response.Message = "Hãy thêm các món ăn muốn tách";
+                return response;
+            }
+            foreach(var item in SplitOrders)
+            {
+                var dbProduct = await _context.Products.FindAsync(item.IdProduct);
+                if(dbProduct == null)
+                {
+                    response.Status = false;
+                    response.Message = "Không tìm thấy món ăn";
+                    return response;
+                }
+                var matchingItemOldOrder = orderDetailOldOrders.FirstOrDefault(itemODt => itemODt.IdProduct == item.IdProduct);
+                if(matchingItemOldOrder != null)
+                {
+                    var amount = matchingItemOldOrder.Amout - item.CountSplit;
+                    var price = amount * dbProduct.Price;
+                    matchingItemOldOrder.Amout = amount;
+                    matchingItemOldOrder.Price = price;
+                }
+                var matchItemNewOrder = orderDetailNewOrders.FirstOrDefault(itemODt => itemODt.IdProduct == item.IdProduct);
+                if(matchItemNewOrder != null)
+                {
+                    var amount = item.CountSplit + matchItemNewOrder.Amout;
+                    var price = amount * dbProduct.Price;
+                    matchItemNewOrder.Amout = amount;
+                    matchItemNewOrder.Price = price;
+                }
+                else
+                {
+                    var newOrderDetail = new OrderDetail
+                    {
+                        IdOrderDetail = Guid.NewGuid().ToString().Substring(0, 10),
+                        IdOrder = dbNewOrder.IdOrder,
+                        IdProduct = item.IdProduct,
+                        Price = dbProduct.Price * item.CountSplit,
+                        Amout = item.CountSplit
+                    };
+                    _context.OrderDetails.Add(newOrderDetail);  
+                }
+            }
+            var OrderDetailNewOrder = await _context.OrderDetails.
+                Where(od=> od.IdOrder == dbNewOrder.IdOrder).ToListAsync();
+            var OrderDetailOldOrder = await _context.OrderDetails.
+                Where(od => od.IdOrder == dbOldOrder.IdOrder).ToListAsync();
+            var priceOldOrder = OrderDetailNewOrder.Sum(od => od.Price);
+            var priceNewOrder = OrderDetailOldOrder.Sum(od => od.Price);
+            await _context.SaveChangesAsync();
             return response;
         }
     }

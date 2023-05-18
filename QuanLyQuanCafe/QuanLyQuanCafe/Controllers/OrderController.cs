@@ -149,5 +149,19 @@ namespace QuanLyQuanCafe.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("splitOrder")]
+        /*[Authorize]*/
+        public async Task<IActionResult> SplitOrder(string IdOldOrder,string IdNewOrder, [FromBody] List<DataSplitOrder>? SplitOrders)
+        {
+            try
+            {
+                var response = await _orderService.SplitOrder(IdOldOrder, IdNewOrder, SplitOrders);
+                return Ok(response);
+            }catch (Exception ex) { 
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

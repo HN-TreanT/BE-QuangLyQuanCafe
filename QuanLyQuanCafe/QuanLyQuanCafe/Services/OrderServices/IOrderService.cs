@@ -15,5 +15,6 @@ namespace QuanLyQuanCafe.Services.OrderServices
         Task<ApiResponse<List<OrderGet>>> GetOrderPaid(int page, string? typeSearch, string? searchValue);
         Task<ApiResponse<List<OrderGet>>> GetOrderUnpaid(int page, string? typeSearch, string? searchValue,string? timeStart,string? timeEnd);
         Task<ApiResponse<AnyType>> GraftOrder(string IdOldOrder,string IdNewOrder);
+        Task<ApiResponse<AnyType>> SplitOrder(string IdOldOrder, string IdNewOrder, List<DataSplitOrder>? SplitOrders);
     }
 }
