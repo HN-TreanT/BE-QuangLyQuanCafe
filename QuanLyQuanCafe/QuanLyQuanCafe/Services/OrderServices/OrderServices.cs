@@ -736,6 +736,10 @@ namespace QuanLyQuanCafe.Services.OrderServices
                     var price = amount * dbProduct.Price;
                     matchingItemOldOrder.Amout = amount;
                     matchingItemOldOrder.Price = price;
+                    if(amount == 0)
+                    {
+                        _context.OrderDetails.Remove(matchingItemOldOrder);
+                    }
                 }
                 var matchItemNewOrder = orderDetailNewOrders.FirstOrDefault(itemODt => itemODt.IdProduct == item.IdProduct);
                 if(matchItemNewOrder != null)
@@ -744,27 +748,31 @@ namespace QuanLyQuanCafe.Services.OrderServices
                     var price = amount * dbProduct.Price;
                     matchItemNewOrder.Amout = amount;
                     matchItemNewOrder.Price = price;
+                    var newPrice = dbNewOrder.Price + price;
+                    dbNewOrder.Price = (long?)newPrice;
                 }
                 else
                 {
-                    var newOrderDetail = new OrderDetail
-                    {
-                        IdOrderDetail = Guid.NewGuid().ToString().Substring(0, 10),
-                        IdOrder = dbNewOrder.IdOrder,
-                        IdProduct = item.IdProduct,
-                        Price = dbProduct.Price * item.CountSplit,
-                        Amout = item.CountSplit
-                    };
-                    _context.OrderDetails.Add(newOrderDetail);  
+                   if(item.CountSplit > 0) {
+                        var newOrderDetail = new OrderDetail
+                        {
+                            IdOrderDetail = Guid.NewGuid().ToString().Substring(0, 10),
+                            IdOrder = dbNewOrder.IdOrder,
+                            IdProduct = item.IdProduct,
+                            Price = dbProduct.Price * item.CountSplit,
+                            Amout = item.CountSplit
+                        };
+                        _context.OrderDetails.Add(newOrderDetail);
+                        var price = dbNewOrder.Price + dbProduct.Price * item.CountSplit;
+                        dbNewOrder.Price = (long?)price;
+                    }
                 }
             }
-            var OrderDetailNewOrder = await _context.OrderDetails.
-                Where(od=> od.IdOrder == dbNewOrder.IdOrder).ToListAsync();
             var OrderDetailOldOrder = await _context.OrderDetails.
                 Where(od => od.IdOrder == dbOldOrder.IdOrder).ToListAsync();
-            var priceOldOrder = OrderDetailNewOrder.Sum(od => od.Price);
-            var priceNewOrder = OrderDetailOldOrder.Sum(od => od.Price);
-            await _context.SaveChangesAsync();
+            var priceOldOrder = OrderDetailOldOrder.Sum(od => od.Price);
+            dbOldOrder.Price = (long?)priceOldOrder;
+           await _context.SaveChangesAsync();
             return response;
         }
     }
