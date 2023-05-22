@@ -25,7 +25,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getImportGoodDt/{Id}")]
-      /*  [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetImportGoodDt(string Id)
         {
             try
@@ -39,7 +39,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllImportGood")]
-       /* [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllImportGood(int page,string? timeStart,string? timeEnd,string? nameMaterials)
         {
             try
@@ -55,7 +55,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createImportGoods")]
-       /* [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateImportGoods([FromBody] ImportGoodsDto ImportGoodsDto)
         {
             try
@@ -71,7 +71,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateImportGoods/{Id}")]
-    /*    [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateImportGoods(string Id, [FromBody] ImportGoodsDto ImportGoodsDto)
         {
             try
@@ -87,7 +87,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteImportGoods/{Id}")]
-        /*[Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteImportGoods(string Id)
         {
             try
@@ -102,7 +102,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpPost]
         [Route("createManyImportGoods")]
-    /*    [Authorize(Roles ="Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateManyImportGoods([FromBody] List<ImportGoodsDto> listImportGoods)
         {
             try

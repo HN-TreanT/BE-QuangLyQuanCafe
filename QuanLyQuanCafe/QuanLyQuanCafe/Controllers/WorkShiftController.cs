@@ -26,7 +26,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("GetWorkShiftDetail/{Id}")]
-      /*  [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetWorkShiftDetail(int Id)
         {
             try
@@ -42,7 +42,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("GetWorkShift")]
-      /*  [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetWorkShift()
         {
             try
@@ -58,7 +58,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpPost]
         [Route("CreateWorkShift")]
-       /* [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateWorkShift(WorkShiftDto workShift)
         {
             try
@@ -73,7 +73,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpPut]
         [Route("UpdateWorkShift/{Id}")]
-        /*[Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateWorkShift(int Id, [FromBody] UpdateWorkShiftDto workShift )
         {
             try
@@ -88,7 +88,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpDelete]
         [Route("DeleteWS/{Id}")]
-    /*    [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteWorkShift(int Id)
         {
             try

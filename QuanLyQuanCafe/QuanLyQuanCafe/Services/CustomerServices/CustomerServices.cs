@@ -123,13 +123,24 @@ namespace QuanLyQuanCafe.Services.CustomerServices
             var response = new ApiResponse<Customer>();           
                 /* var dbCustomer = await _context.Customers.SingleOrDefaultAsync(c => c.IdCustomer == Id);*/
                 var dbCustomer = await _context.Customers.FindAsync(Id);
-                if (dbCustomer == null)
+            
+            if (dbCustomer == null)
                 {
                     response.Status = false;
                     response.Message = "Not found customer";
                     return response;
                 }
-                _mapper.Map(CustomerDto, dbCustomer);
+            if (CustomerDto.PhoneNumber != null)
+            {
+                if (CustomerDto.PhoneNumber.Length < 10 || CustomerDto.PhoneNumber.Length > 11)
+                {
+                    response.Status = false;
+                    response.Message = "Số điện thoại không hợp lệ!";
+                    return response;
+                }
+
+            }
+            _mapper.Map(CustomerDto, dbCustomer);
                 _context.Customers.Update(dbCustomer);
                 await _context.SaveChangesAsync();         
             return response;

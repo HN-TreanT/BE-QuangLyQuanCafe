@@ -27,7 +27,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getMaterialById/{Id}")]
-  /*      [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> GetMaterialById(string Id)
         {
@@ -42,7 +42,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllMaterial")]
-     /*   [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> GetAllMaterial(int page ,string? name)
         {
@@ -59,8 +59,8 @@ namespace QuanLyQuanCafe.Controllers
         }
 
         [HttpPost]
-        [Route("createMaterial")]/*
-     */   [Authorize(Roles = "Admin")]
+        [Route("createMaterial")]
+      [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> CreateMaterial([FromBody]MaterialDto materialDto)
         {
@@ -77,7 +77,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateMaterial/{Id}")]
-     /*   [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> UpdateMaterial(string Id, [FromBody] MaterialUpdateDto materialDto)
         {
@@ -94,7 +94,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteMaterial/{Id}")]
-       /* [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> DelteMaterial(string Id)
         {
@@ -111,7 +111,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("searchMaterial/{name}")]
-     /*   [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> SearchMaterial(string name)
         {
@@ -132,7 +132,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getHistoryWarehouse")]
-      /*  [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetHistoryWareHouse(int page,string? timeStart,string? timeEnd)
         {
             try

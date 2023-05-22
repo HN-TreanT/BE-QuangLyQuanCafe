@@ -26,7 +26,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getProductById/{Id}")]
-       /* [Authorize]*/
+        [Authorize]
         public async Task<IActionResult> GetProductById(string Id) {
             try
             {
@@ -40,7 +40,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllProduct")]
-      /*  [Authorize]*/
+        [Authorize]
         public async Task<IActionResult> GetAllProduct(int pageSize,int page , string? typeSearch,string? searchValue)
         {
             try
@@ -56,7 +56,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getAllProductByCategory")]
-      /*  [Authorize]*/
+        [Authorize]
         public async Task<IActionResult> GetAllProductByCategory(int pageSize,int page,string Id,string? searchValue)
         {
             try
@@ -73,7 +73,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPost]
         [Route("createProduct")]
-      /*  [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProduct([FromForm] ProductDto productDto)
         {
             try
@@ -90,7 +90,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpPut]
         [Route("updateProduct/{Id}")]
-     /*   [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProduct(string Id,[FromForm]ProductDto productDto)
         {
             try
@@ -106,7 +106,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpDelete]
         [Route("deleteProduct/{Id}")]
-      /*  [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProduct(string Id)
         {
             try
@@ -122,7 +122,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("getBestSellProduct/{time}")]
-      /*  [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetBestSellProduct(int time)
         {
             try

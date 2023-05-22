@@ -240,7 +240,7 @@ namespace QuanLyQuanCafe.Controllers
         //get user by id
         [HttpGet]
         [Route("{Id}")]
-       /* [Authorize]*/
+        [Authorize]
         public async Task<IActionResult> GetUserById(string Id)
         {
             try
@@ -260,7 +260,7 @@ namespace QuanLyQuanCafe.Controllers
 
         //get all user 
         [HttpGet]
-       /* [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUser()
         {
             try
@@ -275,7 +275,7 @@ namespace QuanLyQuanCafe.Controllers
         //delete user
         [HttpDelete]
         [Route("{Id}")]
-       /* [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(string Id)
         {
             try

@@ -268,6 +268,12 @@ namespace QuanLyQuanCafe.Services.OrderServices
             if (orderDto.Status == 1)
             {
                 dbOrder.TimePay = DateTime.Now;
+                var dbTable = await _context.TableFoods.FindAsync(dbOrder.IdTable);
+                if(dbTable != null)
+                {
+                    dbTable.Status = 0;
+                }
+
             }
             if (orderDto.Status == 0)
             {
@@ -688,10 +694,25 @@ namespace QuanLyQuanCafe.Services.OrderServices
                     itemNewOrder.Amout = amount;
                     itemNewOrder.Price = price;
                 }
-                else
+               
+            }
+            foreach(var item in orderDetailOldOrders)
+            {
+                var matchingItemNewOrder = orderDetailNewOrders.FirstOrDefault(itemNewOrder => itemNewOrder.IdProduct == item.IdProduct);
+                if(matchingItemNewOrder == null)
                 {
-                    itemNewOrder.IdOrder = IdNewOrder;
+                    var newOrderDetail = new OrderDetail()
+                    {
+                        IdOrderDetail= Guid.NewGuid().ToString().Substring(0, 10),
+                        IdOrder = IdNewOrder, // Gán IdOrder của order mới
+                        IdProduct = item.IdProduct,
+                        Amout = item.Amout,
+                        Price = item.Price
+                    };
+
+                    _context.OrderDetails.Add(newOrderDetail);
                 }
+
             }
             var priceNewOrder = oldOrder.Price + newOrder.Price;
             var amountCustomer = newOrder.Amount + oldOrder.Amount;

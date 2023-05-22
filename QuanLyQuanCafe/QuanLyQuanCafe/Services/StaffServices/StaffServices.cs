@@ -8,6 +8,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
 using System.Text;
+using QuanLyQuanCafe.Dto.Customer;
 
 namespace QuanLyQuanCafe.Services.StaffServices
 {
@@ -100,14 +101,25 @@ namespace QuanLyQuanCafe.Services.StaffServices
             var response = new ApiResponse<staff>();          
                 string IdStaff = Guid.NewGuid().ToString().Substring(0, 10);
                 var dbStaff = _context.staff.Where(u => u.Email == StaffDto.Email).FirstOrDefault();
+               
                 if (dbStaff != null)
                 {
                     response.Status = false;
                     response.Message = "email already";
                     return response;
                 }
+            if (StaffDto.PhoneNumber != null)
+            {
+                if (StaffDto.PhoneNumber.Length < 10 || StaffDto.PhoneNumber.Length > 11)
+                {
+                    response.Status = false;
+                    response.Message = "Số điện thoại không hợp lệ!";
+                    return response;
+                }
 
-                var staff = new staff
+            }
+          
+            var staff = new staff
                 {
                     IdStaff = IdStaff,
                     Fullname = StaffDto.Fullname,
@@ -153,8 +165,18 @@ namespace QuanLyQuanCafe.Services.StaffServices
                     response.Message = "not found";
                     return response;
                 }
-                //update SelectedWorkShift
-                if(staffDto.WorkShifts != null)
+            if (staffDto.PhoneNumber != null)
+            {
+                if (staffDto.PhoneNumber.Length < 10 || staffDto.PhoneNumber.Length > 11)
+                {
+                    response.Status = false;
+                    response.Message = "Số điện thoại không hợp lệ!";
+                    return response;
+                }
+
+            }
+            //update SelectedWorkShift
+            if (staffDto.WorkShifts != null)
                 {
                     var workShiftsToRemove = dbStaff.SelectedWorkShifts
                    .Where(selectedWS => staffDto.WorkShifts.All(ws => ws != (int)selectedWS.IdWorkShift)).ToList();

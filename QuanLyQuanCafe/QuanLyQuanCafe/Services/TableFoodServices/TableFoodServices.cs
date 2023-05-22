@@ -98,13 +98,19 @@ namespace QuanLyQuanCafe.Services.TableFoodServices
         {
             var response = new ApiResponse<TableFood>();
                 var dbTableFood = await _context.TableFoods.SingleOrDefaultAsync(tb => tb.IdTable == Id);
+               
                 if (dbTableFood == null)
                 {
                     response.Status = false;
-                    response.Message = "not found";
+                    response.Message = "Không tìm thấy bàn ăn";
                     return response;
                 }
-                _mapper.Map(TableFoodDto, dbTableFood);
+                if (dbTableFood.Name == TableFoodDto.Name) {
+                response.Status = false;
+                response.Message = "Bàn đã tồn tại";
+                return response;
+               }
+            _mapper.Map(TableFoodDto, dbTableFood);
                 _context.TableFoods.Update(dbTableFood);
                 await _context.SaveChangesAsync();
                 response.Data = dbTableFood;           

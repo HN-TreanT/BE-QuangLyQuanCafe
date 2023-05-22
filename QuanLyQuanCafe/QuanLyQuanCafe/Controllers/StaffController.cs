@@ -25,7 +25,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("GetAllStaff")]
-      /*  [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllStaff(int page,string? name)
         {
             try
@@ -41,7 +41,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpPost]
         [Route("CreateStaff")]
-       /* [Authorize(Roles = "Admin")]*/ 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateStaff([FromBody] StaffCreateDto StaffDto) 
         {
             try
@@ -57,7 +57,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpPut]
         [Route("UpdateInfoStaff/{Id}")]
-       /* [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateInfoStaff(string Id, [FromBody] StaffCreateDto staffDto)
         {
             try
@@ -73,7 +73,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpDelete]
         [Route("DeleteStaff/{Id}")]
-       /* [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteStaff(string Id)
         {
             try
@@ -89,7 +89,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("getStaff/{Id}")]
-      /*  [Authorize(Roles = "Admin")] */   
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> getStaff(string Id)
         {
             try
@@ -105,7 +105,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("searchStaffByName/{staffName}")]
-       /* [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SearchStaffByName(string staffName)
         {
             try
@@ -125,7 +125,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("searchStaffByPhone/{staffPhone}")]
-       /* [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SearchStaffByPhone(string staffPhone)
         {
             try
@@ -140,7 +140,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpPost]
         [Route("UploadAvartarStaff")]
-       /* [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UploadAvartarStaff( [FromForm] ModelAvartarImage avartarStaffImage)
         {
             try
@@ -153,7 +153,7 @@ namespace QuanLyQuanCafe.Controllers
         }
         [HttpGet]
         [Route("StaffImage/{imageName}")]
-       /* [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetImage(string imageName)
         {
             var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "StaffImage", imageName);
@@ -165,7 +165,7 @@ namespace QuanLyQuanCafe.Controllers
 
         [HttpGet]
         [Route("searchStaffByEmail")]
-       /* [Authorize(Roles = "Admin")]*/
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SearchStaffByEmail(string email)
         {
             try
