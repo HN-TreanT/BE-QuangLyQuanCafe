@@ -232,7 +232,7 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
                 OrderNumber = OrdersCount,
                 ProductNumber = ProductCount,   
                 Revenue = ActualSaleMoney,
-                MoneyProduct = MoneyProduct,
+                MoneyProduct = ActualSaleMoney,
                 MoneyMaterial = MoneyMaterial   
             };
             response.Data = newOverview;

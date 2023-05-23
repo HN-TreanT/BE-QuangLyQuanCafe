@@ -769,7 +769,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                     var price = amount * dbProduct.Price;
                     matchItemNewOrder.Amout = amount;
                     matchItemNewOrder.Price = price;
-                    var newPrice = dbNewOrder.Price + price;
+                    var newPrice = dbNewOrder.Price + item.CountSplit  * dbProduct.Price;
                     dbNewOrder.Price = (long?)newPrice;
                 }
                 else
