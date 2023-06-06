@@ -53,7 +53,7 @@ namespace QuanLyQuanCafe.Services.StaffServices
             var response = new ApiResponse<List<staff>>();
             if( string.IsNullOrEmpty(name))
             {
-                var dbStaffs = await _context.staff.Include(s => s.SelectedWorkShifts)
+                var dbStaffs = await _context.staff.Include(s => s.SelectedWorkShifts).OrderByDescending(st=> st.CreatedAt)
                     .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
                     .ToListAsync();
                 if (dbStaffs.Count <= 0)
@@ -76,7 +76,7 @@ namespace QuanLyQuanCafe.Services.StaffServices
                             return false;
                     }).AsQueryable();
                 response.TotalPage = query.ToList().Count();
-                response.Data = query.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+                response.Data = query.OrderByDescending(st=> st.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
             }
             return response;
         }

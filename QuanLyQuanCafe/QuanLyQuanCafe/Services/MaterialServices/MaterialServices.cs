@@ -58,7 +58,7 @@ namespace QuanLyQuanCafe.Services.MaterialServices
             var response = new ApiResponse<List<Material>>();
             if (string.IsNullOrEmpty(name))
             {
-                var dbMaterials = await _context.Materials
+                var dbMaterials = await _context.Materials.OrderByDescending(m=> m.CreatedAt)
                      .Skip((page - 1) * PAGE_SIZE_MATERIAL).Take(PAGE_SIZE_MATERIAL)
                     .ToListAsync();
                 response.Data = dbMaterials;
@@ -75,7 +75,7 @@ namespace QuanLyQuanCafe.Services.MaterialServices
                         return false;
                 }).AsQueryable();
                 response.TotalPage = query.ToList().Count();
-                response.Data = query.Skip((page - 1) * PAGE_SIZE_MATERIAL).Take(PAGE_SIZE_MATERIAL).ToList();
+                response.Data = query.OrderByDescending(m => m.CreatedAt).Skip((page - 1) * PAGE_SIZE_MATERIAL).Take(PAGE_SIZE_MATERIAL).ToList();
             }
             return response;
         }

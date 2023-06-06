@@ -83,7 +83,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
             {
                 var data = new List<OrderGet>();
                 var dbOrders1 = await _context.Orders.Include((o) => o.IdCustomerNavigation)
-                                                 .Include(o => o.IdTableNavigation)
+                                                 .Include(o => o.IdTableNavigation).OrderByDescending(p => p.CreatedAt)
                                                  .ToListAsync();
                 foreach (var dbOrder in dbOrders1)
                 {
@@ -111,7 +111,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                         }
                     }
                 }
-                var db = data.OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+                var db = data.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
                 if (dbOrders1.Count <= 0)
                 {
                     response.Status = false;
@@ -125,7 +125,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
             if (typeSearch == "phonenumber")
             {
 
-                var dbOrders2 = await _context.Orders.Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
+                var dbOrders2 = await _context.Orders.Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation).OrderByDescending(p => p.CreatedAt)
                                 .Where(o => o.IdCustomerNavigation.PhoneNumber == searchValue)
                                 .Select(o =>
                                  new OrderGet
@@ -144,7 +144,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                      NameTable = o.IdTableNavigation.Name,
                                      StatusTable = o.IdTableNavigation.Status
                                  })
-                                 .OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                 .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
                                  .ToListAsync();
                 var count2 = await _context.Orders.Include(o => o.IdCustomerNavigation)
                                  .Where(o => o.IdCustomerNavigation.PhoneNumber == searchValue)
@@ -162,7 +162,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
             }
             if (typeSearch == "tableFood")
             {
-                var dbOrders3 = await _context.Orders.Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
+                var dbOrders3 = await _context.Orders.Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation).OrderByDescending(p => p.CreatedAt)
                                .Where(o => o.IdTableNavigation.Name.ToString() == searchValue)
                                .Select(o =>
                                  new OrderGet
@@ -181,7 +181,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                      NameTable = o.IdTableNavigation.Name,
                                      StatusTable = o.IdTableNavigation.Status
                                  })
-                              .OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                              .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
                               .ToListAsync();
                 var count3 = await _context.Orders.Include(o => o.IdTableNavigation)
                               .Where(o => o.IdTableNavigation.Name.ToString() == searchValue).CountAsync();
@@ -198,6 +198,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
             }
             var dbOrders = await _context.Orders.Include(o => o.IdCustomerNavigation)
                                  .Include(o => o.IdTableNavigation)
+                                 .OrderByDescending(p => p.CreatedAt)
                                  .Select(o =>
                                  new OrderGet
                                  {
@@ -215,7 +216,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                      NameTable = o.IdTableNavigation.Name,
                                      StatusTable = o.IdTableNavigation.Status
                                  })
-                                 .OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
                                  .ToListAsync();
             var count = await _context.Orders.CountAsync();
             if (dbOrders.Count <= 0)
@@ -330,7 +331,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
             if (typeSearch == "nameCustomer")
             {
                 var data = new List<OrderGet>();
-                var dbOrders1 = await _context.Orders.Where(o => o.Status == 1).Include((o) => o.IdCustomerNavigation)
+                var dbOrders1 = await _context.Orders.OrderByDescending(p => p.CreatedAt).Where(o => o.Status == 1).Include((o) => o.IdCustomerNavigation)
                                                  .Include(o => o.IdTableNavigation)
                                                  .ToListAsync();
                 foreach (var dbO in dbOrders1)
@@ -373,7 +374,8 @@ namespace QuanLyQuanCafe.Services.OrderServices
             if (typeSearch == "phonenumber")
             {
 
-                var dbOrders2 = await _context.Orders.Where(o => o.Status == 1).Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
+                var dbOrders2 = await _context.Orders.OrderByDescending(p => p.CreatedAt).Where(o => o.Status == 1).Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
+                                 
                                 .Where(o => o.IdCustomerNavigation.PhoneNumber == searchValue)
                                 .Select(o =>
                                  new OrderGet
@@ -410,7 +412,8 @@ namespace QuanLyQuanCafe.Services.OrderServices
             }
             if (typeSearch == "tableFood")
             {
-                var dbOrders3 = await _context.Orders.Where(o => o.Status == 1).Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
+                var dbOrders3 = await _context.Orders.OrderByDescending(p => p.CreatedAt).Where(o => o.Status == 1).Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation).OrderByDescending(p => p.CreatedAt)
+
                                .Where(o => o.IdTableNavigation.Name.ToString() == searchValue)
                                .Select(o =>
                                  new OrderGet
@@ -444,7 +447,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                 response.Data = dbOrders3;
                 return response;
             }
-            var dbOrder = await _context.Orders.Where(o => o.Status == 1).Include(o => o.IdCustomerNavigation)
+            var dbOrder = await _context.Orders.OrderByDescending(p => p.CreatedAt).Where(o => o.Status == 1).Include(o => o.IdCustomerNavigation)
                                 .Include(o => o.IdTableNavigation)
                                 .Select(o =>
                                  new OrderGet
@@ -495,7 +498,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
             if (typeSearch == "nameCustomer")
             {
                 var data = new List<OrderGet>();
-                var dbOrders1 = await _context.Orders.Where(o => o.Status == 0)
+                var dbOrders1 = await _context.Orders.OrderByDescending(p => p.CreatedAt).Where(o => o.Status == 0)
                                                   .Where(o => (!convertTimeStart.HasValue || o.CreatedAt >= convertTimeStart) &&
                                                     (!convertTimeEnd.HasValue || o.CreatedAt <= convertTimeEnd))
                                                  .Include((o) => o.IdCustomerNavigation)
@@ -527,7 +530,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                         }
                     }
                 }
-                var db = data.OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+                var db = data.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
                 if (dbOrders1.Count <= 0)
                 {
                     response.Status = false;
@@ -541,7 +544,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
             if (typeSearch == "phonenumber")
             {
 
-                var dbOrders2 = await _context.Orders.Where(o => o.Status == 0).Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
+                var dbOrders2 = await _context.Orders.OrderByDescending(p => p.CreatedAt).Where(o => o.Status == 0).Include(o => o.IdTableNavigation).Include(o => o.IdCustomerNavigation)
                                 .Where(o => (!convertTimeStart.HasValue || o.CreatedAt >= convertTimeStart) &&
                                     (!convertTimeEnd.HasValue || o.CreatedAt <= convertTimeEnd))
                                 .Where(o => o.IdCustomerNavigation.PhoneNumber == searchValue)
@@ -562,7 +565,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                      NameTable = o.IdTableNavigation.Name,
                                      StatusTable = o.IdTableNavigation.Status
                                  })
-                                 .OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
                                  .ToListAsync();
                 var count2 = await _context.Orders.Include(o => o.IdCustomerNavigation)
                                   .Where(o => o.Status == 0)
@@ -583,7 +586,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
             }
             if (typeSearch == "tableFood")
             {
-                var dbOrders3 = await _context.Orders.Where(o => o.Status == 0)
+                var dbOrders3 = await _context.Orders.OrderByDescending(p => p.CreatedAt).Where(o => o.Status == 0)
                     .Where(o => (!convertTimeStart.HasValue || o.CreatedAt >= convertTimeStart) &&
                                     (!convertTimeEnd.HasValue || o.CreatedAt <= convertTimeEnd))
                      .Include(o => o.IdTableNavigation)
@@ -606,7 +609,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                      NameTable = o.IdTableNavigation.Name,
                                      StatusTable = o.IdTableNavigation.Status
                                  })
-                              .OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                             .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
                               .ToListAsync();
                 var count3 = await _context.Orders.Include(o => o.IdTableNavigation)
                                .Where(o => o.Status == 0)
@@ -625,7 +628,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                 return response;
             }
 
-            var dbOrders = await _context.Orders.Where(o => o.Status == 0)
+            var dbOrders = await _context.Orders.OrderByDescending(p => p.CreatedAt).Where(o => o.Status == 0)
                                   .Where(o => (!convertTimeStart.HasValue || o.CreatedAt >= convertTimeStart) &&
                                     (!convertTimeEnd.HasValue || o.CreatedAt <= convertTimeEnd))
                                   .Include(o => o.IdCustomerNavigation)
@@ -647,7 +650,7 @@ namespace QuanLyQuanCafe.Services.OrderServices
                                      NameTable = o.IdTableNavigation.Name,
                                      StatusTable = o.IdTableNavigation.Status
                                  })
-                                 .OrderByDescending(p => p.CreatedAt).Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
+                                .Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE)
                                  .ToListAsync();
             var count = await _context.Orders
                  .Where(o => o.Status == 0)
