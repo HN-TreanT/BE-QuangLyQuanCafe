@@ -239,7 +239,44 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
             return response;
         }
 
-        
+        public async Task<ApiResponse<RevenueOverview>> RevenueOverview()
+        {
+            var response = new ApiResponse<RevenueOverview>();
+            int currentYear = DateTime.Now.Year;
+            int prevouisYear = DateTime.Now.Year - 1;
+            List<decimal> monthlyCurrentYear = new List<decimal>();
+            List<decimal> monthlyRevenuePreviousYear = new List<decimal>();
+            for (int month = 1; month <= 12; month++)
+            {
+                // Lấy ngày đầu tiên và cuối cùng của tháng trong năm trước
+                DateTime startDate = new DateTime(currentYear, month, 1);
+                DateTime endDate = startDate.AddMonths(1).AddDays(-1);
+
+                // Tính tổng doanh thu trong khoảng thời gian của tháng
+                var revenueOfMonth =await _context.Orders.Where(c => c.CreatedAt >= startDate && c.CreatedAt <= endDate)
+                .SumAsync(od => od.Price);
+
+                // Thêm tổng doanh thu vào danh sách
+                monthlyCurrentYear.Add((decimal)revenueOfMonth);
+            }
+            for (int month = 1; month <= 12; month++)
+            {
+                // Lấy ngày đầu tiên và cuối cùng của tháng trong năm trước
+                DateTime startDatePrevouis = new DateTime(prevouisYear, month, 1);
+                DateTime endDatePrevouis = startDatePrevouis.AddMonths(1).AddDays(-1);
+
+                // Tính tổng doanh thu trong khoảng thời gian của tháng
+                var revenueOfMonthPre =await _context.Orders.Where(c => c.CreatedAt >= startDatePrevouis && c.CreatedAt <= endDatePrevouis)
+                .SumAsync(od => od.Price);
+
+                // Thêm tổng doanh thu vào danh sách
+                monthlyRevenuePreviousYear.Add((decimal)revenueOfMonthPre);
+            }
+            response.Data = new RevenueOverview();
+            response.Data.currentYear = monthlyCurrentYear;
+           response.Data.preYear = monthlyRevenuePreviousYear;
+            return response;
+        }
 
     }
 }

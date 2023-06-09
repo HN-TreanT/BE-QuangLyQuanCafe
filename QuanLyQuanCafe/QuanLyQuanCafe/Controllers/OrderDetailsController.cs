@@ -156,5 +156,23 @@ namespace QuanLyQuanCafe.Controllers
                     BadRequest(ex.Message);
             }
         }
+
+        [HttpGet]
+        [Route("revenueOverview")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> getRevenueOverview()
+        {
+            try
+            {
+                var response = await _orderDtService.RevenueOverview();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+
+                return
+                    BadRequest(ex.Message);
+            }
+        }
     }
 }

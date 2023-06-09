@@ -17,5 +17,7 @@ namespace QuanLyQuanCafe.Services.OrderDetailServices
         Task<ApiResponse<List<OrderDetail>>> CreateListOrderDt(List<OrderDetailDto> ListOrderDt);
         //Lấy ra tiền hàng , giảm giá , số khách hàng , số hóa đơn,số mặt hàng 
         Task<ApiResponse<Overview>> GetOverview(int time);
+
+        Task<ApiResponse<RevenueOverview>> RevenueOverview();
     }
 }
